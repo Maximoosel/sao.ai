@@ -140,7 +140,7 @@ const FloatingOverlay = () => {
         onClick={() => setIsMinimized(false)}
       >
         <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
-          <Wind size={20} className="text-primary-foreground" />
+          <Layers size={20} className="text-primary-foreground" />
         </div>
       </div>
     );
