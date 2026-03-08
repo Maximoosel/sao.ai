@@ -162,7 +162,7 @@ const FloatingOverlay = () => {
           
           {/* Title bar - draggable */}
           <div
-            className="flex items-center justify-between px-4 py-3 cursor-move select-none border-b border-black/5"
+            className="flex items-center justify-between px-4 py-3 cursor-move select-none border-b border-white/10"
             onMouseDown={onMouseDown}
           >
             <div className="flex items-center gap-2.5">
