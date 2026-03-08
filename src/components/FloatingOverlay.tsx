@@ -167,8 +167,8 @@ const FloatingOverlay = () => {
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-muted-foreground/50" />
-              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Layers size={14} className="text-primary" />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center">
+                <AbstractShape size={22} />
               </div>
               <span className="text-sm font-semibold text-foreground tracking-tight">Sift</span>
               {isAnalyzing && (
