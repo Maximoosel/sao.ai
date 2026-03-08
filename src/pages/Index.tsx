@@ -90,41 +90,28 @@ const Index = () => {
             border: '0.5px solid rgba(255,255,255,0.15)',
           }}
         >
-          <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Appearance</p>
-
-          {/* Theme swatches */}
-          <div className="space-y-1.5">
-            <label className="text-white/50 text-[11px]">Theme</label>
-            <div className="flex gap-2">
+          <div className="flex items-center justify-between">
+            <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Appearance</p>
+            <div className="flex gap-1.5">
               {themes.map((theme, i) => (
                 <button
                   key={theme.name}
                   onClick={() => setActiveTheme(i)}
-                  className="relative flex-1 group"
-                >
-                  {/* Animated blob swatch */}
-                  <div className="relative h-10 rounded-xl overflow-hidden" style={{
-                    border: activeTheme === i ? '1.5px solid rgba(255,255,255,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                  className="relative w-5 h-5 rounded-full overflow-hidden"
+                  style={{
                     background: theme.preview[0],
-                  }}>
-                    <motion.div
-                      className="absolute inset-0"
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-                    >
-                      <div className="absolute w-6 h-6 rounded-full top-0 left-1 blur-sm" style={{ background: theme.preview[1], opacity: 0.7 }} />
-                      <div className="absolute w-5 h-5 rounded-full bottom-0 right-1 blur-sm" style={{ background: theme.preview[2], opacity: 0.6 }} />
-                    </motion.div>
-                    {activeTheme === i && (
-                      <motion.div
-                        className="absolute inset-0 rounded-xl"
-                        layoutId="themeRing"
-                        style={{ boxShadow: `0 0 12px ${theme.preview[0]}60` }}
-                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                      />
-                    )}
-                  </div>
-                  <span className="text-[10px] text-white/40 mt-1 block text-center">{theme.name}</span>
+                    border: activeTheme === i ? '1.5px solid rgba(255,255,255,0.6)' : '1px solid rgba(255,255,255,0.15)',
+                    boxShadow: activeTheme === i ? `0 0 8px ${theme.preview[0]}50` : 'none',
+                  }}
+                >
+                  <motion.div
+                    className="absolute inset-0"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <div className="absolute w-2 h-2 rounded-full top-0 left-0 blur-[2px]" style={{ background: theme.preview[1], opacity: 0.7 }} />
+                    <div className="absolute w-1.5 h-1.5 rounded-full bottom-0 right-0 blur-[2px]" style={{ background: theme.preview[2], opacity: 0.6 }} />
+                  </motion.div>
                 </button>
               ))}
             </div>
