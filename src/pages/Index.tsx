@@ -29,7 +29,7 @@ const Index = () => {
       
       {/* Desktop hint text */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
-        <p className="text-xs text-muted-foreground/60">Drag the Sift overlay anywhere · 📂 Scan folders · ✨ AI analysis</p>
+        <p className="text-xs text-muted-foreground/60">Drag the swept.ai overlay anywhere · 📂 Scan folders · ✨ AI analysis</p>
       </div>
       
       <FloatingOverlay />
