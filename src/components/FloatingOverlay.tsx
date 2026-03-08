@@ -4,6 +4,7 @@ import {
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
   ChevronDown
 } from 'lucide-react';
+import { AbstractShape } from './SplashScreen';
 import FileCard from './FileCard';
 import StorageRing from './StorageRing';
 import EmptyState from './EmptyState';
@@ -139,8 +140,8 @@ const FloatingOverlay = () => {
         style={{ left: position.x, top: position.y }}
         onClick={() => setIsMinimized(false)}
       >
-        <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
-          <Layers size={20} className="text-primary-foreground" />
+        <div className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
+          <AbstractShape size={28} />
         </div>
       </div>
     );
@@ -166,8 +167,8 @@ const FloatingOverlay = () => {
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-muted-foreground/50" />
-              <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Layers size={14} className="text-primary" />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center">
+                <AbstractShape size={22} />
               </div>
               <span className="text-sm font-semibold text-foreground tracking-tight">Sift</span>
               {isAnalyzing && (
