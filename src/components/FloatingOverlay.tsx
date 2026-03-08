@@ -322,11 +322,11 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
   onTrash: (id: string) => void;
 }) => {
   const tagColors: Record<string, string> = {
-    'essential': 'bg-green-100 text-green-700',
-    'useful': 'bg-blue-100 text-blue-700',
-    'questionable': 'bg-yellow-100 text-yellow-700',
-    'low-priority': 'bg-orange-100 text-orange-700',
-    'safe-to-remove': 'bg-red-100 text-red-700',
+    'essential': 'bg-green-500/20 text-green-300',
+    'useful': 'bg-blue-500/20 text-blue-300',
+    'questionable': 'bg-yellow-500/20 text-yellow-300',
+    'low-priority': 'bg-orange-500/20 text-orange-300',
+    'safe-to-remove': 'bg-red-500/20 text-red-300',
   };
 
   return (
@@ -334,22 +334,22 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
       onClick={() => onToggle(file.id)}
       className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
         selected 
-          ? 'bg-primary/8 border border-primary/25 shadow-sm shadow-primary/5' 
-          : 'hover:bg-black/3 border border-transparent'
+          ? 'bg-primary/15 border border-primary/30 shadow-sm shadow-primary/10' 
+          : 'hover:bg-white/5 border border-transparent'
       }`}
     >
       <div className={`w-4 h-4 rounded-md flex items-center justify-center flex-shrink-0 transition-all ${
-        selected ? 'bg-primary' : 'border border-black/15 bg-white/80'
+        selected ? 'bg-primary' : 'border border-white/20 bg-white/10'
       }`}>
         {selected && <Check size={10} className="text-primary-foreground" strokeWidth={3} />}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-foreground truncate leading-tight">{file.name}</p>
+        <p className="text-xs font-medium text-white truncate leading-tight">{file.name}</p>
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[10px] text-muted-foreground truncate">{file.path}</span>
+          <span className="text-[10px] text-white/40 truncate">{file.path}</span>
           {file.relevanceTag && (
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${tagColors[file.relevanceTag] || 'bg-muted text-muted-foreground'}`}>
+            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${tagColors[file.relevanceTag] || 'bg-white/10 text-white/50'}`}>
               {file.relevanceTag === 'safe-to-remove' ? 'Safe to remove' : file.relevanceTag}
             </span>
           )}
@@ -359,7 +359,7 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
       <div className="flex items-center gap-2 flex-shrink-0">
         {file.keepPriority !== undefined && (
           <div className="flex items-center gap-1">
-            <div className="w-8 h-1.5 rounded-full bg-black/5 overflow-hidden">
+            <div className="w-8 h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all ${
                   file.keepPriority > 70 ? 'bg-green-500' :
@@ -368,13 +368,13 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
                 style={{ width: `${file.keepPriority}%` }}
               />
             </div>
-            <span className="text-[9px] text-muted-foreground w-5 text-right">{file.keepPriority}</span>
+            <span className="text-[9px] text-white/40 w-5 text-right">{file.keepPriority}</span>
           </div>
         )}
-        <span className="text-[10px] font-semibold text-primary bg-primary/8 px-2 py-0.5 rounded-lg">{formatSize(file.size)}</span>
+        <span className="text-[10px] font-semibold text-primary bg-primary/15 px-2 py-0.5 rounded-lg">{formatSize(file.size)}</span>
         <button
           onClick={(e) => { e.stopPropagation(); onTrash(file.id); }}
-          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-red-500/20 text-white/30 hover:text-red-400 transition-all"
         >
           <Trash2 size={12} />
         </button>
