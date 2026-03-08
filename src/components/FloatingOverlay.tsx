@@ -122,7 +122,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setShowTick(false);
         setSweepResult(null);
       }, 1200);
-    }, 1400);
+    }, 2200);
   }, [files, selectedIds]);
 
   const handleScanFolder = async () => {
@@ -284,51 +284,29 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
 
           {/* File list */}
-          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative overflow-x-hidden">
-            {filteredFiles.length === 0 ? (
+          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative overflow-hidden">
+            {filteredFiles.length === 0 && !sweepAnimating ? (
               <EmptyState />
             ) : (
               <AnimatePresence mode="popLayout">
-                {filteredFiles.map((file, i) => {
+                {filteredFiles.map((file) => {
                   const isSelected = selectedIds.has(file.id);
-                  const selectedIndex = isSelected ? [...selectedIds].indexOf(file.id) : 0;
                   return (
                     <motion.div
                       key={file.id}
                       layout
                       initial={false}
-                      animate={sweepAnimating && isSelected ? 'shrink' : 'idle'}
-                      variants={{
-                        idle: { scale: 1, opacity: 1, x: 0, y: 0 },
-                        shrink: {
-                          scale: [1, 0.7, 0.3, 0.08],
-                          opacity: [1, 1, 0.8, 0],
-                          x: [0, 20, 60, 140],
-                          y: [0, 0, -selectedIndex * 15, 250],
-                          height: ['auto', 'auto', '24px', '4px'],
-                          marginBottom: [6, 6, 0, 0],
-                        },
-                      }}
+                      animate={sweepAnimating && isSelected ? {
+                        opacity: [1, 0.4, 0],
+                        scale: [1, 0.95, 0.9],
+                        height: ['auto', 'auto', 0],
+                        marginBottom: [6, 4, 0],
+                      } : { opacity: 1, scale: 1 }}
                       transition={sweepAnimating && isSelected ? {
-                        duration: 1.2,
-                        ease: [0.4, 0, 0.2, 1],
-                        delay: selectedIndex * 0.1,
-                      } : { layout: { duration: 0.35, ease: 'easeOut' } }}
-                      className="relative"
+                        duration: 0.6,
+                        ease: 'easeIn',
+                      } : { layout: { duration: 0.4, ease: 'easeOut' } }}
                     >
-                      {/* Logo ball that replaces the card */}
-                      {sweepAnimating && isSelected && (
-                        <motion.div
-                          className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: [0, 1, 1, 1, 0], scale: [0, 1.5, 1.2, 1, 0.4] }}
-                          transition={{ duration: 1.2, delay: selectedIndex * 0.1 + 0.2, ease: 'easeInOut' }}
-                        >
-                          <div className="w-10 h-10 rounded-full bg-primary/30 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-primary/40">
-                            <AbstractShape size={28} />
-                          </div>
-                        </motion.div>
-                      )}
                       <OverlayFileCard
                         file={file}
                         selected={isSelected}
@@ -340,6 +318,39 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 })}
               </AnimatePresence>
             )}
+
+            {/* Floating logo balls — rendered on top, inside the list area */}
+            <AnimatePresence>
+              {sweepAnimating && [...selectedIds].map((id, idx) => (
+                <motion.div
+                  key={`ball-${id}`}
+                  className="absolute z-50 pointer-events-none"
+                  style={{ left: '50%', top: `${40 + idx * 50}px` }}
+                  initial={{ opacity: 0, scale: 0, x: '-50%', y: 0 }}
+                  animate={{
+                    opacity: [0, 1, 1, 1, 0.8],
+                    scale: [0, 1.3, 1, 0.9, 0.5],
+                    x: ['-50%', '-50%', '-50%', '40%', '80%'],
+                    y: [0, -10, 0, 80, 200],
+                  }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{
+                    duration: 1.8,
+                    ease: [0.25, 0.1, 0.25, 1],
+                    delay: idx * 0.2,
+                  }}
+                >
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-xl"
+                    style={{
+                      background: 'radial-gradient(circle, hsla(var(--primary), 0.5) 0%, hsla(var(--primary), 0.15) 70%)',
+                      boxShadow: '0 0 20px hsla(var(--primary), 0.5), 0 0 40px hsla(var(--primary), 0.2)',
+                    }}
+                  >
+                    <AbstractShape size={32} />
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           {/* Bottom sweep bar */}
@@ -364,9 +375,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 ],
               } : { scale: 1 }}
               transition={sweepAnimating ? {
-                duration: 0.25 * selectedIds.size + 0.6,
+                duration: 0.3 * selectedIds.size + 0.8,
                 ease: 'easeOut',
-                delay: 0.7,
+                delay: 1.2,
               } : { type: 'spring', stiffness: 400, damping: 15 }}
               className={`relative px-5 py-2 rounded-xl font-semibold text-xs transition-colors ${
                 selectedIds.size === 0
