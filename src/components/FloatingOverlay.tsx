@@ -375,6 +375,48 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
         </div>
 
+        {/* Logo balls rolling to sweep button */}
+        <AnimatePresence>
+          {sweepAnimating && [...selectedIds].map((id, idx) => (
+            <motion.div
+              key={`ball-${id}`}
+              className="absolute z-40 pointer-events-none"
+              initial={{ 
+                left: '50%', 
+                top: '40%',
+                opacity: 0, 
+                scale: 0,
+                x: '-50%',
+                y: '-50%',
+              }}
+              animate={{ 
+                left: ['50%', '45%', '75%', '85%'],
+                top: ['40%', '50%', '75%', '92%'],
+                opacity: [0, 1, 1, 0],
+                scale: [0, 1.1, 0.9, 0.3],
+                x: ['-50%', '-50%', '-50%', '-50%'],
+                y: ['-50%', '-50%', '-50%', '-50%'],
+                rotate: [0, 90, 270, 540],
+              }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{
+                duration: 1.4,
+                ease: [0.2, 0.8, 0.3, 1],
+                delay: idx * 0.15,
+              }}
+            >
+              <div className="w-11 h-11 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'radial-gradient(circle, hsl(var(--primary) / 0.6) 0%, hsl(var(--primary) / 0.2) 70%)',
+                  boxShadow: '0 0 16px hsl(var(--primary) / 0.6), 0 0 32px hsl(var(--primary) / 0.25)',
+                }}
+              >
+                <AbstractShape size={28} />
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+
         {/* Minimalist tick overlay */}
         <AnimatePresence>
           {showTick && (
