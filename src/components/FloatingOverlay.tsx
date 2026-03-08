@@ -157,7 +157,7 @@ const FloatingOverlay = () => {
         style={{ left: position.x, top: position.y, maxHeight: '90vh' }}
       >
         <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/10 border border-white/40"
-          style={{ background: 'hsla(0, 0%, 100%, 0.45)', backdropFilter: 'blur(80px) saturate(180%)', WebkitBackdropFilter: 'blur(80px) saturate(180%)' }}>
+          style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(80px) saturate(180%)', WebkitBackdropFilter: 'blur(80px) saturate(180%)' }}>
           
           {/* Title bar - draggable */}
           <div
