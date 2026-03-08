@@ -1,4 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
