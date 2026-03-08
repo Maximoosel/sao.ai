@@ -18,11 +18,19 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
   const [showControls, setShowControls] = useState(false);
+  const [activeTheme, setActiveTheme] = useState(0);
 
   // Tuning sliders
   const [bgBlur, setBgBlur] = useState(60);
   const [overlayOpacity, setOverlayOpacity] = useState(50);
   const [splashOpacity, setSplashOpacity] = useState(35);
+
+  // Apply theme to CSS variable
+  useEffect(() => {
+    document.documentElement.style.setProperty('--primary', themes[activeTheme].hsl);
+    document.documentElement.style.setProperty('--accent', themes[activeTheme].hsl);
+    document.documentElement.style.setProperty('--ring', themes[activeTheme].hsl);
+  }, [activeTheme]);
 
   const dismissOnboarding = () => {
     setShowOnboarding(false);
