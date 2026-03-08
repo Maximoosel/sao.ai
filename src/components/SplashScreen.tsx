@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface SplashScreenProps {
   onComplete: () => void;
+  bgBlur?: number;
+  panelOpacity?: number;
 }
 
 const cards = [
