@@ -157,20 +157,20 @@ const FloatingOverlay = () => {
         className={`fixed z-[100] ${width} ${height} flex flex-col transition-all duration-300`}
         style={{ left: position.x, top: position.y, maxHeight: '90vh' }}
       >
-        <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/10 border border-white/40"
-          style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(80px) saturate(180%)', WebkitBackdropFilter: 'blur(80px) saturate(180%)' }}>
+        <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/8 border border-white/20"
+          style={{ background: 'hsla(0, 0%, 100%, 0.35)', backdropFilter: 'blur(60px) saturate(200%)', WebkitBackdropFilter: 'blur(60px) saturate(200%)' }}>
           
           {/* Title bar - draggable */}
           <div
-            className="flex items-center justify-between px-4 py-3 cursor-move select-none border-b border-black/5"
+            className="flex items-center justify-between px-4 py-3 cursor-move select-none border-b border-white/10"
             onMouseDown={onMouseDown}
           >
             <div className="flex items-center gap-2.5">
-              <GripVertical size={14} className="text-muted-foreground/50" />
+              <GripVertical size={14} className="text-white/30" />
               <div className="w-7 h-7 rounded-lg flex items-center justify-center">
                 <AbstractShape size={22} />
               </div>
-              <span className="text-sm font-semibold text-foreground tracking-tight">swept.ai</span>
+              <span className="text-sm font-semibold text-white tracking-tight">swept.ai</span>
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
                   <Sparkles size={10} /> Analyzing...
@@ -183,20 +183,20 @@ const FloatingOverlay = () => {
               )}
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 rounded-lg hover:bg-black/5 text-muted-foreground transition-colors">
+              <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors">
                 {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
               </button>
-              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-black/5 text-muted-foreground transition-colors">
+              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors">
                 <Minus size={12} />
               </button>
-              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-red-500/20 text-white/40 hover:text-red-400 transition-colors">
                 <X size={12} />
               </button>
             </div>
           </div>
 
           {/* Compact storage + actions */}
-          <div className="px-4 py-3 flex items-center justify-between border-b border-black/5">
+          <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
             <StorageRing used={currentUsed} total={totalStorage} />
             <div className="flex gap-1.5">
               <button onClick={handleScanFolder} disabled={isScanning} className="overlay-action-btn" title="Scan a folder">
@@ -221,13 +221,13 @@ const FloatingOverlay = () => {
           {/* Search + Sort */}
           <div className="flex gap-2 px-4 py-2">
             <div className="relative flex-1">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
               <input
                 type="text"
                 placeholder="Search files..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="no-drag w-full rounded-xl pl-8 pr-3 py-2 text-xs outline-none transition-all border border-black/5 bg-white/50 focus:border-primary/30 focus:ring-2 focus:ring-primary/10"
+                className="no-drag w-full rounded-xl pl-8 pr-3 py-2 text-xs outline-none transition-all border border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
               />
             </div>
             <div className="relative">
@@ -240,7 +240,7 @@ const FloatingOverlay = () => {
                 <ChevronDown size={10} />
               </button>
               {showSortMenu && (
-                <div className="absolute right-0 top-full mt-1 w-40 rounded-xl bg-white/95 backdrop-blur-xl border border-black/10 shadow-lg z-10 py-1 overflow-hidden">
+                <div className="absolute right-0 top-full mt-1 w-40 rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 shadow-lg z-10 py-1 overflow-hidden">
                   {(Object.keys(sortLabels) as SortMode[]).map(mode => (
                     <button
                       key={mode}
@@ -253,8 +253,8 @@ const FloatingOverlay = () => {
                         }
                         setShowSortMenu(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-black/5 transition-colors ${
-                        sortMode === mode ? 'text-primary font-semibold' : 'text-foreground'
+                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/10 transition-colors ${
+                        sortMode === mode ? 'text-primary font-semibold' : 'text-white/80'
                       }`}
                     >
                       {sortLabels[mode]}
@@ -284,16 +284,16 @@ const FloatingOverlay = () => {
           </div>
 
           {/* Bottom sweep bar */}
-          <div className="px-4 py-3 border-t border-black/5 flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">
-              <span className="text-foreground font-semibold">{selectedIds.size}</span> selected · <span className="text-foreground font-semibold">{formatSize(selectedSize)}</span>
+          <div className="px-4 py-3 border-t border-white/10 flex items-center justify-between">
+            <p className="text-xs text-white/50">
+              <span className="text-white font-semibold">{selectedIds.size}</span> selected · <span className="text-white font-semibold">{formatSize(selectedSize)}</span>
             </p>
             <button
               onClick={sweepSelected}
               disabled={selectedIds.size === 0}
               className={`px-5 py-2 rounded-xl font-semibold text-xs transition-all ${
                 selectedIds.size === 0
-                  ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                  ? 'bg-white/10 text-white/30 cursor-not-allowed'
                   : 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 hover:brightness-110 hover:-translate-y-0.5'
               }`}
             >
@@ -322,11 +322,11 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
   onTrash: (id: string) => void;
 }) => {
   const tagColors: Record<string, string> = {
-    'essential': 'bg-green-100 text-green-700',
-    'useful': 'bg-blue-100 text-blue-700',
-    'questionable': 'bg-yellow-100 text-yellow-700',
-    'low-priority': 'bg-orange-100 text-orange-700',
-    'safe-to-remove': 'bg-red-100 text-red-700',
+    'essential': 'bg-green-500/20 text-green-300',
+    'useful': 'bg-blue-500/20 text-blue-300',
+    'questionable': 'bg-yellow-500/20 text-yellow-300',
+    'low-priority': 'bg-orange-500/20 text-orange-300',
+    'safe-to-remove': 'bg-red-500/20 text-red-300',
   };
 
   return (
@@ -334,22 +334,22 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
       onClick={() => onToggle(file.id)}
       className={`group flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150 ${
         selected 
-          ? 'bg-primary/8 border border-primary/25 shadow-sm shadow-primary/5' 
-          : 'hover:bg-black/3 border border-transparent'
+          ? 'bg-primary/15 border border-primary/30 shadow-sm shadow-primary/10' 
+          : 'hover:bg-white/5 border border-transparent'
       }`}
     >
       <div className={`w-4 h-4 rounded-md flex items-center justify-center flex-shrink-0 transition-all ${
-        selected ? 'bg-primary' : 'border border-black/15 bg-white/80'
+        selected ? 'bg-primary' : 'border border-white/20 bg-white/10'
       }`}>
         {selected && <Check size={10} className="text-primary-foreground" strokeWidth={3} />}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-foreground truncate leading-tight">{file.name}</p>
+        <p className="text-xs font-medium text-white truncate leading-tight">{file.name}</p>
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[10px] text-muted-foreground truncate">{file.path}</span>
+          <span className="text-[10px] text-white/40 truncate">{file.path}</span>
           {file.relevanceTag && (
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${tagColors[file.relevanceTag] || 'bg-muted text-muted-foreground'}`}>
+            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${tagColors[file.relevanceTag] || 'bg-white/10 text-white/50'}`}>
               {file.relevanceTag === 'safe-to-remove' ? 'Safe to remove' : file.relevanceTag}
             </span>
           )}
@@ -359,7 +359,7 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
       <div className="flex items-center gap-2 flex-shrink-0">
         {file.keepPriority !== undefined && (
           <div className="flex items-center gap-1">
-            <div className="w-8 h-1.5 rounded-full bg-black/5 overflow-hidden">
+            <div className="w-8 h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all ${
                   file.keepPriority > 70 ? 'bg-green-500' :
@@ -368,13 +368,13 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
                 style={{ width: `${file.keepPriority}%` }}
               />
             </div>
-            <span className="text-[9px] text-muted-foreground w-5 text-right">{file.keepPriority}</span>
+            <span className="text-[9px] text-white/40 w-5 text-right">{file.keepPriority}</span>
           </div>
         )}
-        <span className="text-[10px] font-semibold text-primary bg-primary/8 px-2 py-0.5 rounded-lg">{formatSize(file.size)}</span>
+        <span className="text-[10px] font-semibold text-primary bg-primary/15 px-2 py-0.5 rounded-lg">{formatSize(file.size)}</span>
         <button
           onClick={(e) => { e.stopPropagation(); onTrash(file.id); }}
-          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-red-500/20 text-white/30 hover:text-red-400 transition-all"
         >
           <Trash2 size={12} />
         </button>

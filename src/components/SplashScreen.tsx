@@ -49,11 +49,11 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           style={{
             top: 20, left: 20,
             width: 420, height: 600,
-            background: 'hsla(0, 0%, 100%, 0.55)',
-            backdropFilter: 'blur(80px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(80px) saturate(180%)',
-            border: '1px solid rgba(255,255,255,0.4)',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
+            background: 'hsla(0, 0%, 100%, 0.15)',
+            backdropFilter: 'blur(60px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(60px) saturate(200%)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           }}
           onClick={handleClick}
           exit={{ opacity: 0, scale: 0.95 }}
@@ -88,7 +88,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
                   <div className="absolute inset-0 flex flex-col justify-end p-3">
                     <div className="w-full h-0.5 bg-black/8 rounded-full mb-1.5" />
                     <div className="w-3/4 h-0.5 bg-black/5 rounded-full mb-2" />
-                    <span className="text-foreground/40 text-[9px] font-medium">{card.label}</span>
+                    <span className="text-white/40 text-[9px] font-medium">{card.label}</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent" />
                 </motion.div>
@@ -103,17 +103,17 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1 className="text-2xl font-black tracking-tight text-foreground">
+            <h1 className="text-2xl font-black tracking-tight text-white">
               swept.ai
             </h1>
-            <p className="mt-1.5 text-[10px] font-medium text-muted-foreground tracking-[0.1em] uppercase">
+            <p className="mt-1.5 text-[10px] font-medium text-white/50 tracking-[0.1em] uppercase">
               Smart File Intelligence
             </p>
           </motion.div>
 
           {phase === 'idle' && (
             <motion.p
-              className="absolute bottom-6 text-[10px] text-muted-foreground/40 tracking-widest uppercase"
+              className="absolute bottom-6 text-[10px] text-white/25 tracking-widest uppercase"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}

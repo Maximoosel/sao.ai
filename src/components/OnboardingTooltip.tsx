@@ -30,8 +30,8 @@ const OnboardingTooltip = ({ onDismiss }: OnboardingTooltipProps) => {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div
-        className="w-[320px] rounded-2xl overflow-hidden border border-white/30 shadow-2xl"
-        style={{ background: 'hsla(0, 0%, 100%, 0.85)', backdropFilter: 'blur(40px)' }}
+        className="w-[320px] rounded-2xl overflow-hidden border border-white/15 shadow-2xl"
+        style={{ background: 'hsla(0, 0%, 100%, 0.12)', backdropFilter: 'blur(60px) saturate(200%)' }}
       >
         {/* Progress dots */}
         <div className="flex justify-center gap-2 pt-5">
@@ -39,24 +39,24 @@ const OnboardingTooltip = ({ onDismiss }: OnboardingTooltipProps) => {
             <div
               key={i}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === step ? 'w-6 bg-primary' : 'w-1.5 bg-black/15'
+                i === step ? 'w-6 bg-primary' : 'w-1.5 bg-white/20'
               }`}
             />
           ))}
         </div>
 
         <div className="px-6 py-5 text-center">
-          <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center mx-auto mb-4">
             {current.icon}
           </div>
-          <h3 className="text-base font-bold text-foreground mb-2">{current.title}</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">{current.desc}</p>
+          <h3 className="text-base font-bold text-white mb-2">{current.title}</h3>
+          <p className="text-sm text-white/60 leading-relaxed">{current.desc}</p>
         </div>
 
         <div className="px-6 pb-5 flex gap-2">
           <button
             onClick={onDismiss}
-            className="flex-1 py-2.5 rounded-xl text-xs font-medium text-muted-foreground hover:bg-black/5 transition-colors"
+            className="flex-1 py-2.5 rounded-xl text-xs font-medium text-white/50 hover:bg-white/5 transition-colors"
           >
             Skip
           </button>
