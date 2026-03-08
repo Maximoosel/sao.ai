@@ -266,8 +266,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   return (
       <div
         ref={overlayRef}
-        className={`fixed z-[100] ${width} ${height} flex flex-col transition-all duration-300`}
-        style={{ left: position.x, top: position.y, maxHeight: '90vh' }}
+        className={`fixed z-[100] left-0 top-0 ${width} ${height} flex flex-col`}
+        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform', maxHeight: '90vh' }}
       >
         <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/8 border border-white/20"
           style={{ background: `hsla(0, 0%, 100%, ${panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
