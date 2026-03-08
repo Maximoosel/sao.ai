@@ -249,8 +249,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
-        className="fixed z-[100] cursor-pointer"
-        style={{ left: position.x, top: position.y }}
+        className="fixed z-[100] cursor-pointer left-0 top-0"
+        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform' }}
         onClick={() => setIsMinimized(false)}
       >
         <div className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
