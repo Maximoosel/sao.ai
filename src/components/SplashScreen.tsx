@@ -32,6 +32,15 @@ const stackOffsets = [
   { x: -1, y: -20, rotate: -0.5 },
 ];
 
+// Partially fanned out on hover — subtle peek
+const peekOffsets = [
+  { x: -30, y: 12, rotate: -8 },
+  { x: 28, y: -8, rotate: 6 },
+  { x: -22, y: -28, rotate: -4 },
+  { x: 24, y: -48, rotate: 5 },
+  { x: 0, y: -60, rotate: 1 },
+];
+
 const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScreenProps) => {
   const [phase, setPhase] = useState<'idle' | 'exploded' | 'exit'>('idle');
 
