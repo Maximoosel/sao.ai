@@ -49,11 +49,11 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           style={{
             top: 20, left: 20,
             width: 420, height: 600,
-            background: 'hsla(0, 0%, 100%, 0.55)',
-            backdropFilter: 'blur(80px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(80px) saturate(180%)',
-            border: '1px solid rgba(255,255,255,0.4)',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
+            background: 'hsla(0, 0%, 100%, 0.15)',
+            backdropFilter: 'blur(60px) saturate(200%)',
+            WebkitBackdropFilter: 'blur(60px) saturate(200%)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           }}
           onClick={handleClick}
           exit={{ opacity: 0, scale: 0.95 }}
