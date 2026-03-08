@@ -122,7 +122,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setShowTick(false);
         setSweepResult(null);
       }, 1200);
-    }, 600);
+    }, 1400);
   }, [files, selectedIds]);
 
   const handleScanFolder = async () => {
