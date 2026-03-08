@@ -36,7 +36,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [currentUsed, setCurrentUsed] = useState(usedStorage);
   const [sweepAnimating, setSweepAnimating] = useState(false);
   const [showTick, setShowTick] = useState(false);
+  const [ballSpawns, setBallSpawns] = useState<{ id: string; topPct: number }[]>([]);
   const sweepBtnRef = useRef<HTMLButtonElement>(null);
+  const fileListRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
