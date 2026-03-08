@@ -13,6 +13,7 @@ export interface SweepFile {
   keepPriority?: number; // 0-100
   relevanceTag?: RelevanceTag;
   relevanceReason?: string;
+  confidence?: number; // 0-100
 }
 
 const GB = 1024 * 1024 * 1024;
@@ -50,6 +51,13 @@ export function formatSize(bytes: number): string {
   return `${(bytes / 1024).toFixed(0)} KB`;
 }
 
+export function formatSizeWithContext(bytes: number, totalBytes: number): string {
+  const base = formatSize(bytes);
+  const pct = ((bytes / totalBytes) * 100);
+  if (pct >= 0.1) return `${base} · ${pct.toFixed(1)}% of disk`;
+  return base;
+}
+
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -71,4 +79,14 @@ export function daysSince(dateStr: string): number {
   const date = new Date(dateStr);
   const now = new Date();
   return Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+export function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return 'just now';
+  const mins = Math.floor(seconds / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
