@@ -284,9 +284,9 @@ const FloatingOverlay = () => {
           </div>
 
           {/* Bottom sweep bar */}
-          <div className="px-4 py-3 border-t border-black/5 flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">
-              <span className="text-foreground font-semibold">{selectedIds.size}</span> selected · <span className="text-foreground font-semibold">{formatSize(selectedSize)}</span>
+          <div className="px-4 py-3 border-t border-white/10 flex items-center justify-between">
+            <p className="text-xs text-white/50">
+              <span className="text-white font-semibold">{selectedIds.size}</span> selected · <span className="text-white font-semibold">{formatSize(selectedSize)}</span>
             </p>
             <button
               onClick={sweepSelected}
