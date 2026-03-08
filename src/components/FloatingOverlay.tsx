@@ -221,13 +221,13 @@ const FloatingOverlay = () => {
           {/* Search + Sort */}
           <div className="flex gap-2 px-4 py-2">
             <div className="relative flex-1">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
               <input
                 type="text"
                 placeholder="Search files..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="no-drag w-full rounded-xl pl-8 pr-3 py-2 text-xs outline-none transition-all border border-black/5 bg-white/50 focus:border-primary/30 focus:ring-2 focus:ring-primary/10"
+                className="no-drag w-full rounded-xl pl-8 pr-3 py-2 text-xs outline-none transition-all border border-white/10 bg-white/5 text-white placeholder:text-white/30 focus:border-primary/40 focus:ring-2 focus:ring-primary/15"
               />
             </div>
             <div className="relative">

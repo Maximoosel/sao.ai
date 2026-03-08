@@ -18,7 +18,7 @@ const StorageRing = ({ used, total }: StorageRingProps) => {
           <circle
             cx="50" cy="50" r={radius}
             fill="none"
-            stroke="hsl(var(--secondary))"
+            stroke="rgba(255,255,255,0.1)"
             strokeWidth="7"
             strokeLinecap="round"
           />
@@ -34,12 +34,12 @@ const StorageRing = ({ used, total }: StorageRingProps) => {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xs font-bold text-foreground">{percentage.toFixed(0)}%</span>
+          <span className="text-xs font-bold text-white">{percentage.toFixed(0)}%</span>
         </div>
       </div>
       <div>
-        <p className="text-sm font-semibold text-foreground">{formatSize(used)}</p>
-        <p className="text-xs text-muted-foreground">of {formatSize(total)}</p>
+        <p className="text-sm font-semibold text-white">{formatSize(used)}</p>
+        <p className="text-xs text-white/50">of {formatSize(total)}</p>
       </div>
     </div>
   );
