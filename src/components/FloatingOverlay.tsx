@@ -151,7 +151,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const height = isExpanded ? 'h-[85vh]' : 'h-[600px]';
 
   return (
-    <>
       <div
         ref={overlayRef}
         className={`fixed z-[100] ${width} ${height} flex flex-col transition-all duration-300`}
@@ -301,16 +300,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </button>
           </div>
         </div>
-      </div>
 
-      {sweepResult && (
-        <SweepConfirmation
-          fileCount={sweepResult.count}
-          totalSize={sweepResult.size}
-          onClose={() => setSweepResult(null)}
-        />
-      )}
-    </>
+        {sweepResult && (
+          <SweepConfirmation
+            fileCount={sweepResult.count}
+            totalSize={sweepResult.size}
+            onClose={() => setSweepResult(null)}
+          />
+        )}
+    </div>
   );
 };
 
