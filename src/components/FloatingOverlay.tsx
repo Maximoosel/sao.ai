@@ -167,9 +167,9 @@ const FloatingOverlay = () => {
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-muted-foreground/50" />
               <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Wind size={14} className="text-primary" />
+                <Layers size={14} className="text-primary" />
               </div>
-              <span className="text-sm font-semibold text-foreground tracking-tight">Sweep</span>
+              <span className="text-sm font-semibold text-foreground tracking-tight">Sift</span>
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
                   <Sparkles size={10} /> Analyzing...
