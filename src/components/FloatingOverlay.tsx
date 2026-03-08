@@ -16,7 +16,7 @@ import { mockFiles, totalStorage, usedStorage, formatSize, type FileCategory, ty
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
 
-const FloatingOverlay = () => {
+const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; panelOpacity?: number }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [position, setPosition] = useState({ x: 20, y: 20 });
