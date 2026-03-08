@@ -10,7 +10,8 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/80 via-background to-purple-50/40 relative">
+    <div className="min-h-screen relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #a8c0ff 0%, #c2b6d9 30%, #f7cac9 60%, #ffe6a7 100%)' }}>
       {/* Simulated desktop background */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-20 left-20 w-64 h-40 rounded-xl bg-white/40 border border-white/30 backdrop-blur-sm" />
