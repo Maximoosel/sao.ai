@@ -293,7 +293,7 @@ const FloatingOverlay = () => {
               disabled={selectedIds.size === 0}
               className={`px-5 py-2 rounded-xl font-semibold text-xs transition-all ${
                 selectedIds.size === 0
-                  ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                  ? 'bg-white/10 text-white/30 cursor-not-allowed'
                   : 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 hover:brightness-110 hover:-translate-y-0.5'
               }`}
             >
