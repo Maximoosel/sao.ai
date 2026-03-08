@@ -170,7 +170,7 @@ const FloatingOverlay = () => {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center">
                 <AbstractShape size={22} />
               </div>
-              <span className="text-sm font-semibold text-foreground tracking-tight">swept.ai</span>
+              <span className="text-sm font-semibold text-white tracking-tight">swept.ai</span>
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
                   <Sparkles size={10} /> Analyzing...
