@@ -122,7 +122,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setShowTick(false);
         setSweepResult(null);
       }, 1200);
-    }, 2200);
+    }, 1600);
   }, [files, selectedIds]);
 
   const handleScanFolder = async () => {
@@ -284,7 +284,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
 
           {/* File list */}
-          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
             {filteredFiles.length === 0 && !sweepAnimating ? (
               <EmptyState />
             ) : (
@@ -297,15 +297,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                       layout
                       initial={false}
                       animate={sweepAnimating && isSelected ? {
-                        opacity: [1, 0.4, 0],
-                        scale: [1, 0.95, 0.9],
-                        height: ['auto', 'auto', 0],
-                        marginBottom: [6, 4, 0],
-                      } : { opacity: 1, scale: 1 }}
+                        opacity: [1, 0.3, 0],
+                        scaleY: [1, 0.6, 0],
+                        scaleX: [1, 0.8, 0.3],
+                        height: ['auto', '16px', 0],
+                        marginBottom: [6, 2, 0],
+                      } : { opacity: 1, scaleX: 1, scaleY: 1 }}
                       transition={sweepAnimating && isSelected ? {
-                        duration: 0.6,
-                        ease: 'easeIn',
+                        duration: 0.5,
+                        ease: [0.4, 0, 1, 1],
                       } : { layout: { duration: 0.4, ease: 'easeOut' } }}
+                      style={{ transformOrigin: 'center center' }}
                     >
                       <OverlayFileCard
                         file={file}
@@ -318,39 +320,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 })}
               </AnimatePresence>
             )}
-
-            {/* Floating logo balls — rendered on top, inside the list area */}
-            <AnimatePresence>
-              {sweepAnimating && [...selectedIds].map((id, idx) => (
-                <motion.div
-                  key={`ball-${id}`}
-                  className="absolute z-50 pointer-events-none"
-                  style={{ left: '50%', top: `${40 + idx * 50}px` }}
-                  initial={{ opacity: 0, scale: 0, x: '-50%', y: 0 }}
-                  animate={{
-                    opacity: [0, 1, 1, 1, 0.8],
-                    scale: [0, 1.3, 1, 0.9, 0.5],
-                    x: ['-50%', '-50%', '-50%', '40%', '80%'],
-                    y: [0, -10, 0, 80, 200],
-                  }}
-                  exit={{ opacity: 0, scale: 0 }}
-                  transition={{
-                    duration: 1.8,
-                    ease: [0.25, 0.1, 0.25, 1],
-                    delay: idx * 0.2,
-                  }}
-                >
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-xl"
-                    style={{
-                      background: 'radial-gradient(circle, hsla(var(--primary), 0.5) 0%, hsla(var(--primary), 0.15) 70%)',
-                      boxShadow: '0 0 20px hsla(var(--primary), 0.5), 0 0 40px hsla(var(--primary), 0.2)',
-                    }}
-                  >
-                    <AbstractShape size={32} />
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
           </div>
 
           {/* Bottom sweep bar */}
@@ -377,7 +346,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               transition={sweepAnimating ? {
                 duration: 0.3 * selectedIds.size + 0.8,
                 ease: 'easeOut',
-                delay: 1.2,
+                delay: 0.6,
               } : { type: 'spring', stiffness: 400, damping: 15 }}
               className={`relative px-5 py-2 rounded-xl font-semibold text-xs transition-colors ${
                 selectedIds.size === 0
@@ -405,6 +374,48 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </motion.button>
           </div>
         </div>
+
+        {/* Logo balls rolling to sweep button */}
+        <AnimatePresence>
+          {sweepAnimating && [...selectedIds].map((id, idx) => (
+            <motion.div
+              key={`ball-${id}`}
+              className="absolute z-40 pointer-events-none"
+              initial={{ 
+                left: '50%', 
+                top: '40%',
+                opacity: 0, 
+                scale: 0,
+                x: '-50%',
+                y: '-50%',
+              }}
+              animate={{ 
+                left: ['50%', '45%', '75%', '85%'],
+                top: ['40%', '50%', '75%', '92%'],
+                opacity: [0, 1, 1, 0],
+                scale: [0, 1.1, 0.9, 0.3],
+                x: ['-50%', '-50%', '-50%', '-50%'],
+                y: ['-50%', '-50%', '-50%', '-50%'],
+                rotate: [0, 90, 270, 540],
+              }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{
+                duration: 1.4,
+                ease: [0.2, 0.8, 0.3, 1],
+                delay: idx * 0.15,
+              }}
+            >
+              <div className="w-11 h-11 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'radial-gradient(circle, hsl(var(--primary) / 0.6) 0%, hsl(var(--primary) / 0.2) 70%)',
+                  boxShadow: '0 0 16px hsl(var(--primary) / 0.6), 0 0 32px hsl(var(--primary) / 0.25)',
+                }}
+              >
+                <AbstractShape size={28} />
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
         {/* Minimalist tick overlay */}
         <AnimatePresence>
