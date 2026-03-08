@@ -113,7 +113,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
           {phase === 'idle' && (
             <motion.p
-              className="absolute bottom-6 text-[10px] text-muted-foreground/40 tracking-widest uppercase"
+              className="absolute bottom-6 text-[10px] text-white/25 tracking-widest uppercase"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
