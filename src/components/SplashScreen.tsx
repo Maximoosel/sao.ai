@@ -49,7 +49,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           style={{
             top: 20, left: 20,
             width: 420, height: 600,
-            background: 'hsla(0, 0%, 100%, 0.15)',
+            background: 'hsla(0, 0%, 100%, 0.25)',
             backdropFilter: 'blur(60px) saturate(200%)',
             WebkitBackdropFilter: 'blur(60px) saturate(200%)',
             border: '1px solid rgba(255,255,255,0.15)',
