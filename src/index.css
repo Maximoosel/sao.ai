@@ -187,6 +187,34 @@
     color: hsl(var(--foreground));
     background: hsl(0 0% 100% / 0.85);
   }
+
+  .overlay-action-btn {
+    @apply p-2 rounded-xl text-muted-foreground transition-all duration-200 flex items-center justify-center;
+    background: hsl(var(--glass-bg));
+    border: 0.5px solid hsl(var(--glass-border));
+  }
+
+  .overlay-action-btn:hover {
+    color: hsl(var(--primary));
+    background: hsl(var(--primary) / 0.08);
+    border-color: hsl(var(--primary) / 0.2);
+  }
+
+  .overlay-action-btn:disabled {
+    @apply opacity-40 cursor-not-allowed;
+  }
+
+  .overlay-sort-btn {
+    @apply px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-200 flex items-center gap-1 cursor-pointer;
+    background: hsl(0 0% 100% / 0.6);
+    border: 0.5px solid hsl(var(--glass-border));
+    color: hsl(var(--muted-foreground));
+  }
+
+  .overlay-sort-btn:hover {
+    color: hsl(var(--foreground));
+    background: hsl(0 0% 100% / 0.85);
+  }
 }
 
 @layer utilities {

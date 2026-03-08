@@ -1,5 +1,7 @@
 export type FileCategory = 'large' | 'old' | 'downloads' | 'duplicates' | 'screenshots';
 
+export type RelevanceTag = 'essential' | 'useful' | 'questionable' | 'low-priority' | 'safe-to-remove';
+
 export interface SweepFile {
   id: string;
   name: string;
@@ -8,6 +10,9 @@ export interface SweepFile {
   lastOpened: string;
   type: string;
   category: FileCategory[];
+  keepPriority?: number; // 0-100
+  relevanceTag?: RelevanceTag;
+  relevanceReason?: string;
 }
 
 const GB = 1024 * 1024 * 1024;
@@ -25,8 +30,8 @@ export const mockFiles: SweepFile[] = [
   { id: '9', name: 'Screenshot 2024-08-12 at 10.32.14.png', path: '~/Desktop/Screenshots', size: 4.8 * MB, lastOpened: '2024-08-12', type: 'image', category: ['screenshots'] },
   { id: '10', name: 'Screenshot 2024-07-03 at 14.55.01.png', path: '~/Desktop/Screenshots', size: 3.2 * MB, lastOpened: '2024-07-03', type: 'image', category: ['screenshots'] },
   { id: '11', name: 'Screenshot 2024-06-18 at 09.12.44.png', path: '~/Desktop/Screenshots', size: 5.1 * MB, lastOpened: '2024-06-18', type: 'image', category: ['screenshots'] },
-  { id: '12', name: 'Screenshot 2024-05-22 at 16.30.00.png', path: '~/Desktop/Screenshots', size: 2.9 * MB, lastOpened: '2024-05-22', type: 'image', category: ['screenshots'] },
-  { id: '13', name: 'Screenshot 2024-04-10 at 11.45.33.png', path: '~/Desktop/Screenshots', size: 6.4 * MB, lastOpened: '2024-04-10', type: 'image', category: ['screenshots'] },
+  { id: '12', name: '6th grade gradebook 2016.xlsx', path: '~/Documents/School', size: 2.1 * MB, lastOpened: '2016-05-20', type: 'document', category: ['old'] },
+  { id: '13', name: 'tax-return-2019-draft.pdf', path: '~/Documents/Finance', size: 8.4 * MB, lastOpened: '2019-04-15', type: 'document', category: ['old'] },
   { id: '14', name: 'report-final.pdf', path: '~/Documents', size: 45 * MB, lastOpened: '2023-08-15', type: 'document', category: ['old', 'duplicates'] },
   { id: '15', name: 'report-final.pdf', path: '~/Downloads', size: 45 * MB, lastOpened: '2023-08-15', type: 'document', category: ['downloads', 'duplicates'] },
   { id: '16', name: 'presentation-deck.pptx', path: '~/Documents', size: 120 * MB, lastOpened: '2023-05-20', type: 'document', category: ['old', 'duplicates'] },
@@ -60,4 +65,10 @@ export function getFileIcon(type: string): string {
     case 'installer': return '💿';
     default: return '📁';
   }
+}
+
+export function daysSince(dateStr: string): number {
+  const date = new Date(dateStr);
+  const now = new Date();
+  return Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
 }
