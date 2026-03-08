@@ -21,10 +21,11 @@ interface SweptEntry { files: SweepFile[]; totalSize: number; timestamp: Date }
 const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; panelOpacity?: number }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: 20 });
-  const [isDragging, setIsDragging] = useState(false);
+  const posRef = useRef({ x: 20, y: 20 });
+  const isDraggingRef = useRef(false);
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   const [files, setFiles] = useState<SweepFile[]>(mockFiles);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
