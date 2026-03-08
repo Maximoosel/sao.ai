@@ -1,14 +1,16 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Search, Undo2 } from 'lucide-react';
+import { Search, Undo2, Wind, ArrowUpDown, ArrowDown, ArrowUp } from 'lucide-react';
 import StorageRing from '@/components/StorageRing';
 import CategoryTabs from '@/components/CategoryTabs';
 import FileCard from '@/components/FileCard';
 import EmptyState from '@/components/EmptyState';
 import OnboardingModal from '@/components/OnboardingModal';
 import SweepConfirmation from '@/components/SweepConfirmation';
+import SplashScreen from '@/components/SplashScreen';
 import { mockFiles, totalStorage, usedStorage, formatSize, type FileCategory, type SweepFile } from '@/lib/mockData';
 
 const Index = () => {
+  const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [files, setFiles] = useState<SweepFile[]>(mockFiles);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -18,6 +20,7 @@ const Index = () => {
   const [undoStack, setUndoStack] = useState<SweepFile[]>([]);
   const [showUndo, setShowUndo] = useState(false);
   const [currentUsed, setCurrentUsed] = useState(usedStorage);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   const filteredFiles = useMemo(() => {
     let result = files;
@@ -28,9 +31,8 @@ const Index = () => {
       const q = searchQuery.toLowerCase();
       result = result.filter(f => f.name.toLowerCase().includes(q));
     }
-    // Sort by size descending
-    return result.sort((a, b) => b.size - a.size);
-  }, [files, activeCategory, searchQuery]);
+    return result.sort((a, b) => sortOrder === 'desc' ? b.size - a.size : a.size - b.size);
+  }, [files, activeCategory, searchQuery, sortOrder]);
 
   const selectedSize = useMemo(() => {
     return files.filter(f => selectedIds.has(f.id)).reduce((sum, f) => sum + f.size, 0);
@@ -78,6 +80,10 @@ const Index = () => {
     setShowUndo(false);
   }, [undoStack]);
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
+
   if (showOnboarding) {
     return <OnboardingModal onDismiss={() => setShowOnboarding(false)} />;
   }
@@ -87,31 +93,43 @@ const Index = () => {
       {/* Top bar */}
       <div className="flex items-center justify-between mb-8 animate-fade-in-up">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">🧹</span>
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Wind size={20} className="text-primary" />
+          </div>
           <h1 className="text-xl font-bold text-foreground tracking-tight">Sweep</h1>
         </div>
         <StorageRing used={currentUsed} total={totalStorage} />
       </div>
 
       {/* Category tabs */}
-      <div className="mb-6 animate-fade-in-up-delay-1">
+      <div className="mb-5 animate-fade-in-up-delay-1">
         <CategoryTabs active={activeCategory} onSelect={setActiveCategory} />
       </div>
 
-      {/* Search */}
-      <div className="relative mb-4 animate-fade-in-up-delay-2">
-        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="Search files..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input pl-10"
-        />
+      {/* Search + Sort */}
+      <div className="flex gap-2 mb-4 animate-fade-in-up-delay-2">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search files..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="search-input pl-10"
+          />
+        </div>
+        <button
+          onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+          className="sort-button"
+          title={`Sort by size ${sortOrder === 'desc' ? 'ascending' : 'descending'}`}
+        >
+          {sortOrder === 'desc' ? <ArrowDown size={14} /> : <ArrowUp size={14} />}
+          Size
+        </button>
       </div>
 
       {/* File list */}
-      <div className="space-y-2 mb-24 animate-fade-in-up-delay-3">
+      <div className="space-y-2 mb-28 animate-fade-in-up-delay-3">
         {filteredFiles.length === 0 ? (
           <EmptyState />
         ) : (
@@ -148,13 +166,12 @@ const Index = () => {
               disabled={selectedIds.size === 0}
               className={`sweep-button ${selectedIds.size === 0 ? 'opacity-40 cursor-not-allowed' : ''}`}
             >
-              🧹 Sweep
+              Sweep
             </button>
           </div>
         </div>
       </div>
 
-      {/* Sweep confirmation overlay */}
       {sweepResult && (
         <SweepConfirmation
           fileCount={sweepResult.count}
