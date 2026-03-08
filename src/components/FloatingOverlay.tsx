@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { 
-  Wind, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
+  Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
   ChevronDown
 } from 'lucide-react';
