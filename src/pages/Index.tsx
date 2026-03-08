@@ -2,12 +2,20 @@ import { useState } from 'react';
 import FloatingOverlay from '@/components/FloatingOverlay';
 import SplashScreen from '@/components/SplashScreen';
 import OnboardingTooltip from '@/components/OnboardingTooltip';
+import { Slider } from '@/components/ui/slider';
+import { Settings2 } from 'lucide-react';
 
 const ONBOARDING_KEY = 'swept_onboarding_seen';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
+  const [showControls, setShowControls] = useState(false);
+
+  // Tuning sliders
+  const [bgBlur, setBgBlur] = useState(60);
+  const [overlayOpacity, setOverlayOpacity] = useState(50);
+  const [splashOpacity, setSplashOpacity] = useState(35);
 
   const dismissOnboarding = () => {
     setShowOnboarding(false);
@@ -28,14 +36,68 @@ const Index = () => {
       </div>
 
       {/* Splash renders as floating glass card */}
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      {showSplash && (
+        <SplashScreen
+          onComplete={() => setShowSplash(false)}
+          bgBlur={bgBlur}
+          panelOpacity={splashOpacity}
+        />
+      )}
 
       {/* Overlay + onboarding after splash */}
       {!showSplash && (
         <>
-          <FloatingOverlay />
+          <FloatingOverlay bgBlur={bgBlur} panelOpacity={overlayOpacity} />
           {showOnboarding && <OnboardingTooltip onDismiss={dismissOnboarding} />}
         </>
+      )}
+
+      {/* Tuning controls toggle */}
+      <button
+        onClick={() => setShowControls(!showControls)}
+        className="fixed bottom-4 right-4 z-[9999] p-2.5 rounded-xl transition-all"
+        style={{
+          background: 'hsla(0,0%,100%,0.15)',
+          backdropFilter: 'blur(20px)',
+          border: '0.5px solid rgba(255,255,255,0.2)',
+        }}
+      >
+        <Settings2 size={16} className="text-white/60" />
+      </button>
+
+      {/* Tuning panel */}
+      {showControls && (
+        <div
+          className="fixed bottom-14 right-4 z-[9999] w-[260px] rounded-2xl p-4 space-y-4"
+          style={{
+            background: 'hsla(0,0%,0%,0.6)',
+            backdropFilter: 'blur(40px)',
+            border: '0.5px solid rgba(255,255,255,0.15)',
+          }}
+        >
+          <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Appearance</p>
+
+          <div className="space-y-1.5">
+            <label className="text-white/50 text-[11px] flex justify-between">
+              <span>Backdrop Blur</span><span>{bgBlur}px</span>
+            </label>
+            <Slider value={[bgBlur]} onValueChange={([v]) => setBgBlur(v)} min={0} max={120} step={1} />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-white/50 text-[11px] flex justify-between">
+              <span>Overlay Opacity</span><span>{overlayOpacity}%</span>
+            </label>
+            <Slider value={[overlayOpacity]} onValueChange={([v]) => setOverlayOpacity(v)} min={5} max={90} step={1} />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-white/50 text-[11px] flex justify-between">
+              <span>Splash Opacity</span><span>{splashOpacity}%</span>
+            </label>
+            <Slider value={[splashOpacity]} onValueChange={([v]) => setSplashOpacity(v)} min={5} max={90} step={1} />
+          </div>
+        </div>
       )}
     </div>
   );

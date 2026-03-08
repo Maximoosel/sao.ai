@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface SplashScreenProps {
   onComplete: () => void;
+  bgBlur?: number;
+  panelOpacity?: number;
 }
 
 const cards = [
@@ -30,7 +32,7 @@ const stackOffsets = [
   { x: -1, y: -20, rotate: -0.5 },
 ];
 
-const SplashScreen = ({ onComplete }: SplashScreenProps) => {
+const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScreenProps) => {
   const [phase, setPhase] = useState<'idle' | 'exploded' | 'exit'>('idle');
 
   const handleClick = useCallback(() => {
@@ -49,9 +51,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           style={{
             top: 20, left: 20,
             width: 420, height: 600,
-            background: 'hsla(0, 0%, 100%, 0.35)',
-            backdropFilter: 'blur(60px) saturate(200%)',
-            WebkitBackdropFilter: 'blur(60px) saturate(200%)',
+            background: `hsla(0, 0%, 100%, ${panelOpacity / 100})`,
+            backdropFilter: `blur(${bgBlur}px) saturate(200%)`,
+            WebkitBackdropFilter: `blur(${bgBlur}px) saturate(200%)`,
             border: '1px solid rgba(255,255,255,0.15)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           }}
