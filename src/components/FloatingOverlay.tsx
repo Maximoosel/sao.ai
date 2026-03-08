@@ -108,10 +108,23 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     if (swept.length === 0) return;
     const totalSwept = swept.reduce((s, f) => s + f.size, 0);
     
-    // Phase 1: Animate cards stacking + flying to button
+    // Capture card positions relative to the overlay
+    const overlayRect = overlayRef.current?.getBoundingClientRect();
+    const spawns = swept.map(f => {
+      const el = cardRefs.current.get(f.id);
+      if (el && overlayRect) {
+        const rect = el.getBoundingClientRect();
+        const topPct = ((rect.top - overlayRect.top + rect.height / 2) / overlayRect.height) * 100;
+        return { id: f.id, topPct: Math.min(Math.max(topPct, 10), 80) };
+      }
+      return { id: f.id, topPct: 40 };
+    });
+    setBallSpawns(spawns);
+    
+    // Phase 1: Animate cards + balls
     setSweepAnimating(true);
     
-    // Phase 2: After stack animation, remove files and show tick
+    // Phase 2: After animation, remove files and show tick
     setTimeout(() => {
       setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
       setCurrentUsed(prev => prev - totalSwept);
