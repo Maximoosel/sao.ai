@@ -32,7 +32,17 @@ const stackOffsets = [
   { x: -1, y: -20, rotate: -0.5 },
 ];
 
+// Partially fanned out on hover — subtle peek
+const peekOffsets = [
+  { x: -30, y: 12, rotate: -8 },
+  { x: 28, y: -8, rotate: 6 },
+  { x: -22, y: -28, rotate: -4 },
+  { x: 24, y: -48, rotate: 5 },
+  { x: 0, y: -60, rotate: 1 },
+];
+
 const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScreenProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'exploded' | 'exit'>('idle');
 
   const handleClick = useCallback(() => {
@@ -62,11 +72,22 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
           transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         >
           {/* Card pile / explosion */}
-          <div className="relative w-[120px] h-[160px] mb-8">
+          <div 
+            className="relative w-[120px] h-[160px] mb-8"
+            onMouseEnter={() => phase === 'idle' && setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             {cards.map((card, i) => {
               const stacked = stackOffsets[i];
+              const peeked = peekOffsets[i];
               const scattered = scatteredPositions[i];
               const isExploded = phase === 'exploded';
+
+              const target = isExploded
+                ? { x: scattered.x, y: scattered.y, rotate: scattered.rotate, scale: 0.6, opacity: 0.7 }
+                : isHovered
+                ? { x: peeked.x, y: peeked.y, rotate: peeked.rotate, scale: 0.88, opacity: 0.95 }
+                : { x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 };
 
               return (
                 <motion.div
@@ -74,17 +95,13 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
                   className="absolute inset-0 rounded-xl border border-black/5 overflow-hidden"
                   style={{ background: card.gradient, zIndex: cards.length - i, backdropFilter: 'blur(10px)' }}
                   initial={{ x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 }}
-                  animate={
-                    isExploded
-                      ? { x: scattered.x, y: scattered.y, rotate: scattered.rotate, scale: 0.6, opacity: 0.7 }
-                      : { x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 }
-                  }
+                  animate={target}
                   transition={{
                     type: 'spring',
-                    stiffness: 80,
-                    damping: 20,
+                    stiffness: isHovered && !isExploded ? 120 : 80,
+                    damping: isHovered && !isExploded ? 14 : 20,
                     mass: 0.8,
-                    delay: isExploded ? i * 0.04 : 0,
+                    delay: isExploded ? i * 0.04 : i * 0.02,
                   }}
                 >
                   <div className="absolute inset-0 flex flex-col justify-end p-3">
