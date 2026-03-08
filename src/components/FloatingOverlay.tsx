@@ -36,7 +36,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [currentUsed, setCurrentUsed] = useState(usedStorage);
   const [sweepAnimating, setSweepAnimating] = useState(false);
   const [showTick, setShowTick] = useState(false);
-  const [ballSpawns, setBallSpawns] = useState<{ id: string; topPct: number }[]>([]);
+  const [ballSpawns, setBallSpawns] = useState<{ id: string; topPct: number; leftPct: number }[]>([]);
   const sweepBtnRef = useRef<HTMLButtonElement>(null);
   const fileListRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -115,9 +115,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (el && overlayRect) {
         const rect = el.getBoundingClientRect();
         const topPct = ((rect.top - overlayRect.top + rect.height / 2) / overlayRect.height) * 100;
-        return { id: f.id, topPct: Math.min(Math.max(topPct, 10), 80) };
+        const leftPct = ((rect.right - overlayRect.left - 40) / overlayRect.width) * 100;
+        return { id: f.id, topPct: Math.min(Math.max(topPct, 5), 85), leftPct: Math.min(leftPct, 90) };
       }
-      return { id: f.id, topPct: 40 };
+      return { id: f.id, topPct: 40, leftPct: 75 };
     });
     setBallSpawns(spawns);
     
@@ -138,7 +139,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setShowTick(false);
         setSweepResult(null);
       }, 1200);
-    }, 1600);
+    }, 1200);
   }, [files, selectedIds]);
 
   const handleScanFolder = async () => {
@@ -392,43 +393,45 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
         </div>
 
-        {/* Logo balls spawning from card positions, rolling to sweep button */}
+        {/* Logo balls floating from file size badges to sweep button */}
         <AnimatePresence>
-          {sweepAnimating && ballSpawns.map((spawn, idx) => (
-            <motion.div
-              key={`ball-${spawn.id}`}
-              className="absolute z-40 pointer-events-none"
-              style={{ left: '15%', top: `${spawn.topPct}%` }}
-              initial={{ 
-                opacity: 0, 
-                scale: 0,
-                x: 0,
-                y: 0,
-              }}
-              animate={{ 
-                opacity: [0, 1, 1, 1, 0],
-                scale: [0, 1.2, 1, 0.85, 0.3],
-                x: [0, 20, 100, 200, 260],
-                y: [0, 10, 30, 60, 80],
-                rotate: [0, 60, 180, 360, 540],
-              }}
-              exit={{ opacity: 0, scale: 0 }}
-              transition={{
-                duration: 1.3,
-                ease: [0.2, 0.65, 0.3, 1],
-                delay: idx * 0.12,
-              }}
-            >
-              <div className="w-11 h-11 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'radial-gradient(circle, hsl(var(--primary) / 0.6) 0%, hsl(var(--primary) / 0.2) 70%)',
-                  boxShadow: '0 0 16px hsl(var(--primary) / 0.6), 0 0 32px hsl(var(--primary) / 0.25)',
+          {sweepAnimating && ballSpawns.map((spawn, idx) => {
+            // Calculate how far the ball needs to travel to reach bottom-right
+            const endTop = 93;
+            const endLeft = 85;
+            const dy = endTop - spawn.topPct;
+            const dx = endLeft - spawn.leftPct;
+            
+            return (
+              <motion.div
+                key={`ball-${spawn.id}`}
+                className="absolute z-40 pointer-events-none"
+                style={{ left: `${spawn.leftPct}%`, top: `${spawn.topPct}%`, marginLeft: -18, marginTop: -18 }}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ 
+                  opacity: [0, 1, 1, 1, 0],
+                  scale: [0, 1, 0.9, 0.7, 0.2],
+                  x: [0, dx * 0.1, dx * 0.5, dx * 0.85, dx].map(v => `${v}%`),
+                  y: [0, dy * 0.05, dy * 0.4, dy * 0.75, dy].map(v => `${v}%`),
+                }}
+                exit={{ opacity: 0, scale: 0 }}
+                transition={{
+                  duration: 1.0,
+                  ease: [0.25, 0.1, 0.25, 1],
+                  delay: idx * 0.08,
                 }}
               >
-                <AbstractShape size={28} />
-              </div>
-            </motion.div>
-          ))}
+                <div className="w-9 h-9 rounded-full flex items-center justify-center"
+                  style={{
+                    background: 'radial-gradient(circle, hsl(var(--primary) / 0.6) 0%, hsl(var(--primary) / 0.2) 70%)',
+                    boxShadow: '0 0 14px hsl(var(--primary) / 0.5), 0 0 28px hsl(var(--primary) / 0.2)',
+                  }}
+                >
+                  <AbstractShape size={24} />
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
 
         {/* Minimalist tick overlay */}
