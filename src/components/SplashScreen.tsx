@@ -32,7 +32,7 @@ const stackOffsets = [
   { x: -1, y: -20, rotate: -0.5 },
 ];
 
-const SplashScreen = ({ onComplete }: SplashScreenProps) => {
+const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScreenProps) => {
   const [phase, setPhase] = useState<'idle' | 'exploded' | 'exit'>('idle');
 
   const handleClick = useCallback(() => {
