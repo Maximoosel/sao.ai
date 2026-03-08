@@ -122,7 +122,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setShowTick(false);
         setSweepResult(null);
       }, 1200);
-    }, 600);
+    }, 1400);
   }, [files, selectedIds]);
 
   const handleScanFolder = async () => {
@@ -301,30 +301,32 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                       variants={{
                         idle: { scale: 1, opacity: 1, x: 0, y: 0 },
                         shrink: {
-                          scale: [1, 0.5, 0.08],
-                          opacity: [1, 1, 0],
-                          x: [0, 80, 160],
-                          y: [0, -selectedIndex * 30, 300],
-                          height: ['auto', '16px', '4px'],
-                          marginBottom: [6, 0, 0],
+                          scale: [1, 0.7, 0.3, 0.08],
+                          opacity: [1, 1, 0.8, 0],
+                          x: [0, 20, 60, 140],
+                          y: [0, 0, -selectedIndex * 15, 250],
+                          height: ['auto', 'auto', '24px', '4px'],
+                          marginBottom: [6, 6, 0, 0],
                         },
                       }}
                       transition={sweepAnimating && isSelected ? {
-                        duration: 0.6,
-                        ease: [0.6, 0, 0.2, 1],
-                        delay: selectedIndex * 0.05,
+                        duration: 1.2,
+                        ease: [0.4, 0, 0.2, 1],
+                        delay: selectedIndex * 0.1,
                       } : { layout: { duration: 0.35, ease: 'easeOut' } }}
                       className="relative"
                     >
-                      {/* Shrinking logo ball that appears during animation */}
+                      {/* Logo ball that replaces the card */}
                       {sweepAnimating && isSelected && (
                         <motion.div
                           className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
                           initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: [0, 1, 1, 0], scale: [0, 1.2, 1, 0.3] }}
-                          transition={{ duration: 0.6, delay: selectedIndex * 0.05 + 0.15, ease: 'easeInOut' }}
+                          animate={{ opacity: [0, 1, 1, 1, 0], scale: [0, 1.5, 1.2, 1, 0.4] }}
+                          transition={{ duration: 1.2, delay: selectedIndex * 0.1 + 0.2, ease: 'easeInOut' }}
                         >
-                          <AbstractShape size={20} />
+                          <div className="w-10 h-10 rounded-full bg-primary/30 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-primary/40">
+                            <AbstractShape size={28} />
+                          </div>
                         </motion.div>
                       )}
                       <OverlayFileCard
