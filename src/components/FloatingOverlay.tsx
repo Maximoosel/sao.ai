@@ -183,13 +183,13 @@ const FloatingOverlay = () => {
               )}
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 rounded-lg hover:bg-black/5 text-muted-foreground transition-colors">
+              <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors">
                 {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
               </button>
-              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-black/5 text-muted-foreground transition-colors">
+              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors">
                 <Minus size={12} />
               </button>
-              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+              <button onClick={() => setIsMinimized(true)} className="p-1.5 rounded-lg hover:bg-red-500/20 text-white/40 hover:text-red-400 transition-colors">
                 <X size={12} />
               </button>
             </div>

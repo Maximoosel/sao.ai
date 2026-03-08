@@ -99,17 +99,17 @@
 
   .category-pill {
     @apply px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 cursor-pointer;
-    background: hsl(var(--glass-bg));
+    background: rgba(255,255,255,0.08);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 0.5px solid hsl(var(--glass-border));
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    color: hsl(var(--muted-foreground));
+    border: 0.5px solid rgba(255,255,255,0.12);
+    box-shadow: none;
+    color: rgba(255,255,255,0.5);
   }
 
   .category-pill:hover {
-    color: hsl(var(--foreground));
-    background: hsl(0 0% 100% / 0.85);
+    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.15);
   }
 
   .category-pill-active {
