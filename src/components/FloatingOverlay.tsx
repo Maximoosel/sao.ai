@@ -351,15 +351,46 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               ref={sweepBtnRef}
               onClick={sweepSelected}
               disabled={selectedIds.size === 0 || sweepAnimating}
-              animate={sweepAnimating ? { scale: [1, 1.08, 1], boxShadow: ['0 4px 12px rgba(239,68,68,0.2)', '0 4px 20px rgba(239,68,68,0.5)', '0 4px 12px rgba(239,68,68,0.2)'] } : {}}
-              transition={sweepAnimating ? { duration: 0.6, ease: 'easeInOut' } : {}}
-              className={`px-5 py-2 rounded-xl font-semibold text-xs transition-all ${
+              animate={sweepAnimating ? {
+                scale: [1, ...Array.from({ length: selectedIds.size }, () => [1.15, 0.92, 1.05, 1]).flat()],
+                boxShadow: [
+                  '0 4px 12px rgba(239,68,68,0.2)',
+                  ...Array.from({ length: selectedIds.size }, () => [
+                    '0 0 25px rgba(239,68,68,0.7)',
+                    '0 4px 12px rgba(239,68,68,0.3)',
+                    '0 0 18px rgba(239,68,68,0.5)',
+                    '0 4px 12px rgba(239,68,68,0.2)',
+                  ]).flat(),
+                ],
+              } : { scale: 1 }}
+              transition={sweepAnimating ? {
+                duration: 0.25 * selectedIds.size + 0.6,
+                ease: 'easeOut',
+                delay: 0.7,
+              } : { type: 'spring', stiffness: 400, damping: 15 }}
+              className={`relative px-5 py-2 rounded-xl font-semibold text-xs transition-colors ${
                 selectedIds.size === 0
                   ? 'bg-white/10 text-white/30 cursor-not-allowed'
                   : 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 hover:brightness-110 hover:-translate-y-0.5'
               }`}
             >
               Sweep {selectedIds.size > 0 ? `(${selectedIds.size})` : ''}
+              {/* Ripple rings on absorb */}
+              <AnimatePresence>
+                {sweepAnimating && (
+                  <>
+                    {[...Array(3)].map((_, ri) => (
+                      <motion.span
+                        key={ri}
+                        className="absolute inset-0 rounded-xl border-2 border-destructive/40"
+                        initial={{ scale: 1, opacity: 0.6 }}
+                        animate={{ scale: 1.8, opacity: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8 + ri * 0.25, ease: 'easeOut' }}
+                      />
+                    ))}
+                  </>
+                )}
+              </AnimatePresence>
             </motion.button>
           </div>
         </div>
