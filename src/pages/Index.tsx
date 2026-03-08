@@ -22,8 +22,8 @@ const Index = () => {
   const [activeTheme, setActiveTheme] = useState(0);
 
   // Tuning sliders
-  const [bgBlur, setBgBlur] = useState(60);
-  const [overlayOpacity, setOverlayOpacity] = useState(50);
+  const [bgBlur, setBgBlur] = useState(25);
+  const [overlayOpacity, setOverlayOpacity] = useState(15);
   const [splashOpacity, setSplashOpacity] = useState(35);
 
   // Apply theme to CSS variable
