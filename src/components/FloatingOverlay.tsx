@@ -308,7 +308,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             onClose={() => setSweepResult(null)}
           />
         )}
-      </div>
     </div>
   );
 };
