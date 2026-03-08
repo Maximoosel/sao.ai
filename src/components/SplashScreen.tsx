@@ -72,7 +72,11 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
           transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         >
           {/* Card pile / explosion */}
-          <div className="relative w-[120px] h-[160px] mb-8">
+          <div 
+            className="relative w-[120px] h-[160px] mb-8"
+            onMouseEnter={() => phase === 'idle' && setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             {cards.map((card, i) => {
               const stacked = stackOffsets[i];
               const scattered = scatteredPositions[i];
