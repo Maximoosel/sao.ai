@@ -14,9 +14,7 @@ const Index = () => {
     localStorage.setItem(ONBOARDING_KEY, 'true');
   };
 
-  if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
-  }
+  // Splash now renders as overlay on top of white bg, not as separate return
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-white">
