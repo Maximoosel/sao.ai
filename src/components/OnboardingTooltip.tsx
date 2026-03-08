@@ -1,21 +1,36 @@
 import { useState } from 'react';
-import { FolderOpen, Sparkles, Trash2, X, ArrowRight } from 'lucide-react';
+import { FolderOpen, Sparkles, Trash2, X, ArrowRight, Undo2, Copy, Keyboard } from 'lucide-react';
 
 const steps = [
   {
     icon: <FolderOpen size={20} className="text-primary" />,
     title: 'Scan Your Files',
-    desc: 'Tap the folder icon to pick a folder from your computer. Sift reads file sizes, dates, and names.',
+    desc: 'Tap the folder icon to scan a directory. swept.ai reads file sizes, dates, and names to find junk.',
   },
   {
     icon: <Sparkles size={20} className="text-primary" />,
     title: 'AI Keep Priority',
-    desc: 'Tap the sparkle icon to let AI score each file. Low-priority files get flagged for easy cleanup.',
+    desc: 'Tap the sparkle icon and AI will score each file\'s importance. Hover any score to see the reasoning.',
+  },
+  {
+    icon: <Copy size={20} className="text-primary" />,
+    title: 'Find Duplicates',
+    desc: 'Switch to the Duplicates tab to instantly spot files with the same name and size across folders.',
   },
   {
     icon: <Trash2 size={20} className="text-destructive" />,
     title: 'Select & Sweep',
-    desc: 'Check the files you don\'t need, then hit Sweep. Sort by size, date, or priority to find junk fast.',
+    desc: 'Check files you don\'t need, then hit Sweep. Watch them get absorbed and freed from your disk.',
+  },
+  {
+    icon: <Undo2 size={20} className="text-primary" />,
+    title: 'Undo Anytime',
+    desc: 'Changed your mind? An undo banner appears for 10 seconds after every sweep. One click to restore.',
+  },
+  {
+    icon: <Keyboard size={20} className="text-primary" />,
+    title: 'Power Shortcuts',
+    desc: '⌘A to select all, Delete to sweep, ⌘Z to undo. Sort by size, date, or AI priority.',
   },
 ];
 
