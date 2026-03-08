@@ -284,38 +284,43 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
 
           {/* File list */}
-          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
+          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative overflow-x-hidden">
             {filteredFiles.length === 0 ? (
               <EmptyState />
             ) : (
-              filteredFiles.map((file, i) => {
-                const isSelected = selectedIds.has(file.id);
-                return (
-                  <motion.div
-                    key={file.id}
-                    animate={sweepAnimating && isSelected ? {
-                      scale: [1, 0.92, 0.5],
-                      opacity: [1, 0.8, 0],
-                      y: [0, -4 * i, 200],
-                      x: [0, 0, 60],
-                      height: [undefined, undefined, 0],
-                      marginBottom: [undefined, undefined, 0],
-                    } : {}}
-                    transition={sweepAnimating && isSelected ? {
-                      duration: 0.55,
-                      ease: [0.4, 0, 0.2, 1],
-                      delay: i * 0.03,
-                    } : {}}
-                  >
-                    <OverlayFileCard
-                      file={file}
-                      selected={isSelected}
-                      onToggle={sweepAnimating ? () => {} : toggleSelect}
-                      onTrash={sweepAnimating ? () => {} : trashSingle}
-                    />
-                  </motion.div>
-                );
-              })
+              <AnimatePresence mode="popLayout">
+                {filteredFiles.map((file, i) => {
+                  const isSelected = selectedIds.has(file.id);
+                  return (
+                    <motion.div
+                      key={file.id}
+                      layout
+                      initial={false}
+                      animate={sweepAnimating && isSelected ? {
+                        scale: [1, 0.6, 0.15],
+                        opacity: [1, 0.9, 0],
+                        borderRadius: ['12px', '20px', '50px'],
+                        height: ['auto', '20px', '8px'],
+                        marginBottom: [6, 2, 0],
+                        x: [0, 40, 120],
+                        y: [0, 10, 40],
+                      } : { scale: 1, opacity: 1, x: 0, y: 0 }}
+                      transition={sweepAnimating && isSelected ? {
+                        duration: 0.5,
+                        ease: [0.4, 0, 0.2, 1],
+                        delay: i * 0.04,
+                      } : { layout: { duration: 0.3, ease: 'easeOut' } }}
+                    >
+                      <OverlayFileCard
+                        file={file}
+                        selected={isSelected}
+                        onToggle={sweepAnimating ? () => {} : toggleSelect}
+                        onTrash={sweepAnimating ? () => {} : trashSingle}
+                      />
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             )}
           </div>
 
@@ -324,27 +329,20 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             <p className="text-xs text-white/50">
               <span className="text-white font-semibold">{selectedIds.size}</span> selected · <span className="text-white font-semibold">{formatSize(selectedSize)}</span>
             </p>
-            <button
+            <motion.button
               ref={sweepBtnRef}
               onClick={sweepSelected}
               disabled={selectedIds.size === 0 || sweepAnimating}
+              animate={sweepAnimating ? { scale: [1, 1.08, 1], boxShadow: ['0 4px 12px rgba(239,68,68,0.2)', '0 4px 20px rgba(239,68,68,0.5)', '0 4px 12px rgba(239,68,68,0.2)'] } : {}}
+              transition={sweepAnimating ? { duration: 0.6, ease: 'easeInOut' } : {}}
               className={`px-5 py-2 rounded-xl font-semibold text-xs transition-all ${
                 selectedIds.size === 0
                   ? 'bg-white/10 text-white/30 cursor-not-allowed'
                   : 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 hover:brightness-110 hover:-translate-y-0.5'
               }`}
             >
-              {sweepAnimating ? (
-                <motion.span
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 0.4, repeat: Infinity }}
-                >
-                  Sweeping…
-                </motion.span>
-              ) : (
-                <>Sweep {selectedIds.size > 0 ? `(${selectedIds.size})` : ''}</>
-              )}
-            </button>
+              Sweep {selectedIds.size > 0 ? `(${selectedIds.size})` : ''}
+            </motion.button>
           </div>
         </div>
 
@@ -366,12 +364,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
                 <div className="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <motion.div
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                  >
-                    <Check size={28} className="text-green-400" strokeWidth={2.5} />
-                  </motion.div>
+                  <Check size={28} className="text-green-400" strokeWidth={2.5} />
                 </div>
               </motion.div>
             </motion.div>
