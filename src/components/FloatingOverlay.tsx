@@ -291,26 +291,42 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               <AnimatePresence mode="popLayout">
                 {filteredFiles.map((file, i) => {
                   const isSelected = selectedIds.has(file.id);
+                  const selectedIndex = isSelected ? [...selectedIds].indexOf(file.id) : 0;
                   return (
                     <motion.div
                       key={file.id}
                       layout
                       initial={false}
-                      animate={sweepAnimating && isSelected ? {
-                        scale: [1, 0.6, 0.15],
-                        opacity: [1, 0.9, 0],
-                        borderRadius: ['12px', '20px', '50px'],
-                        height: ['auto', '20px', '8px'],
-                        marginBottom: [6, 2, 0],
-                        x: [0, 40, 120],
-                        y: [0, 10, 40],
-                      } : { scale: 1, opacity: 1, x: 0, y: 0 }}
+                      animate={sweepAnimating && isSelected ? 'shrink' : 'idle'}
+                      variants={{
+                        idle: { scale: 1, opacity: 1, x: 0, y: 0 },
+                        shrink: {
+                          scale: [1, 0.5, 0.08],
+                          opacity: [1, 1, 0],
+                          x: [0, 80, 160],
+                          y: [0, -selectedIndex * 30, 300],
+                          height: ['auto', '16px', '4px'],
+                          marginBottom: [6, 0, 0],
+                        },
+                      }}
                       transition={sweepAnimating && isSelected ? {
-                        duration: 0.5,
-                        ease: [0.4, 0, 0.2, 1],
-                        delay: i * 0.04,
-                      } : { layout: { duration: 0.3, ease: 'easeOut' } }}
+                        duration: 0.6,
+                        ease: [0.6, 0, 0.2, 1],
+                        delay: selectedIndex * 0.05,
+                      } : { layout: { duration: 0.35, ease: 'easeOut' } }}
+                      className="relative"
                     >
+                      {/* Shrinking logo ball that appears during animation */}
+                      {sweepAnimating && isSelected && (
+                        <motion.div
+                          className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{ opacity: [0, 1, 1, 0], scale: [0, 1.2, 1, 0.3] }}
+                          transition={{ duration: 0.6, delay: selectedIndex * 0.05 + 0.15, ease: 'easeInOut' }}
+                        >
+                          <AbstractShape size={20} />
+                        </motion.div>
+                      )}
                       <OverlayFileCard
                         file={file}
                         selected={isSelected}
