@@ -104,11 +104,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     const swept = files.filter(f => selectedIds.has(f.id));
     if (swept.length === 0) return;
     const totalSwept = swept.reduce((s, f) => s + f.size, 0);
-    setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
-    setCurrentUsed(prev => prev - totalSwept);
-    setSelectedIds(new Set());
-    setSweepResult({ count: swept.length, size: totalSwept });
-    setTimeout(() => setSweepResult(null), 2500);
+    
+    // Phase 1: Animate cards stacking + flying to button
+    setSweepAnimating(true);
+    
+    // Phase 2: After stack animation, remove files and show tick
+    setTimeout(() => {
+      setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
+      setCurrentUsed(prev => prev - totalSwept);
+      setSelectedIds(new Set());
+      setSweepAnimating(false);
+      setShowTick(true);
+      setSweepResult({ count: swept.length, size: totalSwept });
+      
+      // Phase 3: Hide tick after 1 second
+      setTimeout(() => {
+        setShowTick(false);
+        setSweepResult(null);
+      }, 1200);
+    }, 600);
   }, [files, selectedIds]);
 
   const handleScanFolder = async () => {
