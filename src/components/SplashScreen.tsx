@@ -42,6 +42,7 @@ const peekOffsets = [
 ];
 
 const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScreenProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const [phase, setPhase] = useState<'idle' | 'exploded' | 'exit'>('idle');
 
   const handleClick = useCallback(() => {
