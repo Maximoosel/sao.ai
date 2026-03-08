@@ -346,7 +346,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               transition={sweepAnimating ? {
                 duration: 0.3 * selectedIds.size + 0.8,
                 ease: 'easeOut',
-                delay: 1.2,
+                delay: 0.6,
               } : { type: 'spring', stiffness: 400, damping: 15 }}
               className={`relative px-5 py-2 rounded-xl font-semibold text-xs transition-colors ${
                 selectedIds.size === 0
