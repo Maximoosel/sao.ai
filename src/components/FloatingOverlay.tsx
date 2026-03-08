@@ -284,19 +284,38 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
 
           {/* File list */}
-          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag">
+          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
             {filteredFiles.length === 0 ? (
               <EmptyState />
             ) : (
-              filteredFiles.map((file, i) => (
-                <OverlayFileCard
-                  key={file.id}
-                  file={file}
-                  selected={selectedIds.has(file.id)}
-                  onToggle={toggleSelect}
-                  onTrash={trashSingle}
-                />
-              ))
+              filteredFiles.map((file, i) => {
+                const isSelected = selectedIds.has(file.id);
+                return (
+                  <motion.div
+                    key={file.id}
+                    animate={sweepAnimating && isSelected ? {
+                      scale: [1, 0.92, 0.5],
+                      opacity: [1, 0.8, 0],
+                      y: [0, -4 * i, 200],
+                      x: [0, 0, 60],
+                      height: [undefined, undefined, 0],
+                      marginBottom: [undefined, undefined, 0],
+                    } : {}}
+                    transition={sweepAnimating && isSelected ? {
+                      duration: 0.55,
+                      ease: [0.4, 0, 0.2, 1],
+                      delay: i * 0.03,
+                    } : {}}
+                  >
+                    <OverlayFileCard
+                      file={file}
+                      selected={isSelected}
+                      onToggle={sweepAnimating ? () => {} : toggleSelect}
+                      onTrash={sweepAnimating ? () => {} : trashSingle}
+                    />
+                  </motion.div>
+                );
+              })
             )}
           </div>
 
@@ -306,26 +325,58 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               <span className="text-white font-semibold">{selectedIds.size}</span> selected · <span className="text-white font-semibold">{formatSize(selectedSize)}</span>
             </p>
             <button
+              ref={sweepBtnRef}
               onClick={sweepSelected}
-              disabled={selectedIds.size === 0}
+              disabled={selectedIds.size === 0 || sweepAnimating}
               className={`px-5 py-2 rounded-xl font-semibold text-xs transition-all ${
                 selectedIds.size === 0
                   ? 'bg-white/10 text-white/30 cursor-not-allowed'
                   : 'bg-destructive text-destructive-foreground shadow-md shadow-destructive/20 hover:brightness-110 hover:-translate-y-0.5'
               }`}
             >
-              Sweep {selectedIds.size > 0 ? `(${selectedIds.size})` : ''}
+              {sweepAnimating ? (
+                <motion.span
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 0.4, repeat: Infinity }}
+                >
+                  Sweeping…
+                </motion.span>
+              ) : (
+                <>Sweep {selectedIds.size > 0 ? `(${selectedIds.size})` : ''}</>
+              )}
             </button>
           </div>
         </div>
 
-        {sweepResult && (
-          <SweepConfirmation
-            fileCount={sweepResult.count}
-            totalSize={sweepResult.size}
-            onClose={() => setSweepResult(null)}
-          />
-        )}
+        {/* Minimalist tick overlay */}
+        <AnimatePresence>
+          {showTick && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl"
+              style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }}
+            >
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <div className="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <motion.div
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                  >
+                    <Check size={28} className="text-green-400" strokeWidth={2.5} />
+                  </motion.div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
     </div>
   );
 };
