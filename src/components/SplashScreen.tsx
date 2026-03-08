@@ -5,30 +5,29 @@ interface SplashScreenProps {
   onComplete: () => void;
 }
 
-// Card data — mock "file preview" cards with gradients
 const cards = [
-  { id: 1, gradient: 'linear-gradient(135deg, #667eea, #764ba2)', label: 'Documents' },
-  { id: 2, gradient: 'linear-gradient(135deg, #f093fb, #f5576c)', label: 'Downloads' },
-  { id: 3, gradient: 'linear-gradient(135deg, #4facfe, #00f2fe)', label: 'Screenshots' },
-  { id: 4, gradient: 'linear-gradient(135deg, #43e97b, #38f9d7)', label: 'Archives' },
-  { id: 5, gradient: 'linear-gradient(135deg, #fa709a, #fee140)', label: 'Media' },
+  { id: 1, gradient: 'linear-gradient(135deg, rgba(102,126,234,0.25), rgba(118,75,162,0.25))', label: 'Documents' },
+  { id: 2, gradient: 'linear-gradient(135deg, rgba(240,147,251,0.25), rgba(245,87,108,0.25))', label: 'Downloads' },
+  { id: 3, gradient: 'linear-gradient(135deg, rgba(79,172,254,0.25), rgba(0,242,254,0.25))', label: 'Screenshots' },
+  { id: 4, gradient: 'linear-gradient(135deg, rgba(67,233,123,0.25), rgba(56,249,215,0.25))', label: 'Archives' },
+  { id: 5, gradient: 'linear-gradient(135deg, rgba(250,112,154,0.25), rgba(254,225,64,0.25))', label: 'Media' },
 ];
 
-// Scattered positions for each card after explosion
+// Smaller scatter for overlay-sized container
 const scatteredPositions = [
-  { x: -320, y: -180, rotate: -12 },
-  { x: 280, y: -200, rotate: 8 },
-  { x: -280, y: 160, rotate: 15 },
-  { x: 300, y: 140, rotate: -6 },
-  { x: 0, y: -260, rotate: 3 },
+  { x: -140, y: -100, rotate: -12 },
+  { x: 120, y: -110, rotate: 8 },
+  { x: -130, y: 80, rotate: 15 },
+  { x: 130, y: 70, rotate: -6 },
+  { x: 0, y: -140, rotate: 3 },
 ];
 
 const stackOffsets = [
   { x: 0, y: 0, rotate: -2 },
-  { x: 4, y: -6, rotate: 1.5 },
-  { x: -3, y: -12, rotate: -1 },
-  { x: 5, y: -18, rotate: 2 },
-  { x: -2, y: -24, rotate: -0.5 },
+  { x: 3, y: -5, rotate: 1.5 },
+  { x: -2, y: -10, rotate: -1 },
+  { x: 4, y: -15, rotate: 2 },
+  { x: -1, y: -20, rotate: -0.5 },
 ];
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
@@ -37,9 +36,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const handleClick = useCallback(() => {
     if (phase === 'idle') {
       setPhase('exploded');
-      // After explosion plays out, fade and exit
-      setTimeout(() => setPhase('exit'), 2200);
-      setTimeout(() => onComplete(), 2800);
+      setTimeout(() => setPhase('exit'), 2000);
+      setTimeout(() => onComplete(), 2500);
     }
   }, [phase, onComplete]);
 
@@ -47,21 +45,22 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     <AnimatePresence>
       {phase !== 'exit' ? (
         <motion.div
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black cursor-pointer select-none overflow-hidden"
+          className="fixed z-[100] flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden rounded-3xl"
+          style={{
+            top: 20, left: 20,
+            width: 420, height: 600,
+            background: 'hsla(0, 0%, 100%, 0.55)',
+            backdropFilter: 'blur(80px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(80px) saturate(180%)',
+            border: '1px solid rgba(255,255,255,0.4)',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
+          }}
           onClick={handleClick}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
         >
-          {/* Subtle radial glow behind cards */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div
-              className="w-[600px] h-[600px] rounded-full opacity-20 blur-3xl"
-              style={{ background: 'radial-gradient(circle, rgba(120,100,255,0.4) 0%, transparent 70%)' }}
-            />
-          </div>
-
           {/* Card pile / explosion */}
-          <div className="relative w-[200px] h-[280px] mb-12">
+          <div className="relative w-[120px] h-[160px] mb-8">
             {cards.map((card, i) => {
               const stacked = stackOffsets[i];
               const scattered = scatteredPositions[i];
@@ -70,74 +69,56 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
               return (
                 <motion.div
                   key={card.id}
-                  className="absolute inset-0 rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
-                  style={{ background: card.gradient, zIndex: cards.length - i }}
-                  initial={{
-                    x: stacked.x,
-                    y: stacked.y,
-                    rotate: stacked.rotate,
-                    scale: 1,
-                  }}
+                  className="absolute inset-0 rounded-xl border border-black/5 overflow-hidden"
+                  style={{ background: card.gradient, zIndex: cards.length - i, backdropFilter: 'blur(10px)' }}
+                  initial={{ x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 }}
                   animate={
                     isExploded
-                      ? {
-                          x: scattered.x,
-                          y: scattered.y,
-                          rotate: scattered.rotate,
-                          scale: 0.75,
-                          opacity: [1, 1, 0.9],
-                        }
-                      : {
-                          x: stacked.x,
-                          y: stacked.y,
-                          rotate: stacked.rotate,
-                          scale: 1,
-                        }
+                      ? { x: scattered.x, y: scattered.y, rotate: scattered.rotate, scale: 0.6, opacity: 0.7 }
+                      : { x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 }
                   }
                   transition={{
                     type: 'spring',
-                    stiffness: 120,
-                    damping: 18,
-                    delay: isExploded ? i * 0.06 : 0,
+                    stiffness: 80,
+                    damping: 20,
+                    mass: 0.8,
+                    delay: isExploded ? i * 0.04 : 0,
                   }}
                 >
-                  {/* Card content — minimal */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-4">
-                    <div className="w-full h-1 bg-white/20 rounded-full mb-2" />
-                    <div className="w-3/4 h-1 bg-white/15 rounded-full mb-3" />
-                    <span className="text-white/70 text-xs font-medium">{card.label}</span>
+                  <div className="absolute inset-0 flex flex-col justify-end p-3">
+                    <div className="w-full h-0.5 bg-black/8 rounded-full mb-1.5" />
+                    <div className="w-3/4 h-0.5 bg-black/5 rounded-full mb-2" />
+                    <span className="text-foreground/40 text-[9px] font-medium">{card.label}</span>
                   </div>
-                  {/* Shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent" />
                 </motion.div>
               );
             })}
           </div>
 
-          {/* Title text */}
+          {/* Title */}
           <motion.div
             className="relative z-10 text-center"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1 className="text-4xl md:text-5xl font-black tracking-[0.2em] text-white uppercase">
-              Sift
+            <h1 className="text-2xl font-black tracking-tight text-foreground">
+              swept.ai
             </h1>
-            <p className="mt-3 text-xs md:text-sm font-medium text-white/40 tracking-[0.15em] uppercase">
+            <p className="mt-1.5 text-[10px] font-medium text-muted-foreground tracking-[0.1em] uppercase">
               Smart File Intelligence
             </p>
           </motion.div>
 
-          {/* Click hint — only in idle */}
           {phase === 'idle' && (
             <motion.p
-              className="absolute bottom-10 text-xs text-white/25 tracking-widest uppercase"
+              className="absolute bottom-6 text-[10px] text-muted-foreground/40 tracking-widest uppercase"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.2 }}
+              transition={{ delay: 0.8 }}
             >
-              Click anywhere to begin
+              Tap to begin
             </motion.p>
           )}
         </motion.div>

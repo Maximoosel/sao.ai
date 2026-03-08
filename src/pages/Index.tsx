@@ -19,8 +19,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #a8c0ff 0%, #c2b6d9 30%, #f7cac9 60%, #ffe6a7 100%)' }}>
+    <div className="min-h-screen relative overflow-hidden bg-white">
       {/* Simulated desktop background */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute top-20 left-20 w-64 h-40 rounded-xl bg-white/40 border border-white/30 backdrop-blur-sm" />
@@ -30,7 +29,7 @@ const Index = () => {
       
       {/* Desktop hint text */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
-        <p className="text-xs text-muted-foreground/60">Drag the Sift overlay anywhere · 📂 Scan folders · ✨ AI analysis</p>
+        <p className="text-xs text-muted-foreground/60">Drag the swept.ai overlay anywhere · 📂 Scan folders · ✨ AI analysis</p>
       </div>
       
       <FloatingOverlay />
