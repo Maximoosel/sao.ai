@@ -392,34 +392,31 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
         </div>
 
-        {/* Logo balls rolling to sweep button */}
+        {/* Logo balls spawning from card positions, rolling to sweep button */}
         <AnimatePresence>
-          {sweepAnimating && [...selectedIds].map((id, idx) => (
+          {sweepAnimating && ballSpawns.map((spawn, idx) => (
             <motion.div
-              key={`ball-${id}`}
+              key={`ball-${spawn.id}`}
               className="absolute z-40 pointer-events-none"
+              style={{ left: '15%', top: `${spawn.topPct}%` }}
               initial={{ 
-                left: '50%', 
-                top: '40%',
                 opacity: 0, 
                 scale: 0,
-                x: '-50%',
-                y: '-50%',
+                x: 0,
+                y: 0,
               }}
               animate={{ 
-                left: ['50%', '45%', '75%', '85%'],
-                top: ['40%', '50%', '75%', '92%'],
-                opacity: [0, 1, 1, 0],
-                scale: [0, 1.1, 0.9, 0.3],
-                x: ['-50%', '-50%', '-50%', '-50%'],
-                y: ['-50%', '-50%', '-50%', '-50%'],
-                rotate: [0, 90, 270, 540],
+                opacity: [0, 1, 1, 1, 0],
+                scale: [0, 1.2, 1, 0.85, 0.3],
+                x: [0, 20, 100, 200, 260],
+                y: [0, 10, 30, 60, 80],
+                rotate: [0, 60, 180, 360, 540],
               }}
               exit={{ opacity: 0, scale: 0 }}
               transition={{
-                duration: 1.4,
-                ease: [0.2, 0.8, 0.3, 1],
-                delay: idx * 0.15,
+                duration: 1.3,
+                ease: [0.2, 0.65, 0.3, 1],
+                delay: idx * 0.12,
               }}
             >
               <div className="w-11 h-11 rounded-full flex items-center justify-center"
