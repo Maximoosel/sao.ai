@@ -240,7 +240,7 @@ const FloatingOverlay = () => {
                 <ChevronDown size={10} />
               </button>
               {showSortMenu && (
-                <div className="absolute right-0 top-full mt-1 w-40 rounded-xl bg-white/95 backdrop-blur-xl border border-black/10 shadow-lg z-10 py-1 overflow-hidden">
+                <div className="absolute right-0 top-full mt-1 w-40 rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 shadow-lg z-10 py-1 overflow-hidden">
                   {(Object.keys(sortLabels) as SortMode[]).map(mode => (
                     <button
                       key={mode}
