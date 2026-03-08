@@ -253,8 +253,8 @@ const FloatingOverlay = () => {
                         }
                         setShowSortMenu(false);
                       }}
-                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-black/5 transition-colors ${
-                        sortMode === mode ? 'text-primary font-semibold' : 'text-foreground'
+                      className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-white/10 transition-colors ${
+                        sortMode === mode ? 'text-primary font-semibold' : 'text-white/80'
                       }`}
                     >
                       {sortLabels[mode]}
