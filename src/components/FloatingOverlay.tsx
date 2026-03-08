@@ -34,6 +34,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [sweepResult, setSweepResult] = useState<{ count: number; size: number } | null>(null);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [currentUsed, setCurrentUsed] = useState(usedStorage);
+  const [sweepAnimating, setSweepAnimating] = useState(false);
+  const [showTick, setShowTick] = useState(false);
+  const sweepBtnRef = useRef<HTMLButtonElement>(null);
 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
