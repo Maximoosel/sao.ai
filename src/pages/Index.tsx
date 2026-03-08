@@ -1,11 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FloatingOverlay from '@/components/FloatingOverlay';
 import SplashScreen from '@/components/SplashScreen';
 import OnboardingTooltip from '@/components/OnboardingTooltip';
 import { Slider } from '@/components/ui/slider';
 import { Settings2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const ONBOARDING_KEY = 'swept_onboarding_seen';
+
+const themes = [
+  { name: 'Ocean', hsl: '214 100% 50%', preview: ['#0074ff', '#00a2ff', '#005ecb'] },
+  { name: 'Violet', hsl: '270 80% 55%', preview: ['#8b3dff', '#a855f7', '#6d28d9'] },
+  { name: 'Rose', hsl: '340 82% 55%', preview: ['#f43f6e', '#fb7199', '#e11d56'] },
+];
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
