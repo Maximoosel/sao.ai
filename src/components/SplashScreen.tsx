@@ -151,9 +151,12 @@ const AbstractShape = ({ size = 48 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" className="animate-morph-shape">
     <defs>
       <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="hsl(214, 100%, 60%)" />
-        <stop offset="50%" stopColor="hsl(270, 80%, 65%)" />
-        <stop offset="100%" stopColor="hsl(330, 80%, 60%)" />
+        <stop offset="0%" stopColor="#4B6A6A" />
+        <stop offset="20%" stopColor="#6B9B9B" />
+        <stop offset="40%" stopColor="#F5F0E8" />
+        <stop offset="60%" stopColor="#D4A5B0" />
+        <stop offset="80%" stopColor="#B87A8C" />
+        <stop offset="100%" stopColor="#5A1F2A" />
       </linearGradient>
       <filter id="glow">
         <feGaussianBlur stdDeviation="3" result="blur" />
