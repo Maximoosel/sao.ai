@@ -79,8 +79,15 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
           >
             {cards.map((card, i) => {
               const stacked = stackOffsets[i];
+              const peeked = peekOffsets[i];
               const scattered = scatteredPositions[i];
               const isExploded = phase === 'exploded';
+
+              const target = isExploded
+                ? { x: scattered.x, y: scattered.y, rotate: scattered.rotate, scale: 0.6, opacity: 0.7 }
+                : isHovered
+                ? { x: peeked.x, y: peeked.y, rotate: peeked.rotate, scale: 0.88, opacity: 0.95 }
+                : { x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 };
 
               return (
                 <motion.div
@@ -88,17 +95,13 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
                   className="absolute inset-0 rounded-xl border border-black/5 overflow-hidden"
                   style={{ background: card.gradient, zIndex: cards.length - i, backdropFilter: 'blur(10px)' }}
                   initial={{ x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 }}
-                  animate={
-                    isExploded
-                      ? { x: scattered.x, y: scattered.y, rotate: scattered.rotate, scale: 0.6, opacity: 0.7 }
-                      : { x: stacked.x, y: stacked.y, rotate: stacked.rotate, scale: 1, opacity: 0.9 }
-                  }
+                  animate={target}
                   transition={{
                     type: 'spring',
-                    stiffness: 80,
-                    damping: 20,
+                    stiffness: isHovered && !isExploded ? 120 : 80,
+                    damping: isHovered && !isExploded ? 14 : 20,
                     mass: 0.8,
-                    delay: isExploded ? i * 0.04 : 0,
+                    delay: isExploded ? i * 0.04 : i * 0.02,
                   }}
                 >
                   <div className="absolute inset-0 flex flex-col justify-end p-3">
