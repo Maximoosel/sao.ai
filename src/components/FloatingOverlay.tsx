@@ -36,7 +36,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [currentUsed, setCurrentUsed] = useState(usedStorage);
   const [sweepAnimating, setSweepAnimating] = useState(false);
   const [showTick, setShowTick] = useState(false);
+  const [ballSpawns, setBallSpawns] = useState<{ id: string; topPct: number }[]>([]);
   const sweepBtnRef = useRef<HTMLButtonElement>(null);
+  const fileListRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
@@ -105,10 +108,23 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     if (swept.length === 0) return;
     const totalSwept = swept.reduce((s, f) => s + f.size, 0);
     
-    // Phase 1: Animate cards stacking + flying to button
+    // Capture card positions relative to the overlay
+    const overlayRect = overlayRef.current?.getBoundingClientRect();
+    const spawns = swept.map(f => {
+      const el = cardRefs.current.get(f.id);
+      if (el && overlayRect) {
+        const rect = el.getBoundingClientRect();
+        const topPct = ((rect.top - overlayRect.top + rect.height / 2) / overlayRect.height) * 100;
+        return { id: f.id, topPct: Math.min(Math.max(topPct, 10), 80) };
+      }
+      return { id: f.id, topPct: 40 };
+    });
+    setBallSpawns(spawns);
+    
+    // Phase 1: Animate cards + balls
     setSweepAnimating(true);
     
-    // Phase 2: After stack animation, remove files and show tick
+    // Phase 2: After animation, remove files and show tick
     setTimeout(() => {
       setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
       setCurrentUsed(prev => prev - totalSwept);
@@ -284,7 +300,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
 
           {/* File list */}
-          <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
+          <div ref={fileListRef} className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
             {filteredFiles.length === 0 && !sweepAnimating ? (
               <EmptyState />
             ) : (
@@ -294,6 +310,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                   return (
                     <motion.div
                       key={file.id}
+                      ref={(el: HTMLDivElement | null) => { if (el) cardRefs.current.set(file.id, el); else cardRefs.current.delete(file.id); }}
                       layout
                       initial={false}
                       animate={sweepAnimating && isSelected ? {
@@ -375,34 +392,31 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </div>
         </div>
 
-        {/* Logo balls rolling to sweep button */}
+        {/* Logo balls spawning from card positions, rolling to sweep button */}
         <AnimatePresence>
-          {sweepAnimating && [...selectedIds].map((id, idx) => (
+          {sweepAnimating && ballSpawns.map((spawn, idx) => (
             <motion.div
-              key={`ball-${id}`}
+              key={`ball-${spawn.id}`}
               className="absolute z-40 pointer-events-none"
+              style={{ left: '15%', top: `${spawn.topPct}%` }}
               initial={{ 
-                left: '50%', 
-                top: '40%',
                 opacity: 0, 
                 scale: 0,
-                x: '-50%',
-                y: '-50%',
+                x: 0,
+                y: 0,
               }}
               animate={{ 
-                left: ['50%', '45%', '75%', '85%'],
-                top: ['40%', '50%', '75%', '92%'],
-                opacity: [0, 1, 1, 0],
-                scale: [0, 1.1, 0.9, 0.3],
-                x: ['-50%', '-50%', '-50%', '-50%'],
-                y: ['-50%', '-50%', '-50%', '-50%'],
-                rotate: [0, 90, 270, 540],
+                opacity: [0, 1, 1, 1, 0],
+                scale: [0, 1.2, 1, 0.85, 0.3],
+                x: [0, 20, 100, 200, 260],
+                y: [0, 10, 30, 60, 80],
+                rotate: [0, 60, 180, 360, 540],
               }}
               exit={{ opacity: 0, scale: 0 }}
               transition={{
-                duration: 1.4,
-                ease: [0.2, 0.8, 0.3, 1],
-                delay: idx * 0.15,
+                duration: 1.3,
+                ease: [0.2, 0.65, 0.3, 1],
+                delay: idx * 0.12,
               }}
             >
               <div className="w-11 h-11 rounded-full flex items-center justify-center"
