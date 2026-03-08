@@ -196,7 +196,7 @@ const FloatingOverlay = () => {
           </div>
 
           {/* Compact storage + actions */}
-          <div className="px-4 py-3 flex items-center justify-between border-b border-black/5">
+          <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
             <StorageRing used={currentUsed} total={totalStorage} />
             <div className="flex gap-1.5">
               <button onClick={handleScanFolder} disabled={isScanning} className="overlay-action-btn" title="Scan a folder">
