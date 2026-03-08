@@ -103,10 +103,10 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1 className="text-2xl font-black tracking-tight text-foreground">
+            <h1 className="text-2xl font-black tracking-tight text-white">
               swept.ai
             </h1>
-            <p className="mt-1.5 text-[10px] font-medium text-muted-foreground tracking-[0.1em] uppercase">
+            <p className="mt-1.5 text-[10px] font-medium text-white/50 tracking-[0.1em] uppercase">
               Smart File Intelligence
             </p>
           </motion.div>
