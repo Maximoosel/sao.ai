@@ -3,19 +3,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
-  ChevronDown
+  ChevronDown, Undo2, History
 } from 'lucide-react';
 import { AbstractShape } from './SplashScreen';
 import FileCard from './FileCard';
 import StorageRing from './StorageRing';
 import EmptyState from './EmptyState';
-
 import CategoryTabs from './CategoryTabs';
 import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
-import { mockFiles, totalStorage, usedStorage, formatSize, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { mockFiles, totalStorage, usedStorage, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
+
+interface SweptEntry { files: SweepFile[]; totalSize: number; timestamp: Date }
 
 const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; panelOpacity?: number }) => {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -41,6 +42,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const fileListRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
 
+  // Undo state
+  const [undoData, setUndoData] = useState<{ files: SweepFile[]; size: number } | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Last scan timestamp
+  const [lastScanTime, setLastScanTime] = useState<Date | null>(null);
+
+  // Recently swept log
+  const [recentlySwept, setRecentlySwept] = useState<SweptEntry[]>([]);
+  const [showRecents, setShowRecents] = useState(false);
+
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
@@ -65,6 +77,31 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
   }, [isDragging]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (isMinimized || sweepAnimating) return;
+      
+      // ⌘A / Ctrl+A — select all visible
+      if ((e.metaKey || e.ctrlKey) && e.key === 'a') {
+        e.preventDefault();
+        setSelectedIds(new Set(filteredFiles.map(f => f.id)));
+      }
+      // Delete / Backspace — sweep selected
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedIds.size > 0 && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        sweepSelected();
+      }
+      // ⌘Z — undo
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z' && undoData) {
+        e.preventDefault();
+        handleUndo();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  });
+
   // Filtered + sorted files
   const filteredFiles = (() => {
     let result = files;
@@ -78,7 +115,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (sortMode === 'lastOpened') {
         const da = new Date(a.lastOpened).getTime();
         const db = new Date(b.lastOpened).getTime();
-        return sortOrder === 'desc' ? da - db : db - da; // desc = oldest first (least recently opened)
+        return sortOrder === 'desc' ? da - db : db - da;
       }
       if (sortMode === 'relevance') {
         const pa = a.keepPriority ?? 50;
@@ -98,10 +135,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const trashSingle = useCallback((id: string) => {
     const file = files.find(f => f.id === id);
     if (!file) return;
+    // Save for undo
+    setUndoData({ files: [file], size: file.size });
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    undoTimerRef.current = setTimeout(() => setUndoData(null), 10000);
+
     setFiles(prev => prev.filter(f => f.id !== id));
     setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     setCurrentUsed(prev => prev - file.size);
+    setRecentlySwept(prev => [{ files: [file], totalSize: file.size, timestamp: new Date() }, ...prev].slice(0, 20));
   }, [files]);
+
+  const handleUndo = useCallback(() => {
+    if (!undoData) return;
+    setFiles(prev => [...prev, ...undoData.files]);
+    setCurrentUsed(prev => prev + undoData.size);
+    setUndoData(null);
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    setRecentlySwept(prev => prev.slice(1));
+  }, [undoData]);
 
   const sweepSelected = useCallback(() => {
     const swept = files.filter(f => selectedIds.has(f.id));
@@ -122,10 +174,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     });
     setBallSpawns(spawns);
     
-    // Phase 1: Animate cards + balls
     setSweepAnimating(true);
     
-    // Phase 2: After animation, remove files and show tick
     setTimeout(() => {
       setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
       setCurrentUsed(prev => prev - totalSwept);
@@ -133,8 +183,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setSweepAnimating(false);
       setShowTick(true);
       setSweepResult({ count: swept.length, size: totalSwept });
+
+      // Save for undo
+      setUndoData({ files: swept, size: totalSwept });
+      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = setTimeout(() => setUndoData(null), 10000);
+
+      // Add to recents
+      setRecentlySwept(prev => [{ files: swept, totalSize: totalSwept, timestamp: new Date() }, ...prev].slice(0, 20));
       
-      // Phase 3: Hide tick after 1 second
       setTimeout(() => {
         setShowTick(false);
         setSweepResult(null);
@@ -148,19 +205,33 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setFiles(scanned);
       setSelectedIds(new Set());
     }
+    setLastScanTime(new Date());
   };
 
   const handleAnalyze = async () => {
     const analyzed = await analyzeFiles(files);
     setFiles(analyzed);
     setSortMode('relevance');
-    setSortOrder('asc'); // Show lowest priority first (most deletable)
+    setSortOrder('asc');
   };
 
   const selectLowPriority = () => {
     const lowPriority = files.filter(f => (f.keepPriority ?? 50) < 40);
     setSelectedIds(new Set(lowPriority.map(f => f.id)));
   };
+
+  // Duplicate detection
+  const duplicateGroups = useMemo(() => {
+    const groups = new Map<string, SweepFile[]>();
+    files.forEach(f => {
+      const key = `${f.name}|${f.size}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(f);
+    });
+    return [...groups.values()].filter(g => g.length > 1);
+  }, [files]);
+
+  const duplicateCount = duplicateGroups.reduce((sum, g) => sum + g.length, 0);
 
   const sortLabels: Record<SortMode, string> = {
     size: 'Size',
@@ -217,6 +288,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               )}
             </div>
             <div className="flex items-center gap-1">
+              <button onClick={() => setShowRecents(!showRecents)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors" title="Recently swept">
+                <History size={12} />
+              </button>
               <button onClick={() => setIsExpanded(!isExpanded)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors">
                 {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
               </button>
@@ -229,9 +303,44 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </div>
           </div>
 
+          {/* Recently Swept dropdown */}
+          <AnimatePresence>
+            {showRecents && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="border-b border-white/10 overflow-hidden"
+              >
+                <div className="px-4 py-2 max-h-[140px] overflow-y-auto">
+                  <p className="text-[10px] text-white/40 uppercase tracking-wider font-semibold mb-2">Recently Swept</p>
+                  {recentlySwept.length === 0 ? (
+                    <p className="text-[11px] text-white/30 pb-1">Nothing swept yet this session</p>
+                  ) : (
+                    recentlySwept.map((entry, i) => (
+                      <div key={i} className="flex justify-between items-center py-1">
+                        <span className="text-[11px] text-white/60 truncate">
+                          {entry.files.length} file{entry.files.length > 1 ? 's' : ''} · {formatSize(entry.totalSize)}
+                        </span>
+                        <span className="text-[10px] text-white/30 flex-shrink-0 ml-2">{timeAgo(entry.timestamp)}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Compact storage + actions */}
           <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
-            <StorageRing used={currentUsed} total={totalStorage} />
+            <div className="flex items-center gap-3">
+              <StorageRing used={currentUsed} total={totalStorage} />
+              {lastScanTime && (
+                <span className="text-[10px] text-white/30">
+                  Scanned {timeAgo(lastScanTime)}
+                </span>
+              )}
+            </div>
             <div className="flex gap-1.5">
               <button onClick={handleScanFolder} disabled={isScanning} className="overlay-action-btn" title="Scan a folder">
                 <FolderOpen size={14} />
@@ -247,9 +356,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </div>
           </div>
 
-          {/* Category tabs */}
+          {/* Category tabs with duplicate badge */}
           <div className="px-4 pt-3 pb-1">
-            <CategoryTabs active={activeCategory} onSelect={setActiveCategory} />
+            <CategoryTabs active={activeCategory} onSelect={setActiveCategory} duplicateCount={duplicateCount} />
           </div>
 
           {/* Search + Sort */}
@@ -303,7 +412,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           {/* File list */}
           <div ref={fileListRef} className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
             {filteredFiles.length === 0 && !sweepAnimating ? (
-              <EmptyState />
+              <EmptyState category={activeCategory} />
             ) : (
               <AnimatePresence mode="popLayout">
                 {filteredFiles.map((file) => {
@@ -332,6 +441,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                         selected={isSelected}
                         onToggle={sweepAnimating ? () => {} : toggleSelect}
                         onTrash={sweepAnimating ? () => {} : trashSingle}
+                        totalStorage={totalStorage}
                       />
                     </motion.div>
                   );
@@ -339,6 +449,31 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               </AnimatePresence>
             )}
           </div>
+
+          {/* Undo banner */}
+          <AnimatePresence>
+            {undoData && !sweepAnimating && !showTick && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="border-t border-white/10 overflow-hidden"
+              >
+                <div className="px-4 py-2.5 flex items-center justify-between bg-white/5">
+                  <span className="text-[11px] text-white/60">
+                    {undoData.files.length} file{undoData.files.length > 1 ? 's' : ''} moved to Trash · {formatSize(undoData.size)}
+                  </span>
+                  <button
+                    onClick={handleUndo}
+                    className="flex items-center gap-1.5 text-[11px] font-semibold text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Undo2 size={12} /> Undo
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Bottom sweep bar */}
           <div className="px-4 py-3 border-t border-white/10 flex items-center justify-between">
@@ -373,7 +508,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               }`}
             >
               Sweep {selectedIds.size > 0 ? `(${selectedIds.size})` : ''}
-              {/* Ripple rings on absorb */}
               <AnimatePresence>
                 {sweepAnimating && (
                   <>
@@ -396,7 +530,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         {/* Logo balls floating from file size badges to sweep button */}
         <AnimatePresence>
           {sweepAnimating && ballSpawns.map((spawn, idx) => {
-            // Calculate how far the ball needs to travel to reach bottom-right
             const endTop = 93;
             const endLeft = 85;
             const dy = endTop - spawn.topPct;
@@ -463,12 +596,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 };
 
 // Compact file card for overlay
-const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
+const OverlayFileCard = ({ file, selected, onToggle, onTrash, totalStorage }: {
   file: SweepFile;
   selected: boolean;
   onToggle: (id: string) => void;
   onTrash: (id: string) => void;
+  totalStorage: number;
 }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const tagColors: Record<string, string> = {
     'essential': 'bg-green-500/20 text-green-300',
     'useful': 'bg-blue-500/20 text-blue-300',
@@ -497,8 +633,36 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-[10px] text-white/40 truncate">{file.path}</span>
           {file.relevanceTag && (
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${tagColors[file.relevanceTag] || 'bg-white/10 text-white/50'}`}>
+            <span 
+              className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium cursor-help relative ${tagColors[file.relevanceTag] || 'bg-white/10 text-white/50'}`}
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
+            >
               {file.relevanceTag === 'safe-to-remove' ? 'Safe to remove' : file.relevanceTag}
+              {/* AI explanation tooltip */}
+              <AnimatePresence>
+                {showTooltip && file.relevanceReason && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 4 }}
+                    className="absolute bottom-full left-0 mb-2 w-48 p-2 rounded-lg bg-black/90 backdrop-blur-sm border border-white/10 z-50"
+                  >
+                    <p className="text-[10px] text-white/80 leading-relaxed">{file.relevanceReason}</p>
+                    {file.confidence !== undefined && (
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full ${file.confidence > 80 ? 'bg-green-500' : file.confidence > 50 ? 'bg-yellow-500' : 'bg-orange-500'}`}
+                            style={{ width: `${file.confidence}%` }}
+                          />
+                        </div>
+                        <span className="text-[9px] text-white/40">{file.confidence}% sure</span>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </span>
           )}
         </div>
@@ -506,7 +670,10 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
 
       <div className="flex items-center gap-2 flex-shrink-0">
         {file.keepPriority !== undefined && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 relative"
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
             <div className="w-8 h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all ${
@@ -517,9 +684,18 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash }: {
               />
             </div>
             <span className="text-[9px] text-white/40 w-5 text-right">{file.keepPriority}</span>
+            {file.confidence !== undefined && (
+              <span className={`text-[8px] px-1 py-0.5 rounded ${
+                file.confidence > 80 ? 'text-green-400/60' : file.confidence > 50 ? 'text-yellow-400/60' : 'text-orange-400/60'
+              }`}>
+                {file.confidence}%
+              </span>
+            )}
           </div>
         )}
-        <span className="text-[10px] font-semibold text-primary bg-primary/15 px-2 py-0.5 rounded-lg">{formatSize(file.size)}</span>
+        <span className="text-[10px] font-semibold text-primary bg-primary/15 px-2 py-0.5 rounded-lg">
+          {formatSizeWithContext(file.size, totalStorage)}
+        </span>
         <button
           onClick={(e) => { e.stopPropagation(); onTrash(file.id); }}
           className="opacity-0 group-hover:opacity-100 p-1 rounded-lg hover:bg-red-500/20 text-white/30 hover:text-red-400 transition-all"
