@@ -1,9 +1,18 @@
 import { useState } from 'react';
 import FloatingOverlay from '@/components/FloatingOverlay';
 import SplashScreen from '@/components/SplashScreen';
+import OnboardingTooltip from '@/components/OnboardingTooltip';
+
+const ONBOARDING_KEY = 'sift_onboarding_seen';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
+
+  const dismissOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem(ONBOARDING_KEY, 'true');
+  };
 
   if (showSplash) {
     return <SplashScreen onComplete={() => setShowSplash(false)} />;
@@ -21,10 +30,11 @@ const Index = () => {
       
       {/* Desktop hint text */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
-        <p className="text-xs text-muted-foreground/60">Drag the Sweep overlay anywhere · Click ✦ to scan folders · Click ✨ for AI analysis</p>
+        <p className="text-xs text-muted-foreground/60">Drag the Sift overlay anywhere · 📂 Scan folders · ✨ AI analysis</p>
       </div>
       
       <FloatingOverlay />
+      {showOnboarding && <OnboardingTooltip onDismiss={dismissOnboarding} />}
     </div>
   );
 };
