@@ -4,6 +4,7 @@ import {
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
   ChevronDown
 } from 'lucide-react';
+import { AbstractShape } from './SplashScreen';
 import FileCard from './FileCard';
 import StorageRing from './StorageRing';
 import EmptyState from './EmptyState';
