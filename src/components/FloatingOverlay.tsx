@@ -21,10 +21,11 @@ interface SweptEntry { files: SweepFile[]; totalSize: number; timestamp: Date }
 const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; panelOpacity?: number }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [position, setPosition] = useState({ x: 20, y: 20 });
-  const [isDragging, setIsDragging] = useState(false);
+  const posRef = useRef({ x: 20, y: 20 });
+  const isDraggingRef = useRef(false);
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   const [files, setFiles] = useState<SweepFile[]>(mockFiles);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -56,26 +57,32 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
-  // Drag handling
+  const applyPosition = useCallback(() => {
+    if (overlayRef.current) {
+      overlayRef.current.style.transform = `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`;
+    }
+  }, []);
+
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button, input, .no-drag')) return;
-    setIsDragging(true);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: position.x, origY: position.y };
-  }, [position]);
+    isDraggingRef.current = true;
+    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: posRef.current.x, origY: posRef.current.y };
+  }, []);
 
   useEffect(() => {
-    if (!isDragging) return;
     const onMove = (e: MouseEvent) => {
-      if (!dragRef.current) return;
+      if (!isDraggingRef.current || !dragRef.current) return;
       const dx = e.clientX - dragRef.current.startX;
       const dy = e.clientY - dragRef.current.startY;
-      setPosition({ x: dragRef.current.origX + dx, y: dragRef.current.origY + dy });
+      posRef.current = { x: dragRef.current.origX + dx, y: dragRef.current.origY + dy };
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(applyPosition);
     };
-    const onUp = () => setIsDragging(false);
+    const onUp = () => { isDraggingRef.current = false; };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-  }, [isDragging]);
+  }, [applyPosition]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -242,8 +249,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
-        className="fixed z-[100] cursor-pointer"
-        style={{ left: position.x, top: position.y }}
+        className="fixed z-[100] cursor-pointer left-0 top-0"
+        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform' }}
         onClick={() => setIsMinimized(false)}
       >
         <div className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
@@ -259,8 +266,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   return (
       <div
         ref={overlayRef}
-        className={`fixed z-[100] ${width} ${height} flex flex-col transition-all duration-300`}
-        style={{ left: position.x, top: position.y, maxHeight: '90vh' }}
+        className={`fixed z-[100] left-0 top-0 ${width} ${height} flex flex-col`}
+        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform', maxHeight: '90vh' }}
       >
         <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/8 border border-white/20"
           style={{ background: `hsla(0, 0%, 100%, ${panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
