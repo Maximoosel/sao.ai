@@ -1,21 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FloatingOverlay from '@/components/FloatingOverlay';
 import SplashScreen from '@/components/SplashScreen';
 import OnboardingTooltip from '@/components/OnboardingTooltip';
 import { Slider } from '@/components/ui/slider';
 import { Settings2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const ONBOARDING_KEY = 'swept_onboarding_seen';
+
+const themes = [
+  { name: 'Ocean', hsl: '214 100% 50%', preview: ['#0074ff', '#00a2ff', '#005ecb'] },
+  { name: 'Violet', hsl: '270 80% 55%', preview: ['#8b3dff', '#a855f7', '#6d28d9'] },
+  { name: 'Rose', hsl: '340 82% 55%', preview: ['#f43f6e', '#fb7199', '#e11d56'] },
+];
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem(ONBOARDING_KEY));
   const [showControls, setShowControls] = useState(false);
+  const [activeTheme, setActiveTheme] = useState(0);
 
   // Tuning sliders
   const [bgBlur, setBgBlur] = useState(60);
   const [overlayOpacity, setOverlayOpacity] = useState(50);
   const [splashOpacity, setSplashOpacity] = useState(35);
+
+  // Apply theme to CSS variable
+  useEffect(() => {
+    document.documentElement.style.setProperty('--primary', themes[activeTheme].hsl);
+    document.documentElement.style.setProperty('--accent', themes[activeTheme].hsl);
+    document.documentElement.style.setProperty('--ring', themes[activeTheme].hsl);
+  }, [activeTheme]);
 
   const dismissOnboarding = () => {
     setShowOnboarding(false);
@@ -76,6 +91,44 @@ const Index = () => {
           }}
         >
           <p className="text-white/80 text-xs font-semibold uppercase tracking-wider">Appearance</p>
+
+          {/* Theme swatches */}
+          <div className="space-y-1.5">
+            <label className="text-white/50 text-[11px]">Theme</label>
+            <div className="flex gap-2">
+              {themes.map((theme, i) => (
+                <button
+                  key={theme.name}
+                  onClick={() => setActiveTheme(i)}
+                  className="relative flex-1 group"
+                >
+                  {/* Animated blob swatch */}
+                  <div className="relative h-10 rounded-xl overflow-hidden" style={{
+                    border: activeTheme === i ? '1.5px solid rgba(255,255,255,0.5)' : '1px solid rgba(255,255,255,0.1)',
+                    background: theme.preview[0],
+                  }}>
+                    <motion.div
+                      className="absolute inset-0"
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+                    >
+                      <div className="absolute w-6 h-6 rounded-full top-0 left-1 blur-sm" style={{ background: theme.preview[1], opacity: 0.7 }} />
+                      <div className="absolute w-5 h-5 rounded-full bottom-0 right-1 blur-sm" style={{ background: theme.preview[2], opacity: 0.6 }} />
+                    </motion.div>
+                    {activeTheme === i && (
+                      <motion.div
+                        className="absolute inset-0 rounded-xl"
+                        layoutId="themeRing"
+                        style={{ boxShadow: `0 0 12px ${theme.preview[0]}60` }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                      />
+                    )}
+                  </div>
+                  <span className="text-[10px] text-white/40 mt-1 block text-center">{theme.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="space-y-1.5">
             <label className="text-white/50 text-[11px] flex justify-between">
