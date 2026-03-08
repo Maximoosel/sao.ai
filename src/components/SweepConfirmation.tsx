@@ -9,7 +9,7 @@ interface SweepConfirmationProps {
 
 const SweepConfirmation = ({ fileCount, totalSize, onClose }: SweepConfirmationProps) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/30 backdrop-blur-sm" onClick={onClose}>
+    <div className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl bg-background/30 backdrop-blur-sm" onClick={onClose}>
       <div className="animate-sweep-confirm text-center glass-panel p-6 max-w-[240px]" onClick={(e) => e.stopPropagation()}>
         <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-3">
           <Check size={20} className="text-green-500" />
