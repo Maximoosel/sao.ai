@@ -57,26 +57,32 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
-  // Drag handling
+  const applyPosition = useCallback(() => {
+    if (overlayRef.current) {
+      overlayRef.current.style.transform = `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`;
+    }
+  }, []);
+
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('button, input, .no-drag')) return;
-    setIsDragging(true);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: position.x, origY: position.y };
-  }, [position]);
+    isDraggingRef.current = true;
+    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: posRef.current.x, origY: posRef.current.y };
+  }, []);
 
   useEffect(() => {
-    if (!isDragging) return;
     const onMove = (e: MouseEvent) => {
-      if (!dragRef.current) return;
+      if (!isDraggingRef.current || !dragRef.current) return;
       const dx = e.clientX - dragRef.current.startX;
       const dy = e.clientY - dragRef.current.startY;
-      setPosition({ x: dragRef.current.origX + dx, y: dragRef.current.origY + dy });
+      posRef.current = { x: dragRef.current.origX + dx, y: dragRef.current.origY + dy };
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(applyPosition);
     };
-    const onUp = () => setIsDragging(false);
+    const onUp = () => { isDraggingRef.current = false; };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
     return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-  }, [isDragging]);
+  }, [applyPosition]);
 
   // Keyboard shortcuts
   useEffect(() => {
