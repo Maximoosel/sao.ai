@@ -115,9 +115,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (el && overlayRect) {
         const rect = el.getBoundingClientRect();
         const topPct = ((rect.top - overlayRect.top + rect.height / 2) / overlayRect.height) * 100;
-        return { id: f.id, topPct: Math.min(Math.max(topPct, 10), 80) };
+        const leftPct = ((rect.right - overlayRect.left - 40) / overlayRect.width) * 100;
+        return { id: f.id, topPct: Math.min(Math.max(topPct, 5), 85), leftPct: Math.min(leftPct, 90) };
       }
-      return { id: f.id, topPct: 40 };
+      return { id: f.id, topPct: 40, leftPct: 75 };
     });
     setBallSpawns(spawns);
     
