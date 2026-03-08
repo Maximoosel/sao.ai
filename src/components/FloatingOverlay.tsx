@@ -310,6 +310,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                   return (
                     <motion.div
                       key={file.id}
+                      ref={(el: HTMLDivElement | null) => { if (el) cardRefs.current.set(file.id, el); else cardRefs.current.delete(file.id); }}
                       layout
                       initial={false}
                       animate={sweepAnimating && isSelected ? {
