@@ -30,8 +30,8 @@ const OnboardingTooltip = ({ onDismiss }: OnboardingTooltipProps) => {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/30 backdrop-blur-sm">
       <div
-        className="w-[320px] rounded-2xl overflow-hidden border border-white/30 shadow-2xl"
-        style={{ background: 'hsla(0, 0%, 100%, 0.85)', backdropFilter: 'blur(40px)' }}
+        className="w-[320px] rounded-2xl overflow-hidden border border-white/15 shadow-2xl"
+        style={{ background: 'hsla(0, 0%, 100%, 0.12)', backdropFilter: 'blur(60px) saturate(200%)' }}
       >
         {/* Progress dots */}
         <div className="flex justify-center gap-2 pt-5">

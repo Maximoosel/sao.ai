@@ -88,7 +88,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
                   <div className="absolute inset-0 flex flex-col justify-end p-3">
                     <div className="w-full h-0.5 bg-black/8 rounded-full mb-1.5" />
                     <div className="w-3/4 h-0.5 bg-black/5 rounded-full mb-2" />
-                    <span className="text-foreground/40 text-[9px] font-medium">{card.label}</span>
+                    <span className="text-white/40 text-[9px] font-medium">{card.label}</span>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-transparent" />
                 </motion.div>
