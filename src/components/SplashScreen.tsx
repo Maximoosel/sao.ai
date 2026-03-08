@@ -51,9 +51,9 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
           style={{
             top: 20, left: 20,
             width: 420, height: 600,
-            background: 'hsla(0, 0%, 100%, 0.35)',
-            backdropFilter: 'blur(60px) saturate(200%)',
-            WebkitBackdropFilter: 'blur(60px) saturate(200%)',
+            background: `hsla(0, 0%, 100%, ${panelOpacity / 100})`,
+            backdropFilter: `blur(${bgBlur}px) saturate(200%)`,
+            WebkitBackdropFilter: `blur(${bgBlur}px) saturate(200%)`,
             border: '1px solid rgba(255,255,255,0.15)',
             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
           }}
