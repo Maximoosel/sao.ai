@@ -301,16 +301,16 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </button>
           </div>
         </div>
-      </div>
 
-      {sweepResult && (
-        <SweepConfirmation
-          fileCount={sweepResult.count}
-          totalSize={sweepResult.size}
-          onClose={() => setSweepResult(null)}
-        />
-      )}
-    </>
+        {sweepResult && (
+          <SweepConfirmation
+            fileCount={sweepResult.count}
+            totalSize={sweepResult.size}
+            onClose={() => setSweepResult(null)}
+          />
+        )}
+      </div>
+    </div>
   );
 };
 
