@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { 
-  Wind, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
+  Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
   ChevronDown
 } from 'lucide-react';
@@ -140,7 +140,7 @@ const FloatingOverlay = () => {
         onClick={() => setIsMinimized(false)}
       >
         <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
-          <Wind size={20} className="text-primary-foreground" />
+          <Layers size={20} className="text-primary-foreground" />
         </div>
       </div>
     );
@@ -167,9 +167,9 @@ const FloatingOverlay = () => {
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-muted-foreground/50" />
               <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Wind size={14} className="text-primary" />
+                <Layers size={14} className="text-primary" />
               </div>
-              <span className="text-sm font-semibold text-foreground tracking-tight">Sweep</span>
+              <span className="text-sm font-semibold text-foreground tracking-tight">Sift</span>
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
                   <Sparkles size={10} /> Analyzing...
