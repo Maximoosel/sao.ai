@@ -25,7 +25,7 @@ const CategoryTabs = ({ active, onSelect, duplicateCount }: CategoryTabsProps) =
           className={`category-pill ${active === cat.key ? 'category-pill-active' : ''}`}
         >
           {cat.label}
-          {cat.key === 'duplicates' && duplicateCount && duplicateCount > 0 && (
+          {cat.key === 'duplicates' && (duplicateCount ?? 0) > 0 && (
             <span className="ml-1 text-[9px] bg-destructive/20 text-destructive px-1.5 py-0.5 rounded-full font-semibold">
               {duplicateCount}
             </span>
