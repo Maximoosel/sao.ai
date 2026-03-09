@@ -424,13 +424,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setTimeout(() => {
         setLimbState('walking');
         walkIntervalRef.current = setInterval(() => {
-          perimeterRef.current += 2;
+          perimeterRef.current += WALK_SPEED;
           const pos = getPerimeterPos(perimeterRef.current);
           setWalkPos({ x: pos.x, y: pos.y });
           setWalkDirection(pos.dir);
           setWalkRotation(pos.rotation);
           setWalkFlipY(pos.flipY);
-        }, 50);
+        }, TICK_MS);
       }, 600);
     }, 3000);
   }, [getPerimeterPos]);
