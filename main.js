@@ -25,8 +25,6 @@ function createWindow() {
   ipcMain.on('resize-window', (event, width, height) => {
     win.setSize(width, height, true);
   });
-
-  const { dialog, shell } = require('electron');
   
   ipcMain.handle('select-directory', async () => {
     const result = await dialog.showOpenDialog(win, {
