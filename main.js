@@ -37,8 +37,8 @@ function createWindow() {
   // Minimize → fullscreen transparent overlay so character walks entire screen
   ipcMain.on('enter-overlay-mode', () => {
     const display = screen.getPrimaryDisplay();
-    const { width, height } = display.size;
-    win.setPosition(0, 0);
+    const { width, height } = display.workAreaSize; // logical pixels — works on all Retina resolutions
+    win.setPosition(0, display.workArea.y); // account for menubar offset
     win.setSize(width, height, false);
     win.setIgnoreMouseEvents(true, { forward: true });
     win.setAlwaysOnTop(true, 'screen-saver');
