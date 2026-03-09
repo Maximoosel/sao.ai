@@ -384,7 +384,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 const rect = overlayRef.current.getBoundingClientRect();
                 overlayDimsRef.current = { w: rect.width, h: rect.height };
               }
-              measureBorderLine(); // keep tracking
+              measureBorderLine();
               perimeterRef.current += WALK_SPEED * walkDirRef.current;
               const pos = getTitleBarWalkPos(perimeterRef.current);
               perimeterRef.current = pos.x;
@@ -392,8 +392,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               setWalkDirection(pos.dir);
             }, TICK_MS);
           }, 600);
-        }, 800);
-      }, 4000);
+        }, 2000); // wait for the 1.8s roll to finish
+      }, 10000);
     } else {
       setShowLimbs(false);
       setLimbState('idle');
@@ -447,11 +447,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           <motion.div
             className="absolute z-[201] pointer-events-none"
             style={{ left: 0, top: 0 }}
-            initial={{ x: 60 - 14, y: 22, scale: 1 }}
-            animate={{ x: 60 - 14, y: charTopY, scale: 1 }}
+            initial={{ x: 60 - 14, y: 22 }}
+            animate={{ x: 60 - 14, y: charTopY }}
             transition={{ 
-              duration: 0.7,
-              ease: [0.34, 1.56, 0.64, 1], // gentle overshoot
+              duration: 1.8,
+              ease: [0.25, 0.1, 0.25, 1],
             }}
           >
             <AbstractShape size={28} />
@@ -495,7 +495,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-white/30" />
-              {showLimbs && limbState === 'walking' ? (
+              {showLimbs ? (
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0">
                   <AbstractShape size={22} />
                 </div>
