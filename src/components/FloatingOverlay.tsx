@@ -272,7 +272,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as any}>
               <button onClick={() => setShowRecents(!showRecents)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors" title="Recently swept">
                 <History size={12} />
               </button>

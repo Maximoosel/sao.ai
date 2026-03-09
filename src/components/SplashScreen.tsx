@@ -57,10 +57,8 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
     <AnimatePresence>
       {phase !== 'exit' ? (
         <motion.div
-          className="fixed z-[100] flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden rounded-3xl"
+          className="fixed z-[100] inset-0 flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden rounded-3xl"
           style={{
-            top: 20, left: 20,
-            width: 420, height: 600,
             background: `hsla(235, 24%, 15%, ${panelOpacity === 15 ? 0.95 : panelOpacity / 100})`,
             backdropFilter: `blur(${bgBlur}px) saturate(200%)`,
             WebkitBackdropFilter: `blur(${bgBlur}px) saturate(200%)`,
