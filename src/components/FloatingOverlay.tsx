@@ -118,28 +118,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     setSelectedIds(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
   }, []);
 
-  const trashSingle = useCallback((id: string) => {
+  const trashSingle = useCallback(async (id: string) => {
     const file = files.find(f => f.id === id);
     if (!file) return;
-    // Save for undo
-    setUndoData({ files: [file], size: file.size });
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    undoTimerRef.current = setTimeout(() => setUndoData(null), 10000);
+
+    // Actually trash the file
+    if (file.path !== 'Unknown' && !file.path.startsWith('mock/')) {
+      await trashFiles([file.path]);
+    }
 
     setFiles(prev => prev.filter(f => f.id !== id));
     setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     setCurrentUsed(prev => prev - file.size);
     setRecentlySwept(prev => [{ files: [file], totalSize: file.size, timestamp: new Date() }, ...prev].slice(0, 20));
-  }, [files]);
+  }, [files, trashFiles]);
 
   const handleUndo = useCallback(() => {
-    if (!undoData) return;
-    setFiles(prev => [...prev, ...undoData.files]);
-    setCurrentUsed(prev => prev + undoData.size);
+    // Undo is disabled since files are moved to OS Trash
     setUndoData(null);
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    setRecentlySwept(prev => prev.slice(1));
-  }, [undoData]);
+  }, []);
 
   const sweepSelected = useCallback(() => {
     const swept = files.filter(f => selectedIds.has(f.id));
