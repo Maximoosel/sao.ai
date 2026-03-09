@@ -235,15 +235,66 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     setSelectedIds(new Set(lowPriority.map(f => f.id)));
   };
 
-  // Duplicate detection
+  // Duplicate detection — exact match OR similar names (copy, v2, duplicates)
   const duplicateGroups = useMemo(() => {
-    const groups = new Map<string, SweepFile[]>();
+    // Helper to normalize file name for fuzzy matching
+    const normalize = (name: string) => {
+      const ext = name.lastIndexOf('.') >= 0 ? name.slice(name.lastIndexOf('.')) : '';
+      let base = name.slice(0, name.length - ext.length).toLowerCase();
+      // Strip common duplicate suffixes: "copy", "copy 2", "(1)", "-v2", "_final", etc.
+      base = base
+        .replace(/\s*\(?\bcopy\b\)?\s*\d*/g, '')
+        .replace(/\s*\(\d+\)/g, '')
+        .replace(/[\s_-]*(v\d+|final|backup|old|duplicate)/gi, '')
+        .replace(/[\s_-]+$/g, '')
+        .trim();
+      return `${base}${ext.toLowerCase()}`;
+    };
+
+    // Group 1: exact name+size
+    const exactGroups = new Map<string, SweepFile[]>();
     files.forEach(f => {
       const key = `${f.name}|${f.size}`;
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key)!.push(f);
+      if (!exactGroups.has(key)) exactGroups.set(key, []);
+      exactGroups.get(key)!.push(f);
     });
-    return [...groups.values()].filter(g => g.length > 1);
+
+    // Group 2: fuzzy name match
+    const fuzzyGroups = new Map<string, SweepFile[]>();
+    files.forEach(f => {
+      const key = normalize(f.name);
+      if (!fuzzyGroups.has(key)) fuzzyGroups.set(key, []);
+      fuzzyGroups.get(key)!.push(f);
+    });
+
+    // Merge: use fuzzy groups but avoid double-counting
+    const seen = new Set<string>();
+    const result: SweepFile[][] = [];
+
+    // Add exact matches first
+    for (const group of exactGroups.values()) {
+      if (group.length > 1) {
+        group.forEach(f => seen.add(f.id));
+        result.push(group);
+      }
+    }
+
+    // Add fuzzy matches that aren't already covered
+    for (const group of fuzzyGroups.values()) {
+      if (group.length > 1) {
+        const unseen = group.filter(f => !seen.has(f.id));
+        if (unseen.length < group.length) {
+          // Some already in exact group — add any missing ones to that group
+          unseen.forEach(f => seen.add(f.id));
+        } else {
+          // Entirely new fuzzy group
+          group.forEach(f => seen.add(f.id));
+          result.push(group);
+        }
+      }
+    }
+
+    return result;
   }, [files]);
 
   const duplicateCount = duplicateGroups.reduce((sum, g) => sum + g.length, 0);
