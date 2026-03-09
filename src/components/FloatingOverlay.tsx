@@ -218,9 +218,52 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const handleScanFolder = async () => {
     const scanned = await scanFolder();
     if (scanned.length > 0) {
-      setFiles(scanned);
+      // Disable walking character when user starts working with real files
+      setCharacterEnabled(false);
+
+      // Tag duplicate files so the duplicates tab shows them
+      const normalize = (name: string) => {
+        const ext = name.lastIndexOf('.') >= 0 ? name.slice(name.lastIndexOf('.')) : '';
+        let base = name.slice(0, name.length - ext.length).toLowerCase();
+        base = base
+          .replace(/\s*\(?\bcopy\b\)?\s*\d*/g, '')
+          .replace(/\s*\(\d+\)/g, '')
+          .replace(/[\s_-]*(v\d+|final|backup|old|duplicate)/gi, '')
+          .replace(/[\s_-]+$/g, '')
+          .trim();
+        return `${base}${ext.toLowerCase()}`;
+      };
+
+      // Find duplicates by exact name+size OR fuzzy normalized name
+      const exactMap = new Map<string, string[]>();
+      const fuzzyMap = new Map<string, string[]>();
+      scanned.forEach(f => {
+        const exactKey = `${f.name}|${f.size}`;
+        if (!exactMap.has(exactKey)) exactMap.set(exactKey, []);
+        exactMap.get(exactKey)!.push(f.id);
+
+        const fuzzyKey = normalize(f.name);
+        if (!fuzzyMap.has(fuzzyKey)) fuzzyMap.set(fuzzyKey, []);
+        fuzzyMap.get(fuzzyKey)!.push(f.id);
+      });
+
+      const duplicateIds = new Set<string>();
+      for (const ids of exactMap.values()) {
+        if (ids.length > 1) ids.forEach(id => duplicateIds.add(id));
+      }
+      for (const ids of fuzzyMap.values()) {
+        if (ids.length > 1) ids.forEach(id => duplicateIds.add(id));
+      }
+
+      const tagged = scanned.map(f =>
+        duplicateIds.has(f.id) && !f.category.includes('duplicates')
+          ? { ...f, category: [...f.category, 'duplicates' as const] }
+          : f
+      );
+
+      setFiles(tagged);
       setSelectedIds(new Set());
-      setCurrentUsed(scanned.reduce((sum, f) => sum + f.size, 0));
+      setCurrentUsed(tagged.reduce((sum, f) => sum + f.size, 0));
     }
     setLastScanTime(new Date());
   };
