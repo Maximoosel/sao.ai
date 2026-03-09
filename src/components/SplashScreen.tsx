@@ -159,19 +159,19 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
       className={`overflow-visible ${isWalking ? 'animate-walk-bounce' : ''}`}
     >
       <defs>
-        {/* Seamless gradient - no harsh white, smooth fade */}
+        {/* More vivid gradient with faster rotation */}
         <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#4B6A6A" />
-          <stop offset="25%" stopColor="#6B9B9B" />
-          <stop offset="50%" stopColor="#9BBBBB" />
-          <stop offset="75%" stopColor="#C4A5A5" />
-          <stop offset="100%" stopColor="#8B5A6A" />
+          <stop offset="0%" stopColor="#2D5A5A" />
+          <stop offset="30%" stopColor="#4ECDC4" />
+          <stop offset="50%" stopColor="#FF6B9D" />
+          <stop offset="70%" stopColor="#C44569" />
+          <stop offset="100%" stopColor="#2D5A5A" />
           <animateTransform
             attributeName="gradientTransform"
             type="rotate"
             from="0 50 50"
             to="360 50 50"
-            dur={showLimbs ? "6s" : "20s"}
+            dur={showLimbs ? "2s" : "8s"}
             repeatCount="indefinite"
           />
         </linearGradient>
