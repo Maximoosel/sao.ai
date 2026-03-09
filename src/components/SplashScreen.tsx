@@ -268,6 +268,52 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
         />
       </g>
       
+      {/* Scanner arm - forward arm holding wand at 45° angle */}
+      {showLimbs && isWalking && (
+        <g style={{ transformOrigin: '50px 50px' }}>
+          {walkDirection === 1 ? (
+            /* Walking right — arm on right side */
+            <g>
+              {/* Arm stub from body */}
+              <path d="M65 55 Q72 62 76 72" fill="none" stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round" />
+              {/* Wand/scanner stick */}
+              <line x1="76" y1="72" x2="88" y2="130" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              {/* Scanner tip group — sweeps with footsteps */}
+              <g className="animate-scanner-sweep">
+                {/* Red glow dot */}
+                <circle cx="88" cy="132" r="3" fill="#ff3b3b" filter="url(#red-glow)">
+                  <animate attributeName="opacity" values="1;0.4;1" dur="0.6s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="88" cy="132" r="7" fill="#ff3b3b" opacity="0.1">
+                  <animate attributeName="r" values="5;9;5" dur="0.6s" repeatCount="indefinite" />
+                </circle>
+                {/* Faint scan line on floor */}
+                <line x1="82" y1="140" x2="94" y2="140" stroke="#ff3b3b" strokeWidth="1.5" strokeLinecap="round" opacity="0.3">
+                  <animate attributeName="opacity" values="0.4;0;0.4" dur="0.3s" repeatCount="indefinite" />
+                </line>
+              </g>
+            </g>
+          ) : (
+            /* Walking left — arm on left side */
+            <g>
+              <path d="M35 55 Q28 62 24 72" fill="none" stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round" />
+              <line x1="24" y1="72" x2="12" y2="130" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              <g className="animate-scanner-sweep">
+                <circle cx="12" cy="132" r="3" fill="#ff3b3b" filter="url(#red-glow)">
+                  <animate attributeName="opacity" values="1;0.4;1" dur="0.6s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="12" cy="132" r="7" fill="#ff3b3b" opacity="0.1">
+                  <animate attributeName="r" values="5;9;5" dur="0.6s" repeatCount="indefinite" />
+                </circle>
+                <line x1="6" y1="140" x2="18" y2="140" stroke="#ff3b3b" strokeWidth="1.5" strokeLinecap="round" opacity="0.3">
+                  <animate attributeName="opacity" values="0.4;0;0.4" dur="0.3s" repeatCount="indefinite" />
+                </line>
+              </g>
+            </g>
+          )}
+        </g>
+      )}
+
       {/* Legs - rounded jelly-like soft curves */}
       {showLimbs && (
         <g className={limbClass}>
@@ -284,7 +330,7 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
             )}
           </g>
           
-          {/* Right leg - soft rounded jelly with striped shoe */}
+          {/* Right leg - soft rounded jelly */}
           <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
              style={{ transformOrigin: '58px 85px' }}>
             <path 
