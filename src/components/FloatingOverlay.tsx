@@ -507,6 +507,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 </div>
               )}
               <span className="text-sm font-semibold text-white tracking-tight">sao.ai</span>
+              <Switch
+                checked={characterEnabled}
+                onCheckedChange={setCharacterEnabled}
+                className="scale-75 ml-1"
+              />
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
                   <Sparkles size={10} /> Analyzing...
