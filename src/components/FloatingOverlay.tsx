@@ -396,7 +396,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           {/* File list */}
           <div ref={fileListRef} className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
             {filteredFiles.length === 0 && !sweepAnimating ? (
-              <EmptyState category={activeCategory} />
+              <EmptyState category={activeCategory} onScan={handleScanFolder} />
             ) : (
               <AnimatePresence mode="popLayout">
                 {filteredFiles.map((file) => {
