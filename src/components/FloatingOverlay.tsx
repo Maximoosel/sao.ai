@@ -380,7 +380,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
       if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
     };
-  }, [isMinimized, getOverlayPerimeterPos]);
+  }, [isMinimized, getTitleBarWalkPos]);
 
   if (isMinimized) {
     return (
