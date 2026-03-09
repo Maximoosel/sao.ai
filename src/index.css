@@ -366,14 +366,14 @@
 
   /* Ball squash and stretch - MORE stretch (15% elongation) */
   @keyframes squashStretch {
-    0%, 100% { transform: scaleX(1) scaleY(1); }      /* contact */
-    12.5% { transform: scaleX(1.12) scaleY(0.88); }   /* down - squash */
-    25% { transform: scaleX(1.04) scaleY(0.96); }     /* passing */
-    37.5% { transform: scaleX(0.85) scaleY(1.18); }   /* up - MORE stretch */
-    50% { transform: scaleX(1) scaleY(1); }           /* contact */
-    62.5% { transform: scaleX(1.12) scaleY(0.88); }   /* down - squash */
-    75% { transform: scaleX(1.04) scaleY(0.96); }     /* passing */
-    87.5% { transform: scaleX(0.85) scaleY(1.18); }   /* up - MORE stretch */
+    0%, 100% { transform: scaleX(1) scaleY(1); }
+    12.5% { transform: scaleX(1.04) scaleY(0.96); }
+    25% { transform: scaleX(1.02) scaleY(0.98); }
+    37.5% { transform: scaleX(0.95) scaleY(1.06); }
+    50% { transform: scaleX(1) scaleY(1); }
+    62.5% { transform: scaleX(1.04) scaleY(0.96); }
+    75% { transform: scaleX(1.02) scaleY(0.98); }
+    87.5% { transform: scaleX(0.95) scaleY(1.06); }
   }
 
   .animate-squash-stretch {
