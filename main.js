@@ -56,10 +56,11 @@ function createWindow() {
     win.setSize(ww, wh, true);
   });
 
-  // Get full screen dimensions for perimeter walking
+  // Get full screen dimensions (logical pixels, accounting for Retina scaleFactor)
   ipcMain.handle('get-screen-size', () => {
     const d = screen.getPrimaryDisplay();
-    return { width: d.size.width, height: d.size.height };
+    // Use workAreaSize (excludes menubar/dock) in logical pixels — works on all MacBook resolutions
+    return { width: d.workAreaSize.width, height: d.workAreaSize.height, scaleFactor: d.scaleFactor };
   });
   
   ipcMain.handle('select-directory', async () => {
