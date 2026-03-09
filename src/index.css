@@ -338,25 +338,30 @@
     animation: morphShape 6s ease-in-out infinite;
   }
 
-  /* Character idle animations */
-  @keyframes armSwingLeft {
-    0%, 100% { transform: rotate(15deg); }
-    50% { transform: rotate(-15deg); }
+  /* Body morph only (no rotation) — for character mode */
+  .animate-morph-body {
+    animation: morphShape 6s ease-in-out infinite;
   }
 
-  @keyframes armSwingRight {
-    0%, 100% { transform: rotate(-15deg); }
-    50% { transform: rotate(15deg); }
+  /* Marching animations — slow, deliberate */
+  @keyframes marchArmLeft {
+    0%, 100% { transform: rotate(12deg); }
+    50% { transform: rotate(-12deg); }
   }
 
-  @keyframes legWalkLeft {
-    0%, 100% { transform: rotate(20deg); }
-    50% { transform: rotate(-20deg); }
+  @keyframes marchArmRight {
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
   }
 
-  @keyframes legWalkRight {
-    0%, 100% { transform: rotate(-20deg); }
-    50% { transform: rotate(20deg); }
+  @keyframes marchLegLeft {
+    0%, 100% { transform: rotate(14deg); }
+    50% { transform: rotate(-14deg); }
+  }
+
+  @keyframes marchLegRight {
+    0%, 100% { transform: rotate(-14deg); }
+    50% { transform: rotate(14deg); }
   }
 
   @keyframes armRaisedLeft {
@@ -379,31 +384,26 @@
     50% { transform: rotate(5deg); }
   }
 
-  @keyframes bodyBounce {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-2px) scale(1.02); }
-  }
-
   @keyframes popIn {
     0% { opacity: 0; transform: scale(0); }
     60% { opacity: 1; transform: scale(1.2); }
     100% { opacity: 1; transform: scale(1); }
   }
 
-  .animate-arm-swing-left {
-    animation: armSwingLeft 0.4s ease-in-out infinite;
+  .animate-march-arm-left {
+    animation: marchArmLeft 0.8s ease-in-out infinite;
   }
 
-  .animate-arm-swing-right {
-    animation: armSwingRight 0.4s ease-in-out infinite;
+  .animate-march-arm-right {
+    animation: marchArmRight 0.8s ease-in-out infinite;
   }
 
-  .animate-leg-walk-left {
-    animation: legWalkLeft 0.4s ease-in-out infinite;
+  .animate-march-leg-left {
+    animation: marchLegLeft 0.8s ease-in-out infinite;
   }
 
-  .animate-leg-walk-right {
-    animation: legWalkRight 0.4s ease-in-out infinite;
+  .animate-march-leg-right {
+    animation: marchLegRight 0.8s ease-in-out infinite 0.4s;
   }
 
   .animate-arm-raised-left {
@@ -420,10 +420,6 @@
 
   .animate-leg-dangle-right {
     animation: legDangleRight 0.5s ease-in-out infinite 0.15s;
-  }
-
-  .animate-body-bounce {
-    animation: bodyBounce 0.4s ease-in-out infinite;
   }
 
   .animate-pop-in > * {

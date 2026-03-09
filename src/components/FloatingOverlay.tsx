@@ -329,19 +329,18 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setTimeout(() => {
           setLimbState('walking');
           
-          // Random walking
+          // Slow marching — deliberate pace
           let dir = 1;
           let posX = 0;
           walkIntervalRef.current = setInterval(() => {
-            posX += dir * (2 + Math.random() * 2);
+            posX += dir * 0.6;
             const maxX = window.innerWidth / 2 - 40;
             if (posX > maxX || posX < -maxX) {
               dir *= -1;
-              posX += dir * 4;
             }
-            setWalkPos({ x: posX, y: Math.sin(posX * 0.05) * 3 });
+            setWalkPos({ x: posX, y: 0 });
             setWalkDirection(dir);
-          }, 60);
+          }, 50);
         }, 600);
       }, 5000);
     }
