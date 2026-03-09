@@ -580,7 +580,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           </AnimatePresence>
 
           {/* Compact storage + actions */}
-          <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
+          <div ref={storageBorderRef} className="px-4 py-3 flex items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <StorageRing used={currentUsed} total={totalStorage} />
               {lastScanTime && (
