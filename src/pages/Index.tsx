@@ -3,7 +3,7 @@ import FloatingOverlay from '@/components/FloatingOverlay';
 import SplashScreen from '@/components/SplashScreen';
 import OnboardingTooltip from '@/components/OnboardingTooltip';
 
-const ONBOARDING_KEY = 'swept_onboarding_seen';
+const ONBOARDING_KEY = 'sao_onboarding_seen';
 
 const themes = [
   { name: 'Ocean', hsl: '214 100% 50%', preview: ['#0074ff', '#00a2ff', '#005ecb'] },
