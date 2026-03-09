@@ -389,13 +389,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         drag
         dragMomentum={false}
         dragElastic={0}
-        initial={{ scale: 0.8, opacity: 0, x: 0, y: 0 }}
+        dragConstraints={{ top: 0, left: 0, right: typeof window !== 'undefined' ? window.innerWidth - 36 : 500, bottom: typeof window !== 'undefined' ? window.innerHeight - 36 : 500 }}
+        initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         style={{ top: 16, left: '50%', marginLeft: -18 }}
         onPointerUp={(e) => {
-          // Only open if it wasn't a drag
           if (!minimizeDragLockRef.current) {
             setIsMinimized(false);
           }
@@ -412,16 +412,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   return (
       <div
         ref={overlayRef}
-        className="fixed z-[100] inset-0 flex flex-col w-full h-full"
+        className="fixed z-[100] inset-0 flex flex-col w-full h-full overflow-visible"
       >
-        {/* Walking character on overlay border */}
+        {/* Walking character on overlay border — rendered outside overflow container */}
         {showLimbs && limbState === 'walking' && (
           <motion.div
-            className="absolute z-[200] pointer-events-none"
-            style={{ left: 0, top: 0 }}
+            className="fixed z-[201] pointer-events-none"
             animate={{
               x: walkPos.x - 14,
-              y: -45,
+              y: -17,
               rotate: walkRotation,
               scaleY: walkFlipY,
             }}
