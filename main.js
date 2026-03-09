@@ -155,11 +155,7 @@ print(json.dumps(out))
     }
   });
 
-  // Get screen dimensions
-  ipcMain.handle('get-screen-size', () => {
-    const d = screen.getPrimaryDisplay();
-    return { width: d.workAreaSize.width, height: d.workAreaSize.height };
-  });
+  // Duplicate removed — get-screen-size is defined above
 }
 
 app.whenReady().then(createWindow);
