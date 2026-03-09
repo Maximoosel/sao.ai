@@ -447,11 +447,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           <motion.div
             className="absolute z-[201] pointer-events-none"
             style={{ left: 0, top: 0 }}
-            initial={{ x: 60 - 14, y: 22, scale: 1 }}
-            animate={{ x: 60 - 14, y: charTopY, scale: 1 }}
+            initial={{ x: 60 - 14, y: 22 }}
+            animate={{ x: 60 - 14, y: charTopY }}
             transition={{ 
-              duration: 0.7,
-              ease: [0.34, 1.56, 0.64, 1], // gentle overshoot
+              duration: 1.8,
+              ease: [0.25, 0.1, 0.25, 1],
             }}
           >
             <AbstractShape size={28} />
