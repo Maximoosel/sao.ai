@@ -325,10 +325,12 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const getTitleBarWalkPos = useCallback((x: number) => {
     const W = overlayDimsRef.current.w;
     const margin = 20;
+    // Right boundary: stop before the "Scanned Xm ago" text (~40% from right)
+    const rightLimit = W * 0.35;
     // Clamp and bounce
-    if (x >= W - margin) {
+    if (x >= rightLimit) {
       walkDirRef.current = -1;
-      x = W - margin;
+      x = rightLimit;
     } else if (x <= margin) {
       walkDirRef.current = 1;
       x = margin;
@@ -336,7 +338,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     return { x, y: 0, rotation: 0, flipY: 1, dir: walkDirRef.current };
   }, []);
 
-  const WALK_SPEED = 1.8;
+  const WALK_SPEED = 0.8;
   const TICK_MS = 50;
 
   // Start/stop walking based on minimized state
@@ -417,10 +419,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         {/* Walking character on overlay border — rendered outside overflow container */}
         {showLimbs && limbState === 'walking' && (
           <motion.div
-            className="fixed z-[201] pointer-events-none"
+            className="absolute z-[201] pointer-events-none"
+            style={{ left: 0, top: 0 }}
             animate={{
               x: walkPos.x - 14,
-              y: -17,
+              y: 103,
               rotate: walkRotation,
               scaleY: walkFlipY,
             }}
