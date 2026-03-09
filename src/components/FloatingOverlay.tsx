@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
-  ChevronDown, Undo2, History
+  ChevronDown, Undo2, History, ExternalLink
 } from 'lucide-react';
 import { AbstractShape } from './SplashScreen';
 import FileCard from './FileCard';
@@ -14,6 +14,7 @@ import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
 import { useDeviceStorage } from '@/hooks/useDeviceStorage';
 import { mockFiles, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { toast } from 'sonner';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
 
