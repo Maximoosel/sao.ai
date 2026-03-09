@@ -348,16 +348,12 @@
      4 frames: contact → down → passing → up
      ============================================ */
 
-  /* Whole character bounce - 4px up/down per step */
+  /* Whole character bounce - subtle */
   @keyframes walkBounce {
     0%, 100% { transform: translateY(0); }
-    12.5% { transform: translateY(1.5px); }
-    25% { transform: translateY(0.5px); }
-    37.5% { transform: translateY(-1px); }
+    25% { transform: translateY(-0.5px); }
     50% { transform: translateY(0); }
-    62.5% { transform: translateY(1.5px); }
-    75% { transform: translateY(0.5px); }
-    87.5% { transform: translateY(-1px); }
+    75% { transform: translateY(-0.5px); }
   }
 
   .animate-walk-bounce {
