@@ -23,7 +23,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [isExpanded, setIsExpanded] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
-  const [files, setFiles] = useState<SweepFile[]>(mockFiles);
+  const [files, setFiles] = useState<SweepFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeCategory, setActiveCategory] = useState<FileCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,7 +31,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [sweepResult, setSweepResult] = useState<{ count: number; size: number } | null>(null);
   const [showSortMenu, setShowSortMenu] = useState(false);
-  const [currentUsed, setCurrentUsed] = useState(usedStorage);
+  const [currentUsed, setCurrentUsed] = useState(0);
   const [sweepAnimating, setSweepAnimating] = useState(false);
   const [showTick, setShowTick] = useState(false);
   const [ballSpawns, setBallSpawns] = useState<{ id: string; topPct: number; leftPct: number }[]>([]);
@@ -188,6 +188,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     if (scanned.length > 0) {
       setFiles(scanned);
       setSelectedIds(new Set());
+      setCurrentUsed(scanned.reduce((sum, f) => sum + f.size, 0));
     }
     setLastScanTime(new Date());
   };

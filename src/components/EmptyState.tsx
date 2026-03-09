@@ -1,7 +1,7 @@
 import type { FileCategory } from '@/lib/mockData';
 
 const categoryMessages: Record<FileCategory | 'all', { emoji: string; title: string; desc: string }> = {
-  all: { emoji: '✨', title: 'All clear!', desc: 'No files need attention right now' },
+  all: { emoji: '📂', title: 'Ready to sweep', desc: 'Select a folder to start scanning files' },
   large: { emoji: '🪶', title: 'Nothing heavy here', desc: 'No large files detected' },
   old: { emoji: '🕐', title: 'No old files', desc: 'Everything looks recently used' },
   downloads: { emoji: '📥', title: 'Downloads clean', desc: 'No lingering downloads found' },
