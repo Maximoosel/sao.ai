@@ -231,16 +231,49 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
+        ref={minimizeBoundsRef}
         className="fixed z-[100] inset-0"
         style={{ WebkitAppRegion: 'drag' } as any}
       >
-        <div 
-          className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer"
+        <motion.div
+          drag
+          dragConstraints={minimizeBoundsRef}
+          dragMomentum={false}
+          dragElastic={0.12}
+          onDragStart={() => {
+            minimizeDragLockRef.current = true;
+          }}
+          onDragEnd={() => {
+            // let the click event (if any) flush first
+            requestAnimationFrame(() => {
+              minimizeDragLockRef.current = false;
+            });
+          }}
+          className="absolute top-4 left-1/2 -translate-x-1/2"
           style={{ WebkitAppRegion: 'no-drag' } as any}
-          onClick={() => setIsMinimized(false)}
         >
-          <AbstractShape size={28} />
-        </div>
+          <div className="relative">
+            <div
+              className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
+              style={{ WebkitAppRegion: 'drag' } as any}
+            >
+              <AbstractShape size={28} />
+            </div>
+
+            {/* Click target (kept small so the icon stays draggable in Electron) */}
+            <button
+              type="button"
+              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white/10 border border-white/15 text-white/80 text-[10px] leading-none flex items-center justify-center"
+              style={{ WebkitAppRegion: 'no-drag' } as any}
+              onClick={() => {
+                if (!minimizeDragLockRef.current) setIsMinimized(false);
+              }}
+              title="Open"
+            >
+              ↗
+            </button>
+          </div>
+        </motion.div>
       </div>
     );
   }
