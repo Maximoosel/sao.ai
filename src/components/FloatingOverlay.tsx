@@ -308,6 +308,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   };
 
   // Walking character state — walks the overlay border when maximized
+  const [characterEnabled, setCharacterEnabled] = useState(true);
   const [limbState, setLimbState] = useState<'idle' | 'bouncing' | 'popping' | 'walking'>('idle');
   const [showLimbs, setShowLimbs] = useState(false);
   const walkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
