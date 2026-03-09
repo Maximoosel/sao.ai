@@ -188,5 +188,24 @@ export function useFileScanner() {
     });
   }, []);
 
-  return { isScanning, scannedFiles, scanFolder };
+  const trashFiles = useCallback(async (filePaths: string[]) => {
+    if ('require' in window) {
+      try {
+        const { ipcRenderer } = (window as any).require('electron');
+        let successCount = 0;
+        for (const path of filePaths) {
+          const success = await ipcRenderer.invoke('trash-file', path);
+          if (success) successCount++;
+        }
+        return successCount === filePaths.length;
+      } catch (e) {
+        console.error('Failed to trash files:', e);
+        return false;
+      }
+    }
+    console.log('Not in Electron, skipping real trash for:', filePaths);
+    return false;
+  }, []);
+
+  return { isScanning, scannedFiles, scanFolder, trashFiles };
 }
