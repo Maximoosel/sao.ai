@@ -60,7 +60,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [recentlySwept, setRecentlySwept] = useState<SweptEntry[]>([]);
   const [showRecents, setShowRecents] = useState(false);
 
-  const { isScanning, scanFolder, trashFiles } = useFileScanner();
+  const { isScanning, scanFolder, trashFiles, scanProgress, scanETA } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
   // Resize electron window when expanded state changes
