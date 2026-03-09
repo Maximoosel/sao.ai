@@ -191,11 +191,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           description: `${formatSize(totalSwept)} freed · Restore anytime from Trash`,
           action: {
             label: 'Open Trash',
-            onClick: () => {
+            onClick: async () => {
               if ('require' in window) {
                 try {
-                  const { shell } = (window as any).require('electron');
-                  shell.openPath(`${process.env.HOME}/.Trash`);
+                  const { ipcRenderer } = (window as any).require('electron');
+                  await ipcRenderer.invoke('open-trash');
                 } catch (e) {
                   console.log('Could not open Trash');
                 }
