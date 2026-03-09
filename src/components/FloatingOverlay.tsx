@@ -410,8 +410,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             className="absolute z-[200] pointer-events-none"
             style={{ left: 0, top: 0 }}
             animate={{
-              x: walkPos.x - 20,
-              y: walkPos.y - 20,
+              x: walkPos.x - 14,
+              y: walkPos.y - 26,
               rotate: walkRotation,
               scaleY: walkFlipY,
             }}
