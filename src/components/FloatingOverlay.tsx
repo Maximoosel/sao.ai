@@ -53,32 +53,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
-  const applyPosition = useCallback(() => {
-    if (overlayRef.current) {
-      overlayRef.current.style.transform = `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`;
-    }
-  }, []);
-
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button, input, .no-drag')) return;
-    isDraggingRef.current = true;
-    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: posRef.current.x, origY: posRef.current.y };
-  }, []);
-
+  // Resize electron window when expanded state changes
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      if (!isDraggingRef.current || !dragRef.current) return;
-      const dx = e.clientX - dragRef.current.startX;
-      const dy = e.clientY - dragRef.current.startY;
-      posRef.current = { x: dragRef.current.origX + dx, y: dragRef.current.origY + dy };
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(applyPosition);
-    };
-    const onUp = () => { isDraggingRef.current = false; };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-  }, [applyPosition]);
+    if (typeof window !== 'undefined' && 'require' in window) {
+      try {
+        const { ipcRenderer } = (window as any).require('electron');
+        ipcRenderer.send('resize-window', isExpanded ? 800 : 420, isExpanded ? 600 : 600);
+      } catch (e) { console.log('Not in electron'); }
+    }
+  }, [isExpanded]);
 
   // Keyboard shortcuts
   useEffect(() => {
