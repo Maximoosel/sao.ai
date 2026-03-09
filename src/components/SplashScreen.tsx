@@ -148,8 +148,6 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkDirection = 1 }: { size?: number; showLimbs?: boolean; limbState?: 'idle' | 'walking' | 'picked-up' | 'popping'; walkDirection?: number }) => {
   const limbClass = limbState === 'popping' ? 'animate-pop-in' : '';
   const isWalking = limbState === 'walking';
-  // Backpack on opposite side of walking direction
-  const backpackSide = walkDirection === 1 ? 'left' : 'right';
   
   return (
     <svg 
@@ -159,7 +157,6 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
       className={`overflow-visible ${isWalking ? 'animate-walk-bounce' : ''}`}
     >
       <defs>
-        {/* Subtle gradient with smooth rotation */}
         <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#5A7A7A" />
           <stop offset="35%" stopColor="#7A9A9A" />
@@ -181,9 +178,8 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        {/* Red glow for scanner tip */}
         <filter id="red-glow">
-          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge>
             <feMergeNode in="blur" />
             <feMergeNode in="SourceGraphic" />
@@ -191,73 +187,7 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
         </filter>
       </defs>
       
-      {/* Backpack - on opposite side of walking direction */}
-      {showLimbs && (
-        <g className={`${limbClass} ${isWalking ? 'animate-backpack-bob' : ''}`} 
-           style={{ transformOrigin: '50px 50px' }}>
-          {backpackSide === 'left' ? (
-            // Backpack on left side (walking right)
-            <g>
-              <rect x="10" y="25" width="28" height="45" rx="6" ry="6" 
-                fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
-              />
-              {/* Crosshatch lines */}
-              <line x1="14" y1="30" x2="34" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="14" y1="40" x2="34" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="14" y1="50" x2="30" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="34" y1="30" x2="14" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="34" y1="40" x2="14" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="34" y1="50" x2="18" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              {/* Backpack strap */}
-              <path d="M38 35 Q45 38 45 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M38 55 Q45 52 45 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-              {/* Backpack flap */}
-              <path d="M12 25 Q24 18 36 25" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-              {/* Scanner hanging from pocket */}
-              {isWalking && (
-                <g>
-                  <line x1="22" y1="70" x2="22" y2="82" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
-                  <circle cx="22" cy="85" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
-                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
-                  <circle cx="22" cy="85" r="6" fill="#ff3b3b" opacity="0.15">
-                    <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
-                </g>
-              )}
-            </g>
-          ) : (
-            // Backpack on right side (walking left)
-            <g>
-              <rect x="62" y="25" width="28" height="45" rx="6" ry="6" 
-                fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
-              />
-              <line x1="66" y1="30" x2="86" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="66" y1="40" x2="86" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="66" y1="50" x2="82" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="86" y1="30" x2="66" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="86" y1="40" x2="66" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <line x1="86" y1="50" x2="70" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-              <path d="M62 35 Q55 38 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M62 55 Q55 52 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-              <path d="M64 25 Q76 18 88 25" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-              {isWalking && (
-                <g>
-                  <line x1="78" y1="70" x2="78" y2="82" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
-                  <circle cx="78" cy="85" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
-                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
-                  <circle cx="78" cy="85" r="6" fill="#ff3b3b" opacity="0.15">
-                    <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
-                </g>
-              )}
-            </g>
-          )}
-        </g>
-      )}
-      
-      {/* Main ball body — squash and stretch when walking */}
+      {/* Main ball body */}
       <g className={isWalking ? 'animate-squash-stretch' : ''} style={{ transformOrigin: '50px 50px' }}>
         <path
           d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
@@ -268,59 +198,81 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
         />
       </g>
       
-      {/* Scanner arm - forward arm extending from body edge at 45° */}
+      {/* Scanner arm — the arm IS the scanner, curving from body edge to ground */}
       {showLimbs && isWalking && (
         <g style={{ transformOrigin: '50px 50px' }}>
           {walkDirection === 1 ? (
-            /* Walking right — arm on right side, starts from body edge */
             <g>
-              {/* Arm from body edge outward */}
-              <path d="M82 60 Q90 72 92 82" fill="none" stroke="#1a1a1a" strokeWidth="7" strokeLinecap="round" />
-              {/* Wand/scanner stick - thicker */}
-              <line x1="92" y1="82" x2="100" y2="135" stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round" />
-              {/* Scanner tip group — sweeps with footsteps */}
+              {/* Arm-scanner from body edge to ground */}
+              <path d="M84 55 Q92 75 98 100 Q101 118 100 138" fill="none" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" />
+              <circle cx="84" cy="55" r="4" fill="#1a1a1a" opacity="0.6" />
+              {/* Tip sweeps with footsteps */}
               <g className="animate-scanner-sweep">
-                {/* Bright red glow dot */}
-                <circle cx="100" cy="137" r="4.5" fill="#ff2020" filter="url(#red-glow)">
-                  <animate attributeName="opacity" values="1;0.3;1" dur="0.4s" repeatCount="indefinite" />
+                <circle cx="100" cy="141" r="5" fill="#ff2020" filter="url(#red-glow)">
+                  <animate attributeName="opacity" values="1;0.2;1" dur="0.4s" repeatCount="indefinite" />
                 </circle>
-                {/* Outer glow pulse */}
-                <circle cx="100" cy="137" r="10" fill="#ff2020" opacity="0.2">
-                  <animate attributeName="r" values="7;13;7" dur="0.4s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.25;0.08;0.25" dur="0.4s" repeatCount="indefinite" />
+                <circle cx="100" cy="141" r="12" fill="#ff2020" opacity="0.15">
+                  <animate attributeName="r" values="8;16;8" dur="0.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.2;0.04;0.2" dur="0.4s" repeatCount="indefinite" />
                 </circle>
-                {/* Faint scan line on floor */}
-                <line x1="92" y1="145" x2="108" y2="145" stroke="#ff2020" strokeWidth="2" strokeLinecap="round" opacity="0.4">
+                <line x1="90" y1="148" x2="110" y2="148" stroke="#ff2020" strokeWidth="2" strokeLinecap="round" opacity="0.35">
                   <animate attributeName="opacity" values="0.5;0;0.5" dur="0.3s" repeatCount="indefinite" />
                 </line>
+                {/* Sparkle particles */}
+                <circle cx="96" cy="146" r="1.5" fill="#ff6b6b" opacity="0">
+                  <animate attributeName="opacity" values="0;0.9;0" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cy" values="146;138;146" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cx" values="96;91;96" dur="0.55s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="104" cy="146" r="1" fill="#ffaaaa" opacity="0">
+                  <animate attributeName="opacity" values="0;1;0" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cy" values="146;136;146" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cx" values="104;109;104" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                </circle>
+                <circle cx="100" cy="146" r="1.2" fill="#ff4444" opacity="0">
+                  <animate attributeName="opacity" values="0;1;0" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
+                  <animate attributeName="cy" values="146;134;146" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
+                </circle>
               </g>
             </g>
           ) : (
-            /* Walking left — arm on left side */
             <g>
-              <path d="M18 60 Q10 72 8 82" fill="none" stroke="#1a1a1a" strokeWidth="7" strokeLinecap="round" />
-              <line x1="8" y1="82" x2="0" y2="135" stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round" />
+              <path d="M16 55 Q8 75 2 100 Q-1 118 0 138" fill="none" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" />
+              <circle cx="16" cy="55" r="4" fill="#1a1a1a" opacity="0.6" />
               <g className="animate-scanner-sweep">
-                <circle cx="0" cy="137" r="4.5" fill="#ff2020" filter="url(#red-glow)">
-                  <animate attributeName="opacity" values="1;0.3;1" dur="0.4s" repeatCount="indefinite" />
+                <circle cx="0" cy="141" r="5" fill="#ff2020" filter="url(#red-glow)">
+                  <animate attributeName="opacity" values="1;0.2;1" dur="0.4s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="0" cy="137" r="10" fill="#ff2020" opacity="0.2">
-                  <animate attributeName="r" values="7;13;7" dur="0.4s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.25;0.08;0.25" dur="0.4s" repeatCount="indefinite" />
+                <circle cx="0" cy="141" r="12" fill="#ff2020" opacity="0.15">
+                  <animate attributeName="r" values="8;16;8" dur="0.4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.2;0.04;0.2" dur="0.4s" repeatCount="indefinite" />
                 </circle>
-                <line x1="-8" y1="145" x2="8" y2="145" stroke="#ff2020" strokeWidth="2" strokeLinecap="round" opacity="0.4">
+                <line x1="-10" y1="148" x2="10" y2="148" stroke="#ff2020" strokeWidth="2" strokeLinecap="round" opacity="0.35">
                   <animate attributeName="opacity" values="0.5;0;0.5" dur="0.3s" repeatCount="indefinite" />
                 </line>
+                <circle cx="-4" cy="146" r="1.5" fill="#ff6b6b" opacity="0">
+                  <animate attributeName="opacity" values="0;0.9;0" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cy" values="146;138;146" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cx" values="-4;-9;-4" dur="0.55s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="4" cy="146" r="1" fill="#ffaaaa" opacity="0">
+                  <animate attributeName="opacity" values="0;1;0" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cy" values="146;136;146" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cx" values="4;9;4" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                </circle>
+                <circle cx="0" cy="146" r="1.2" fill="#ff4444" opacity="0">
+                  <animate attributeName="opacity" values="0;1;0" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
+                  <animate attributeName="cy" values="146;134;146" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
+                </circle>
               </g>
             </g>
           )}
         </g>
       )}
 
-      {/* Legs - rounded jelly-like soft curves */}
+      {/* Legs */}
       {showLimbs && (
         <g className={limbClass}>
-          {/* Left leg - soft rounded jelly */}
           <g className={isWalking ? 'animate-leg-pendulum-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
              style={{ transformOrigin: '42px 85px' }}>
             <path 
@@ -333,7 +285,6 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
             )}
           </g>
           
-          {/* Right leg - soft rounded jelly */}
           <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
              style={{ transformOrigin: '58px 85px' }}>
             <path 
