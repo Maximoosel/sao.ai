@@ -438,7 +438,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             }, TICK_MS);
           }, 600);
         }, 2000); // wait for the 1.8s roll to finish
-      }, 10000);
+      }, 3000);
     } else {
       setShowLimbs(false);
       setLimbState('idle');
