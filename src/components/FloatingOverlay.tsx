@@ -159,18 +159,19 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     
     setSweepAnimating(true);
     
-    setTimeout(() => {
+    setTimeout(async () => {
+      // Actually trash the files
+      const pathsToTrash = swept.map(f => f.path).filter(p => p !== 'Unknown' && !p.startsWith('mock/'));
+      if (pathsToTrash.length > 0) {
+        await trashFiles(pathsToTrash);
+      }
+
       setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
       setCurrentUsed(prev => prev - totalSwept);
       setSelectedIds(new Set());
       setSweepAnimating(false);
       setShowTick(true);
       setSweepResult({ count: swept.length, size: totalSwept });
-
-      // Save for undo
-      setUndoData({ files: swept, size: totalSwept });
-      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-      undoTimerRef.current = setTimeout(() => setUndoData(null), 10000);
 
       // Add to recents
       setRecentlySwept(prev => [{ files: swept, totalSize: totalSwept, timestamp: new Date() }, ...prev].slice(0, 20));
@@ -180,7 +181,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setSweepResult(null);
       }, 1200);
     }, 1200);
-  }, [files, selectedIds]);
+  }, [files, selectedIds, trashFiles]);
 
   const handleScanFolder = async () => {
     const scanned = await scanFolder();
