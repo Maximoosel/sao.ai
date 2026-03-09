@@ -307,40 +307,93 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   };
 
   // Idle animation state for minimized mode
-  const [limbState, setLimbState] = useState<'idle' | 'popping' | 'walking' | 'picked-up'>('idle');
+  const [limbState, setLimbState] = useState<'idle' | 'popping' | 'walking' | 'picked-up' | 'jumping'>('idle');
   const [showLimbs, setShowLimbs] = useState(false);
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [walkPos, setWalkPos] = useState({ x: 0, y: 0 });
-  const [walkDirection, setWalkDirection] = useState(1); // 1 = right, -1 = left
+  const [walkDirection, setWalkDirection] = useState(1);
+  const currentPlatformRef = useRef<Platform | null>(null);
+  const posXRef = useRef(0);
+  const dirRef = useRef(1);
 
-  // Start idle timer when minimized
+  // Platform detection — polls for window positions when minimized
+  const { platforms, screenSize } = useWindowPlatforms(isMinimized);
+
+  // Pick the best platform to walk on (topmost, widest)
+  const pickPlatform = useCallback((plats: Platform[], currentX: number): Platform | null => {
+    if (plats.length === 0) return null;
+    // Prefer platforms the character is currently above/on
+    const charSize = 40;
+    const onPlatform = plats.filter(p => 
+      currentX >= p.x - charSize && currentX <= p.x + p.width + charSize
+    );
+    if (onPlatform.length > 0) {
+      // Pick the highest (lowest y value) platform the character overlaps
+      return onPlatform.reduce((best, p) => p.y < best.y ? p : best, onPlatform[0]);
+    }
+    // Otherwise pick the widest platform
+    return plats.reduce((best, p) => p.width > best.width ? p : best, plats[0]);
+  }, []);
+
+  // Start walking when minimized
   useEffect(() => {
     if (isMinimized) {
       setShowLimbs(false);
       setLimbState('idle');
       setWalkPos({ x: 0, y: 0 });
+      posXRef.current = window.innerWidth / 2;
+      dirRef.current = 1;
 
       idleTimerRef.current = setTimeout(() => {
-        // Pop limbs out
         setShowLimbs(true);
         setLimbState('popping');
         
-        // After pop animation, start walking
         setTimeout(() => {
           setLimbState('walking');
           
-          // Slow marching — deliberate pace
-          let dir = 1;
-          let posX = 0;
           walkIntervalRef.current = setInterval(() => {
-            posX += dir * 1.2;
-            const maxX = window.innerWidth / 2 - 40;
-            if (posX > maxX || posX < -maxX) {
-              dir *= -1;
+            const plat = pickPlatform(platforms, posXRef.current);
+            const prevPlat = currentPlatformRef.current;
+            
+            // Detect platform change — trigger hop
+            if (plat && prevPlat && plat.id !== prevPlat.id) {
+              setLimbState('jumping');
+              setTimeout(() => setLimbState('walking'), 300);
             }
-            setWalkPos({ x: posX, y: 0 });
-            setWalkDirection(dir);
+            currentPlatformRef.current = plat;
+
+            if (plat) {
+              // Walk within platform bounds
+              const minX = plat.x + 20;
+              const maxX = plat.x + plat.width - 20;
+              
+              posXRef.current += dirRef.current * 1.2;
+              
+              if (posXRef.current > maxX) {
+                dirRef.current = -1;
+                posXRef.current = maxX;
+              } else if (posXRef.current < minX) {
+                dirRef.current = 1;
+                posXRef.current = minX;
+              }
+
+              // In web preview, map platform Y to viewport coordinates
+              // In Electron, these would be screen coordinates used to position the overlay window
+              const viewportY = Math.min(plat.y, window.innerHeight - 60);
+
+              setWalkPos({ x: posXRef.current - window.innerWidth / 2, y: viewportY });
+              setWalkDirection(dirRef.current);
+            } else {
+              // Fallback: walk along bottom
+              posXRef.current += dirRef.current * 1.2;
+              const maxX = window.innerWidth - 40;
+              if (posXRef.current > maxX || posXRef.current < 40) {
+                dirRef.current *= -1;
+              }
+              setWalkPos({ x: posXRef.current - window.innerWidth / 2, y: window.innerHeight - 60 });
+              setWalkDirection(dirRef.current);
+            }
           }, 100);
         }, 600);
       }, 5000);
@@ -350,7 +403,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
     };
-  }, [isMinimized]);
+  }, [isMinimized, platforms, pickPlatform]);
 
   // Reset idle timer on interaction
   const resetIdleTimer = useCallback(() => {
@@ -358,6 +411,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     setLimbState('idle');
     setShowLimbs(false);
     setWalkPos({ x: 0, y: 0 });
+    currentPlatformRef.current = null;
 
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
     idleTimerRef.current = setTimeout(() => {
@@ -365,33 +419,54 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setLimbState('popping');
       setTimeout(() => {
         setLimbState('walking');
-        let dir = 1;
-        let posX = 0;
+        posXRef.current = window.innerWidth / 2;
+        dirRef.current = 1;
         walkIntervalRef.current = setInterval(() => {
-          posX += dir * 1.2;
-          const maxX = window.innerWidth / 2 - 40;
-          if (posX > maxX || posX < -maxX) {
-            dir *= -1;
+          const plat = pickPlatform(platforms, posXRef.current);
+          currentPlatformRef.current = plat;
+          if (plat) {
+            const minX = plat.x + 20;
+            const maxX = plat.x + plat.width - 20;
+            posXRef.current += dirRef.current * 1.2;
+            if (posXRef.current > maxX) { dirRef.current = -1; posXRef.current = maxX; }
+            else if (posXRef.current < minX) { dirRef.current = 1; posXRef.current = minX; }
+            const viewportY = Math.min(plat.y, window.innerHeight - 60);
+            setWalkPos({ x: posXRef.current - window.innerWidth / 2, y: viewportY });
+            setWalkDirection(dirRef.current);
+          } else {
+            posXRef.current += dirRef.current * 1.2;
+            const maxX = window.innerWidth - 40;
+            if (posXRef.current > maxX || posXRef.current < 40) dirRef.current *= -1;
+            setWalkPos({ x: posXRef.current - window.innerWidth / 2, y: window.innerHeight - 60 });
+            setWalkDirection(dirRef.current);
           }
-          setWalkPos({ x: posX, y: 0 });
-          setWalkDirection(dir);
         }, 100);
       }, 600);
     }, 5000);
-  }, []);
+  }, [platforms, pickPlatform]);
 
   if (isMinimized) {
+    const isJumping = limbState === 'jumping';
     return (
       <div
-        className="fixed z-[100] top-4 left-0 right-0 flex justify-center pointer-events-none"
+        className="fixed z-[100] inset-0 pointer-events-none"
       >
         <motion.div
-          className="pointer-events-auto"
+          className="pointer-events-auto absolute"
+          style={{ left: '50%', top: 0 }}
           animate={{
-            x: limbState === 'walking' ? walkPos.x : 0,
-            y: walkPos.y,
+            x: limbState === 'walking' || isJumping ? walkPos.x : 0,
+            y: limbState === 'walking' || isJumping ? walkPos.y : 4,
+            scale: isJumping ? 1.15 : 1,
+            rotate: isJumping ? (walkDirection * -8) : 0,
           }}
-          transition={limbState === 'walking' ? { duration: 0.08, ease: 'linear' } : { type: 'spring', stiffness: 300, damping: 25 }}
+          transition={
+            isJumping
+              ? { type: 'spring', stiffness: 200, damping: 12 }
+              : limbState === 'walking'
+              ? { duration: 0.08, ease: 'linear' }
+              : { type: 'spring', stiffness: 300, damping: 25 }
+          }
         >
           <div
             className="cursor-pointer"
@@ -400,7 +475,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               setIsMinimized(false);
             }}
           >
-            <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} walkDirection={walkDirection} />
+            <AbstractShape size={40} showLimbs={showLimbs} limbState={isJumping ? 'walking' : limbState} walkDirection={walkDirection} />
           </div>
         </motion.div>
       </div>
