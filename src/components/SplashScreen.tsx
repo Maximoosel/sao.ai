@@ -163,14 +163,16 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
           <stop offset="60%" stopColor="#D4A5B0" />
           <stop offset="80%" stopColor="#B87A8C" />
           <stop offset="100%" stopColor="#5A1F2A" />
-          <animateTransform
-            attributeName="gradientTransform"
-            type="rotate"
-            from="0 50 50"
-            to="360 50 50"
-            dur="6s"
-            repeatCount="indefinite"
-          />
+          {showLimbs && (
+            <animateTransform
+              attributeName="gradientTransform"
+              type="rotate"
+              from="0 50 50"
+              to="360 50 50"
+              dur="6s"
+              repeatCount="indefinite"
+            />
+          )}
         </linearGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="3" result="blur" />
