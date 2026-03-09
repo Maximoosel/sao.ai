@@ -333,7 +333,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       walkDirRef.current = 1;
       x = margin;
     }
-    return { x, y: titleBarHeight, rotation: 0, flipY: 1, dir: walkDirRef.current };
+    return { x, y: 0, rotation: 0, flipY: 1, dir: walkDirRef.current };
   }, []);
 
   const WALK_SPEED = 1.8;
