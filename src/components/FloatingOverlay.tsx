@@ -393,7 +393,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             }, TICK_MS);
           }, 600);
         }, 800);
-      }, 4000);
+      }, 10000);
     } else {
       setShowLimbs(false);
       setLimbState('idle');
