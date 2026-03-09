@@ -39,8 +39,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 40%, #24243e 100%)' }}>
+    <div className="min-h-screen relative overflow-hidden bg-transparent">
       {/* Ambient glow blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full opacity-30 blur-3xl"
