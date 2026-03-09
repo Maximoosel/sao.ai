@@ -305,11 +305,87 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     relevance: 'Keep Priority',
   };
 
+  // Idle animation state for minimized mode
+  const [limbState, setLimbState] = useState<'idle' | 'popping' | 'walking' | 'picked-up'>('idle');
+  const [showLimbs, setShowLimbs] = useState(false);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const walkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [walkPos, setWalkPos] = useState({ x: 0, y: 0 });
+  const [walkDirection, setWalkDirection] = useState(1); // 1 = right, -1 = left
+
+  // Start idle timer when minimized
+  useEffect(() => {
+    if (isMinimized) {
+      setShowLimbs(false);
+      setLimbState('idle');
+      setWalkPos({ x: 0, y: 0 });
+
+      idleTimerRef.current = setTimeout(() => {
+        // Pop limbs out
+        setShowLimbs(true);
+        setLimbState('popping');
+        
+        // After pop animation, start walking
+        setTimeout(() => {
+          setLimbState('walking');
+          
+          // Random walking
+          let dir = 1;
+          let posX = 0;
+          walkIntervalRef.current = setInterval(() => {
+            posX += dir * (2 + Math.random() * 2);
+            const maxX = window.innerWidth / 2 - 40;
+            if (posX > maxX || posX < -maxX) {
+              dir *= -1;
+              posX += dir * 4;
+            }
+            setWalkPos({ x: posX, y: Math.sin(posX * 0.05) * 3 });
+            setWalkDirection(dir);
+          }, 60);
+        }, 600);
+      }, 5000);
+    }
+    
+    return () => {
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+      if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
+    };
+  }, [isMinimized]);
+
+  // Reset idle timer on interaction
+  const resetIdleTimer = useCallback(() => {
+    if (walkIntervalRef.current) { clearInterval(walkIntervalRef.current); walkIntervalRef.current = null; }
+    setLimbState('idle');
+    setShowLimbs(false);
+    setWalkPos({ x: 0, y: 0 });
+
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    idleTimerRef.current = setTimeout(() => {
+      setShowLimbs(true);
+      setLimbState('popping');
+      setTimeout(() => {
+        setLimbState('walking');
+        let dir = 1;
+        let posX = 0;
+        walkIntervalRef.current = setInterval(() => {
+          posX += dir * (2 + Math.random() * 2);
+          const maxX = window.innerWidth / 2 - 40;
+          if (posX > maxX || posX < -maxX) {
+            dir *= -1;
+            posX += dir * 4;
+          }
+          setWalkPos({ x: posX, y: Math.sin(posX * 0.05) * 3 });
+          setWalkDirection(dir);
+        }, 60);
+      }, 600);
+    }, 5000);
+  }, []);
+
   if (isMinimized) {
     return (
       <div
         ref={minimizeBoundsRef}
-        className="fixed z-[100] inset-0"
+        className="fixed z-[100] inset-0 pointer-events-none"
         style={{ WebkitAppRegion: 'drag' } as any}
       >
         <motion.div
@@ -319,14 +395,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           dragElastic={0.12}
           onDragStart={() => {
             minimizeDragLockRef.current = true;
+            if (walkIntervalRef.current) { clearInterval(walkIntervalRef.current); walkIntervalRef.current = null; }
+            if (showLimbs) setLimbState('picked-up');
           }}
           onDragEnd={() => {
             requestAnimationFrame(() => {
               minimizeDragLockRef.current = false;
             });
+            resetIdleTimer();
           }}
-          className="absolute top-4 left-1/2 -translate-x-1/2"
-          style={{ WebkitAppRegion: 'no-drag' } as any}
+          className="absolute top-4 left-1/2 pointer-events-auto"
+          animate={{
+            x: limbState === 'walking' ? walkPos.x - 20 : -20,
+            y: walkPos.y,
+          }}
+          transition={limbState === 'walking' ? { duration: 0.06, ease: 'linear' } : { type: 'spring', stiffness: 300, damping: 25 }}
+          style={{ 
+            WebkitAppRegion: 'no-drag',
+            scaleX: walkDirection === -1 ? -1 : 1,
+          } as any}
         >
           <motion.div
             className="cursor-pointer"
@@ -337,7 +424,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
-            <AbstractShape size={40} showLimbs={true} />
+            <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} />
           </motion.div>
         </motion.div>
       </div>
