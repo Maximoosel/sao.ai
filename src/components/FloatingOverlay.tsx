@@ -29,6 +29,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const minimizeDragLockRef = useRef(false);
 
   const isElectron = useMemo(() => typeof window !== 'undefined' && 'require' in (window as any), []);
+  const { totalStorage, usedStorage: deviceUsedStorage } = useDeviceStorage();
 
   const [files, setFiles] = useState<SweepFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
