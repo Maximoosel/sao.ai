@@ -121,7 +121,7 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
             transition={{ delay: 0.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <h1 className="text-2xl font-black tracking-tight text-white">
-              swept.ai
+              sao.ai
             </h1>
             <p className="mt-1.5 text-[10px] font-medium text-white/50 tracking-[0.1em] uppercase">
               Smart File Intelligence
