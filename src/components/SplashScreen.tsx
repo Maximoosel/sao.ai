@@ -198,71 +198,87 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
         />
       </g>
       
-      {/* Scanner arm — the arm IS the scanner, curving from body edge to ground */}
+      {/* Scanner arm — straight thick arm holding a boxy scanner device that shoots red beam down */}
       {showLimbs && isWalking && (
         <g style={{ transformOrigin: '50px 50px' }}>
           {walkDirection === 1 ? (
             <g>
-              {/* Arm-scanner from body edge to ground */}
-              <path d="M84 55 Q92 75 98 100 Q101 118 100 138" fill="none" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" />
-              <circle cx="84" cy="55" r="4" fill="#1a1a1a" opacity="0.6" />
-              {/* Tip sweeps with footsteps */}
+              {/* Thick straight arm from body edge, angled down at ~45° */}
+              <line x1="85" y1="50" x2="105" y2="95" stroke="#1a1a1a" strokeWidth="7" strokeLinecap="round" />
+              {/* Scanner device box at end of arm */}
+              <rect x="97" y="90" width="16" height="12" rx="3" ry="3" fill="#1a1a1a" />
+              <rect x="99" y="92" width="12" height="3" rx="1" fill="#333" />
+              {/* Small antenna nub on scanner */}
+              <line x1="108" y1="90" x2="110" y2="85" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" />
+              {/* Red beam shooting from scanner to floor */}
               <g className="animate-scanner-sweep">
-                <circle cx="100" cy="141" r="5" fill="#ff2020" filter="url(#red-glow)">
-                  <animate attributeName="opacity" values="1;0.2;1" dur="0.4s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="100" cy="141" r="12" fill="#ff2020" opacity="0.15">
-                  <animate attributeName="r" values="8;16;8" dur="0.4s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.2;0.04;0.2" dur="0.4s" repeatCount="indefinite" />
-                </circle>
-                <line x1="90" y1="148" x2="110" y2="148" stroke="#ff2020" strokeWidth="2" strokeLinecap="round" opacity="0.35">
-                  <animate attributeName="opacity" values="0.5;0;0.5" dur="0.3s" repeatCount="indefinite" />
+                {/* Main beam - triangular spread */}
+                <polygon points="100,102 96,148 116,148" fill="url(#beam-grad-r)" opacity="0.5">
+                  <animate attributeName="opacity" values="0.5;0.25;0.5" dur="0.4s" repeatCount="indefinite" />
+                </polygon>
+                {/* Core beam line */}
+                <line x1="105" y1="102" x2="105" y2="148" stroke="#ff2020" strokeWidth="1.5" opacity="0.6">
+                  <animate attributeName="opacity" values="0.7;0.3;0.7" dur="0.4s" repeatCount="indefinite" />
                 </line>
+                {/* Red line on floor where beam hits */}
+                <line x1="92" y1="148" x2="118" y2="148" stroke="#ff2020" strokeWidth="3" strokeLinecap="round" opacity="0.6">
+                  <animate attributeName="opacity" values="0.7;0.2;0.7" dur="0.4s" repeatCount="indefinite" />
+                </line>
+                {/* Floor glow */}
+                <ellipse cx="105" cy="149" rx="14" ry="4" fill="#ff2020" opacity="0.15">
+                  <animate attributeName="opacity" values="0.2;0.06;0.2" dur="0.4s" repeatCount="indefinite" />
+                  <animate attributeName="rx" values="12;18;12" dur="0.4s" repeatCount="indefinite" />
+                </ellipse>
                 {/* Sparkle particles */}
-                <circle cx="96" cy="146" r="1.5" fill="#ff6b6b" opacity="0">
+                <circle cx="96" cy="148" r="1.5" fill="#ff6b6b" opacity="0">
                   <animate attributeName="opacity" values="0;0.9;0" dur="0.55s" repeatCount="indefinite" />
-                  <animate attributeName="cy" values="146;138;146" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cy" values="148;140;148" dur="0.55s" repeatCount="indefinite" />
                   <animate attributeName="cx" values="96;91;96" dur="0.55s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="104" cy="146" r="1" fill="#ffaaaa" opacity="0">
+                <circle cx="114" cy="148" r="1" fill="#ffaaaa" opacity="0">
                   <animate attributeName="opacity" values="0;1;0" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
-                  <animate attributeName="cy" values="146;136;146" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
-                  <animate attributeName="cx" values="104;109;104" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cy" values="148;138;148" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cx" values="114;119;114" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
                 </circle>
-                <circle cx="100" cy="146" r="1.2" fill="#ff4444" opacity="0">
+                <circle cx="105" cy="148" r="1.2" fill="#ff4444" opacity="0">
                   <animate attributeName="opacity" values="0;1;0" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
-                  <animate attributeName="cy" values="146;134;146" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
+                  <animate attributeName="cy" values="148;136;148" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
                 </circle>
               </g>
             </g>
           ) : (
             <g>
-              <path d="M16 55 Q8 75 2 100 Q-1 118 0 138" fill="none" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" />
-              <circle cx="16" cy="55" r="4" fill="#1a1a1a" opacity="0.6" />
+              <line x1="15" y1="50" x2="-5" y2="95" stroke="#1a1a1a" strokeWidth="7" strokeLinecap="round" />
+              <rect x="-13" y="90" width="16" height="12" rx="3" ry="3" fill="#1a1a1a" />
+              <rect x="-11" y="92" width="12" height="3" rx="1" fill="#333" />
+              <line x1="-8" y1="90" x2="-10" y2="85" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" />
               <g className="animate-scanner-sweep">
-                <circle cx="0" cy="141" r="5" fill="#ff2020" filter="url(#red-glow)">
-                  <animate attributeName="opacity" values="1;0.2;1" dur="0.4s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="0" cy="141" r="12" fill="#ff2020" opacity="0.15">
-                  <animate attributeName="r" values="8;16;8" dur="0.4s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.2;0.04;0.2" dur="0.4s" repeatCount="indefinite" />
-                </circle>
-                <line x1="-10" y1="148" x2="10" y2="148" stroke="#ff2020" strokeWidth="2" strokeLinecap="round" opacity="0.35">
-                  <animate attributeName="opacity" values="0.5;0;0.5" dur="0.3s" repeatCount="indefinite" />
+                <polygon points="0,102 -16,148 4,148" fill="url(#beam-grad-l)" opacity="0.5">
+                  <animate attributeName="opacity" values="0.5;0.25;0.5" dur="0.4s" repeatCount="indefinite" />
+                </polygon>
+                <line x1="-5" y1="102" x2="-5" y2="148" stroke="#ff2020" strokeWidth="1.5" opacity="0.6">
+                  <animate attributeName="opacity" values="0.7;0.3;0.7" dur="0.4s" repeatCount="indefinite" />
                 </line>
-                <circle cx="-4" cy="146" r="1.5" fill="#ff6b6b" opacity="0">
+                <line x1="-18" y1="148" x2="8" y2="148" stroke="#ff2020" strokeWidth="3" strokeLinecap="round" opacity="0.6">
+                  <animate attributeName="opacity" values="0.7;0.2;0.7" dur="0.4s" repeatCount="indefinite" />
+                </line>
+                <ellipse cx="-5" cy="149" rx="14" ry="4" fill="#ff2020" opacity="0.15">
+                  <animate attributeName="opacity" values="0.2;0.06;0.2" dur="0.4s" repeatCount="indefinite" />
+                  <animate attributeName="rx" values="12;18;12" dur="0.4s" repeatCount="indefinite" />
+                </ellipse>
+                <circle cx="-14" cy="148" r="1.5" fill="#ff6b6b" opacity="0">
                   <animate attributeName="opacity" values="0;0.9;0" dur="0.55s" repeatCount="indefinite" />
-                  <animate attributeName="cy" values="146;138;146" dur="0.55s" repeatCount="indefinite" />
-                  <animate attributeName="cx" values="-4;-9;-4" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cy" values="148;140;148" dur="0.55s" repeatCount="indefinite" />
+                  <animate attributeName="cx" values="-14;-19;-14" dur="0.55s" repeatCount="indefinite" />
                 </circle>
-                <circle cx="4" cy="146" r="1" fill="#ffaaaa" opacity="0">
+                <circle cx="4" cy="148" r="1" fill="#ffaaaa" opacity="0">
                   <animate attributeName="opacity" values="0;1;0" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
-                  <animate attributeName="cy" values="146;136;146" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
+                  <animate attributeName="cy" values="148;138;148" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
                   <animate attributeName="cx" values="4;9;4" dur="0.45s" repeatCount="indefinite" begin="0.15s" />
                 </circle>
-                <circle cx="0" cy="146" r="1.2" fill="#ff4444" opacity="0">
+                <circle cx="-5" cy="148" r="1.2" fill="#ff4444" opacity="0">
                   <animate attributeName="opacity" values="0;1;0" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
-                  <animate attributeName="cy" values="146;134;146" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
+                  <animate attributeName="cy" values="148;136;148" dur="0.4s" repeatCount="indefinite" begin="0.3s" />
                 </circle>
               </g>
             </g>
