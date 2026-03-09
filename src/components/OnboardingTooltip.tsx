@@ -5,7 +5,7 @@ const steps = [
   {
     icon: <FolderOpen size={20} className="text-primary" />,
     title: 'Scan Your Files',
-    desc: 'Tap the folder icon to scan a directory. swept.ai reads file sizes, dates, and names to find junk.',
+    desc: 'Tap the folder icon to scan a directory. sao.ai reads file sizes, dates, and names to find junk.',
   },
   {
     icon: <Sparkles size={20} className="text-primary" />,
