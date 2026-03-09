@@ -185,6 +185,15 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        {/* Beam gradient - fades from red to transparent */}
+        <linearGradient id="beam-grad-r" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ff2020" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#ff2020" stopOpacity="0.08" />
+        </linearGradient>
+        <linearGradient id="beam-grad-l" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ff2020" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#ff2020" stopOpacity="0.08" />
+        </linearGradient>
       </defs>
       
       {/* Main ball body */}
