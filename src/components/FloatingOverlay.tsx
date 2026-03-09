@@ -414,6 +414,22 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         ref={overlayRef}
         className="fixed z-[100] inset-0 flex flex-col w-full h-full"
       >
+        {/* Walking character on overlay border */}
+        {showLimbs && limbState === 'walking' && (
+          <motion.div
+            className="absolute z-[200] pointer-events-none"
+            style={{ left: 0, top: 0 }}
+            animate={{
+              x: walkPos.x - 20,
+              y: walkPos.y - 20,
+              rotate: walkRotation,
+              scaleY: walkFlipY,
+            }}
+            transition={{ duration: 0.05, ease: 'linear' }}
+          >
+            <AbstractShape size={28} showLimbs={true} limbState="walking" walkDirection={walkDirection} />
+          </motion.div>
+        )}
         <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10"
           style={{ background: `hsla(235, 24%, 15%, ${panelOpacity === 15 ? 0.95 : panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
           
