@@ -207,38 +207,63 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
         />
       </g>
       
-      {/* Scanner arm — straight thick arm holding a boxy scanner device that shoots red beam down */}
+      {/* Legs — rendered first so scanner appears on top */}
+      {showLimbs && (
+        <g className={limbClass}>
+          <g className={isWalking ? 'animate-leg-pendulum-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
+             style={{ transformOrigin: '42px 85px' }}>
+            <path 
+              d="M42 85 Q38 105 40 120 Q42 135 36 138"
+              fill="none" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
+              className={isWalking ? 'animate-jelly-wobble' : ''}
+            />
+            {limbState !== 'picked-up' && (
+              <ellipse cx="34" cy="140" rx="8" ry="5" fill="#1a1a1a" opacity="0.8" />
+            )}
+          </g>
+          
+          <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
+             style={{ transformOrigin: '58px 85px' }}>
+            <path 
+              d="M58 85 Q62 105 60 120 Q58 135 64 138"
+              fill="none" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
+              className={isWalking ? 'animate-jelly-wobble-delay' : ''}
+            />
+            {limbState !== 'picked-up' && (
+              <g>
+                <ellipse cx="66" cy="140" rx="9" ry="6" fill="#1a1a1a" opacity="0.8" />
+                <line x1="60" y1="138" x2="60" y2="142" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+                <line x1="66" y1="137" x2="66" y2="143" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+                <line x1="72" y1="138" x2="72" y2="142" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+              </g>
+            )}
+          </g>
+        </g>
+      )}
+
+      {/* Scanner arm — rendered LAST so it's always in front */}
       {showLimbs && isWalking && (
         <g style={{ transformOrigin: '50px 50px' }}>
           {walkDirection === 1 ? (
             <g>
-              {/* Thick straight arm from body edge, angled down at ~45° */}
               <line x1="85" y1="50" x2="105" y2="95" stroke="#1a1a1a" strokeWidth="7" strokeLinecap="round" />
-              {/* Scanner device box at end of arm */}
               <rect x="97" y="90" width="16" height="12" rx="3" ry="3" fill="#1a1a1a" />
               <rect x="99" y="92" width="12" height="3" rx="1" fill="#333" />
-              {/* Small antenna nub on scanner */}
               <line x1="108" y1="90" x2="110" y2="85" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" />
-              {/* Red beam shooting from scanner to floor */}
               <g className="animate-scanner-sweep">
-                {/* Main beam - triangular spread */}
                 <polygon points="100,102 96,148 116,148" fill="url(#beam-grad-r)" opacity="0.5">
                   <animate attributeName="opacity" values="0.5;0.25;0.5" dur="0.4s" repeatCount="indefinite" />
                 </polygon>
-                {/* Core beam line */}
                 <line x1="105" y1="102" x2="105" y2="148" stroke="#ff2020" strokeWidth="1.5" opacity="0.6">
                   <animate attributeName="opacity" values="0.7;0.3;0.7" dur="0.4s" repeatCount="indefinite" />
                 </line>
-                {/* Red line on floor where beam hits */}
                 <line x1="92" y1="148" x2="118" y2="148" stroke="#ff2020" strokeWidth="3" strokeLinecap="round" opacity="0.6">
                   <animate attributeName="opacity" values="0.7;0.2;0.7" dur="0.4s" repeatCount="indefinite" />
                 </line>
-                {/* Floor glow */}
                 <ellipse cx="105" cy="149" rx="14" ry="4" fill="#ff2020" opacity="0.15">
                   <animate attributeName="opacity" values="0.2;0.06;0.2" dur="0.4s" repeatCount="indefinite" />
                   <animate attributeName="rx" values="12;18;12" dur="0.4s" repeatCount="indefinite" />
                 </ellipse>
-                {/* Sparkle particles */}
                 <circle cx="96" cy="148" r="1.5" fill="#ff6b6b" opacity="0">
                   <animate attributeName="opacity" values="0;0.9;0" dur="0.55s" repeatCount="indefinite" />
                   <animate attributeName="cy" values="148;140;148" dur="0.55s" repeatCount="indefinite" />
@@ -292,40 +317,6 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
               </g>
             </g>
           )}
-        </g>
-      )}
-
-      {/* Legs */}
-      {showLimbs && (
-        <g className={limbClass}>
-          <g className={isWalking ? 'animate-leg-pendulum-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
-             style={{ transformOrigin: '42px 85px' }}>
-            <path 
-              d="M42 85 Q38 105 40 120 Q42 135 36 138"
-              fill="none" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
-              className={isWalking ? 'animate-jelly-wobble' : ''}
-            />
-            {limbState !== 'picked-up' && (
-              <ellipse cx="34" cy="140" rx="8" ry="5" fill="#1a1a1a" opacity="0.8" />
-            )}
-          </g>
-          
-          <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
-             style={{ transformOrigin: '58px 85px' }}>
-            <path 
-              d="M58 85 Q62 105 60 120 Q58 135 64 138"
-              fill="none" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
-              className={isWalking ? 'animate-jelly-wobble-delay' : ''}
-            />
-            {limbState !== 'picked-up' && (
-              <g>
-                <ellipse cx="66" cy="140" rx="9" ry="6" fill="#1a1a1a" opacity="0.8" />
-                <line x1="60" y1="138" x2="60" y2="142" stroke="#555" strokeWidth="2" strokeLinecap="round" />
-                <line x1="66" y1="137" x2="66" y2="143" stroke="#555" strokeWidth="2" strokeLinecap="round" />
-                <line x1="72" y1="138" x2="72" y2="142" stroke="#555" strokeWidth="2" strokeLinecap="round" />
-              </g>
-            )}
-          </g>
         </g>
       )}
     </svg>

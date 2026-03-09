@@ -318,29 +318,29 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const perimeterRef = useRef(0);
   const overlayDimsRef = useRef({ w: 420, h: 600 });
 
-  // Walk the overlay border perimeter
+  // Walk the overlay border: starts from top-left (logo position) going right
   const getOverlayPerimeterPos = useCallback((t: number) => {
     const W = overlayDimsRef.current.w;
     const H = overlayDimsRef.current.h;
     const totalPerimeter = 2 * W + 2 * H;
     const p = ((t % totalPerimeter) + totalPerimeter) % totalPerimeter;
-    const offset = 8; // inset from edge
+    const offset = 8;
 
     if (p < W) {
-      // Bottom edge: walking left
-      return { x: W - p, y: H - offset, rotation: 0, flipY: 1, dir: -1 };
+      // Top edge: walking right, upside down — legs point UP toward edge
+      return { x: p, y: offset, rotation: 180, flipY: 1, dir: 1 };
     } else if (p < W + H) {
-      // Left edge: walking up
-      const along = p - W;
-      return { x: offset, y: H - along, rotation: 90, flipY: -1, dir: -1 };
-    } else if (p < 2 * W + H) {
-      // Top edge: walking right (upside down)
-      const along = p - W - H;
-      return { x: along, y: offset, rotation: 180, flipY: -1, dir: 1 };
-    } else {
       // Right edge: walking down
+      const along = p - W;
+      return { x: W - offset, y: along, rotation: -90, flipY: 1, dir: 1 };
+    } else if (p < 2 * W + H) {
+      // Bottom edge: walking left, normal upright
+      const along = p - W - H;
+      return { x: W - along, y: H - offset, rotation: 0, flipY: 1, dir: -1 };
+    } else {
+      // Left edge: walking up
       const along = p - 2 * W - H;
-      return { x: W - offset, y: along, rotation: -90, flipY: -1, dir: 1 };
+      return { x: offset, y: H - along, rotation: 90, flipY: 1, dir: -1 };
     }
   }, []);
 
@@ -350,13 +350,12 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   // Start/stop walking based on minimized state
   useEffect(() => {
     if (!isMinimized) {
-      // Maximized — start walking after a delay
-      // Measure overlay size
       if (overlayRef.current) {
         const rect = overlayRef.current.getBoundingClientRect();
         overlayDimsRef.current = { w: rect.width, h: rect.height };
       }
-      perimeterRef.current = 0; // start at bottom-right corner
+      // Start from top-left (where the logo is, ~60px in from left)
+      perimeterRef.current = 60;
 
       walkTimerRef.current = setTimeout(() => {
         setShowLimbs(true);
@@ -364,7 +363,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setTimeout(() => {
           setLimbState('walking');
           walkIntervalRef.current = setInterval(() => {
-            // Re-measure in case of resize
             if (overlayRef.current) {
               const rect = overlayRef.current.getBoundingClientRect();
               overlayDimsRef.current = { w: rect.width, h: rect.height };
@@ -379,7 +377,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         }, 600);
       }, 4000);
     } else {
-      // Minimized — stop walking
       setShowLimbs(false);
       setLimbState('idle');
       if (walkIntervalRef.current) { clearInterval(walkIntervalRef.current); walkIntervalRef.current = null; }
