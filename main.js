@@ -25,6 +25,25 @@ function createWindow() {
   ipcMain.on('resize-window', (event, width, height) => {
     win.setSize(width, height, true);
   });
+
+  const { dialog, shell } = require('electron');
+  
+  ipcMain.handle('select-directory', async () => {
+    const result = await dialog.showOpenDialog(win, {
+      properties: ['openDirectory']
+    });
+    return result.filePaths[0] || null;
+  });
+
+  ipcMain.handle('trash-file', async (event, filePath) => {
+    try {
+      await shell.trashItem(filePath);
+      return true;
+    } catch (e) {
+      console.error('Failed to trash file:', e);
+      return false;
+    }
+  });
 }
 
 app.whenReady().then(createWindow);
