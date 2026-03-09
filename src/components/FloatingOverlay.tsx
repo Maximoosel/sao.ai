@@ -269,8 +269,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         className={`fixed z-[100] left-0 top-0 ${width} ${height} flex flex-col`}
         style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform', maxHeight: '90vh' }}
       >
-        <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/8 border border-white/20"
-          style={{ background: `hsla(0, 0%, 100%, ${panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
+        <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10"
+          style={{ background: `hsla(235, 24%, 15%, ${panelOpacity === 15 ? 0.95 : panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
           
           {/* Title bar - draggable */}
           <div

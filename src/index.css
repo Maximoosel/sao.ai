@@ -6,25 +6,25 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 20% 10%;
+    --background: 235 24% 15%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100% / 0.72;
-    --card-foreground: 220 20% 10%;
-    --card-hover: 0 0% 100% / 0.85;
+    --card: 235 24% 18%;
+    --card-foreground: 0 0% 100%;
+    --card-hover: 235 24% 22%;
 
-    --popover: 0 0% 100% / 0.8;
-    --popover-foreground: 220 20% 10%;
+    --popover: 235 24% 18%;
+    --popover-foreground: 0 0% 100%;
 
     --primary: 214 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 214 100% 50% / 0.12;
+    --primary-glow: 214 100% 50% / 0.2;
 
-    --secondary: 220 15% 93%;
-    --secondary-foreground: 220 15% 40%;
+    --secondary: 235 24% 22%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 94%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 235 24% 22%;
+    --muted-foreground: 235 15% 70%;
 
     --accent: 214 100% 50%;
     --accent-foreground: 0 0% 100%;
@@ -35,16 +35,16 @@
     --sweep-red: 0 72% 58%;
     --sweep-red-foreground: 0 0% 100%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 92%;
+    --border: 235 24% 25%;
+    --input: 235 24% 22%;
     --ring: 214 100% 50%;
 
     --radius: 1rem;
 
-    --glass-bg: 0 0% 100% / 0.65;
-    --glass-border: 0 0% 100% / 0.5;
+    --glass-bg: 235 24% 15% / 0.85;
+    --glass-border: 0 0% 100% / 0.08;
     --glass-blur: 40px;
-    --glass-shadow: 0 2px 20px 0 rgba(0,0,0,0.04), 0 0.5px 0 0 rgba(255,255,255,0.8) inset;
+    --glass-shadow: 0 8px 32px 0 rgba(0,0,0,0.3), 0 0.5px 0 0 rgba(255,255,255,0.1) inset;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 220 20% 10%;
