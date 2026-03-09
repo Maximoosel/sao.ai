@@ -350,14 +350,14 @@
 
   /* Whole character bounce - 4px up/down per step */
   @keyframes walkBounce {
-    0%, 100% { transform: translateY(0); } /* contact */
-    12.5% { transform: translateY(4px); }   /* down */
-    25% { transform: translateY(2px); }     /* passing */
-    37.5% { transform: translateY(-2px); }  /* up */
-    50% { transform: translateY(0); }       /* contact (other foot) */
-    62.5% { transform: translateY(4px); }   /* down */
-    75% { transform: translateY(2px); }     /* passing */
-    87.5% { transform: translateY(-2px); }  /* up */
+    0%, 100% { transform: translateY(0); }
+    12.5% { transform: translateY(1.5px); }
+    25% { transform: translateY(0.5px); }
+    37.5% { transform: translateY(-1px); }
+    50% { transform: translateY(0); }
+    62.5% { transform: translateY(1.5px); }
+    75% { transform: translateY(0.5px); }
+    87.5% { transform: translateY(-1px); }
   }
 
   .animate-walk-bounce {
@@ -366,14 +366,14 @@
 
   /* Ball squash and stretch - MORE stretch (15% elongation) */
   @keyframes squashStretch {
-    0%, 100% { transform: scaleX(1) scaleY(1); }      /* contact */
-    12.5% { transform: scaleX(1.12) scaleY(0.88); }   /* down - squash */
-    25% { transform: scaleX(1.04) scaleY(0.96); }     /* passing */
-    37.5% { transform: scaleX(0.85) scaleY(1.18); }   /* up - MORE stretch */
-    50% { transform: scaleX(1) scaleY(1); }           /* contact */
-    62.5% { transform: scaleX(1.12) scaleY(0.88); }   /* down - squash */
-    75% { transform: scaleX(1.04) scaleY(0.96); }     /* passing */
-    87.5% { transform: scaleX(0.85) scaleY(1.18); }   /* up - MORE stretch */
+    0%, 100% { transform: scaleX(1) scaleY(1); }
+    12.5% { transform: scaleX(1.04) scaleY(0.96); }
+    25% { transform: scaleX(1.02) scaleY(0.98); }
+    37.5% { transform: scaleX(0.95) scaleY(1.06); }
+    50% { transform: scaleX(1) scaleY(1); }
+    62.5% { transform: scaleX(1.04) scaleY(0.96); }
+    75% { transform: scaleX(1.02) scaleY(0.98); }
+    87.5% { transform: scaleX(0.95) scaleY(1.06); }
   }
 
   .animate-squash-stretch {
@@ -399,13 +399,29 @@
   /* Backpack bob - delayed behind ball */
   @keyframes backpackBob {
     0%, 100% { transform: translateY(0) rotate(0deg); }
-    15% { transform: translateY(2px) rotate(1deg); }
+    15% { transform: translateY(1px) rotate(0.5deg); }
     30% { transform: translateY(0px) rotate(0deg); }
-    45% { transform: translateY(-1px) rotate(0deg); }
+    45% { transform: translateY(-0.5px) rotate(0deg); }
     55% { transform: translateY(0) rotate(0deg); }
-    65% { transform: translateY(2px) rotate(-1deg); }
+    65% { transform: translateY(1px) rotate(-0.5deg); }
     80% { transform: translateY(0px) rotate(0deg); }
-    95% { transform: translateY(-1px) rotate(0deg); }
+    95% { transform: translateY(-0.5px) rotate(0deg); }
+  }
+
+  /* Scanner tip sweep arc */
+  @keyframes scannerSweep {
+    0%, 100% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+  }
+
+  .animate-scanner-sweep {
+    animation: scannerSweep 0.9s ease-in-out infinite;
+  }
+
+  /* Scan line fade on ground */
+  @keyframes scanLineFade {
+    0% { opacity: 0.5; }
+    100% { opacity: 0; }
   }
 
   .animate-backpack-bob {
