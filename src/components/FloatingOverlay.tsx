@@ -358,7 +358,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   }, []);
 
   useEffect(() => {
-    if (!isMinimized) {
+    if (!isMinimized && characterEnabled) {
       if (overlayRef.current) {
         const rect = overlayRef.current.getBoundingClientRect();
         overlayDimsRef.current = { w: rect.width, h: rect.height };
@@ -407,7 +407,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
       if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
     };
-  }, [isMinimized, getTitleBarWalkPos, measureBorderLine]);
+  }, [isMinimized, characterEnabled, getTitleBarWalkPos, measureBorderLine]);
 
   // The Y position for the character div so feet touch the line
   const charTopY = walkLineY - CHAR_FEET_OFFSET;
