@@ -317,17 +317,18 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [walkFlipY, setWalkFlipY] = useState(1);
   const perimeterRef = useRef(0);
   const overlayDimsRef = useRef({ w: 420, h: 600 });
-  const [bounceY, setBounceY] = useState(22); // starts at title bar logo position
+  const storageBorderRef = useRef<HTMLDivElement>(null);
+  const [walkLineY, setWalkLineY] = useState(0);
 
-  // The Y position of the border line (storage section bottom border)
-  const WALK_LINE_Y = 103;
+  // Character size=28, with limbs height = 28*1.6 = 44.8
+  // Feet are at ~87.5% of SVG height → 44.8 * 0.875 = 39.2px from top
+  const CHAR_FEET_OFFSET = 39;
 
-  const walkDirRef = useRef(1); // 1 = right, -1 = left
+  const walkDirRef = useRef(1);
 
   const getTitleBarWalkPos = useCallback((x: number) => {
     const W = overlayDimsRef.current.w;
     const margin = 20;
-    // Bounce at full width edges
     if (x >= W - margin) {
       walkDirRef.current = -1;
       x = W - margin;
@@ -335,13 +336,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       walkDirRef.current = 1;
       x = margin;
     }
-    return { x, y: 0, rotation: 0, flipY: 1, dir: walkDirRef.current };
+    return { x, dir: walkDirRef.current };
   }, []);
 
   const WALK_SPEED = 0.8;
   const TICK_MS = 50;
 
-  // Start/stop walking based on minimized state
+  // Measure the border line position
+  const measureBorderLine = useCallback(() => {
+    if (storageBorderRef.current && overlayRef.current) {
+      const borderRect = storageBorderRef.current.getBoundingClientRect();
+      const overlayRect = overlayRef.current.getBoundingClientRect();
+      // Bottom of the storage section relative to overlay
+      const lineY = borderRect.bottom - overlayRect.top;
+      setWalkLineY(lineY);
+      return lineY;
+    }
+    return 130; // fallback
+  }, []);
+
   useEffect(() => {
     if (!isMinimized) {
       if (overlayRef.current) {
@@ -350,15 +363,16 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       }
       perimeterRef.current = 60;
       setWalkPos({ x: 60, y: 0 });
-      setBounceY(22);
 
       walkTimerRef.current = setTimeout(() => {
-        // Phase 1: Show the shape and bounce it down to the walk line
+        const lineY = measureBorderLine();
+        
+        // Phase 1: Show shape, smoothly glide down to the line
         setShowLimbs(true);
         setLimbState('bouncing');
-        setBounceY(WALK_LINE_Y);
+        setWalkLineY(lineY);
 
-        // Phase 2: After bounce lands, pop out limbs
+        // Phase 2: After glide lands, pop limbs
         setTimeout(() => {
           setLimbState('popping');
           
@@ -370,21 +384,19 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 const rect = overlayRef.current.getBoundingClientRect();
                 overlayDimsRef.current = { w: rect.width, h: rect.height };
               }
+              measureBorderLine(); // keep tracking
               perimeterRef.current += WALK_SPEED * walkDirRef.current;
               const pos = getTitleBarWalkPos(perimeterRef.current);
               perimeterRef.current = pos.x;
-              setWalkPos({ x: pos.x, y: pos.y });
+              setWalkPos({ x: pos.x, y: 0 });
               setWalkDirection(pos.dir);
-              setWalkRotation(pos.rotation);
-              setWalkFlipY(pos.flipY);
             }, TICK_MS);
-          }, 500);
-        }, 600);
+          }, 600);
+        }, 800);
       }, 4000);
     } else {
       setShowLimbs(false);
       setLimbState('idle');
-      setBounceY(22);
       if (walkIntervalRef.current) { clearInterval(walkIntervalRef.current); walkIntervalRef.current = null; }
       if (walkTimerRef.current) { clearTimeout(walkTimerRef.current); walkTimerRef.current = null; }
     }
@@ -393,7 +405,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
       if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
     };
-  }, [isMinimized, getTitleBarWalkPos]);
+  }, [isMinimized, getTitleBarWalkPos, measureBorderLine]);
+
+  // The Y position for the character div so feet touch the line
+  const charTopY = walkLineY - CHAR_FEET_OFFSET;
 
   if (isMinimized) {
     return (
@@ -427,14 +442,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         ref={overlayRef}
         className="fixed z-[100] inset-0 flex flex-col w-full h-full overflow-visible"
       >
-        {/* Bouncing phase — shape drops from logo to the walk line */}
+        {/* Bouncing phase — shape glides smoothly from logo to the walk line */}
         {showLimbs && limbState === 'bouncing' && (
           <motion.div
             className="absolute z-[201] pointer-events-none"
             style={{ left: 0, top: 0 }}
-            initial={{ x: 60 - 14, y: 22 }}
-            animate={{ x: 60 - 14, y: bounceY }}
-            transition={{ type: 'spring', stiffness: 300, damping: 15, mass: 0.8 }}
+            initial={{ x: 60 - 14, y: 22, scale: 1 }}
+            animate={{ x: 60 - 14, y: charTopY, scale: 1 }}
+            transition={{ 
+              duration: 0.7,
+              ease: [0.34, 1.56, 0.64, 1], // gentle overshoot
+            }}
           >
             <AbstractShape size={28} />
           </motion.div>
@@ -445,7 +463,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           <motion.div
             className="absolute z-[201] pointer-events-none"
             style={{ left: 0, top: 0 }}
-            animate={{ x: 60 - 14, y: WALK_LINE_Y }}
+            initial={{ x: 60 - 14, y: charTopY + CHAR_FEET_OFFSET - 28 }}
+            animate={{ x: 60 - 14, y: charTopY }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <AbstractShape size={28} showLimbs={true} limbState="popping" walkDirection={1} />
           </motion.div>
@@ -458,9 +478,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             style={{ left: 0, top: 0 }}
             animate={{
               x: walkPos.x - 14,
-              y: WALK_LINE_Y,
-              rotate: walkRotation,
-              scaleY: walkFlipY,
+              y: charTopY,
             }}
             transition={{ duration: 0.05, ease: 'linear' }}
           >
