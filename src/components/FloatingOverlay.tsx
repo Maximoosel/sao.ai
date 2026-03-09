@@ -389,13 +389,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         drag
         dragMomentum={false}
         dragElastic={0}
-        initial={{ scale: 0.8, opacity: 0, x: 0, y: 0 }}
+        dragConstraints={{ top: 0, left: 0, right: typeof window !== 'undefined' ? window.innerWidth - 36 : 500, bottom: typeof window !== 'undefined' ? window.innerHeight - 36 : 500 }}
+        initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         style={{ top: 16, left: '50%', marginLeft: -18 }}
         onPointerUp={(e) => {
-          // Only open if it wasn't a drag
           if (!minimizeDragLockRef.current) {
             setIsMinimized(false);
           }
