@@ -188,6 +188,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     if (scanned.length > 0) {
       setFiles(scanned);
       setSelectedIds(new Set());
+      setCurrentUsed(scanned.reduce((sum, f) => sum + f.size, 0));
     }
     setLastScanTime(new Date());
   };
