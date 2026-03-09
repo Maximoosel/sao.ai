@@ -11,6 +11,7 @@ import FileCard from './FileCard';
 import StorageRing from './StorageRing';
 import EmptyState from './EmptyState';
 import CategoryTabs from './CategoryTabs';
+import { Switch } from '@/components/ui/switch';
 import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
 import { useDeviceStorage } from '@/hooks/useDeviceStorage';
@@ -307,6 +308,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   };
 
   // Walking character state — walks the overlay border when maximized
+  const [characterEnabled, setCharacterEnabled] = useState(true);
   const [limbState, setLimbState] = useState<'idle' | 'bouncing' | 'popping' | 'walking'>('idle');
   const [showLimbs, setShowLimbs] = useState(false);
   const walkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -356,7 +358,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   }, []);
 
   useEffect(() => {
-    if (!isMinimized) {
+    if (!isMinimized && characterEnabled) {
       if (overlayRef.current) {
         const rect = overlayRef.current.getBoundingClientRect();
         overlayDimsRef.current = { w: rect.width, h: rect.height };
@@ -405,7 +407,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
       if (walkTimerRef.current) clearTimeout(walkTimerRef.current);
     };
-  }, [isMinimized, getTitleBarWalkPos, measureBorderLine]);
+  }, [isMinimized, characterEnabled, getTitleBarWalkPos, measureBorderLine]);
 
   // The Y position for the character div so feet touch the line
   const charTopY = walkLineY - CHAR_FEET_OFFSET;
@@ -505,6 +507,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 </div>
               )}
               <span className="text-sm font-semibold text-white tracking-tight">sao.ai</span>
+              <Switch
+                checked={characterEnabled}
+                onCheckedChange={setCharacterEnabled}
+                className="scale-75 ml-1"
+              />
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
                   <Sparkles size={10} /> Analyzing...
