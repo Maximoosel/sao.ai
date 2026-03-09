@@ -163,16 +163,14 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
           <stop offset="60%" stopColor="#D4A5B0" />
           <stop offset="80%" stopColor="#B87A8C" />
           <stop offset="100%" stopColor="#5A1F2A" />
-          {showLimbs && (
-            <animateTransform
-              attributeName="gradientTransform"
-              type="rotate"
-              from="0 50 50"
-              to="360 50 50"
-              dur="6s"
-              repeatCount="indefinite"
-            />
-          )}
+          <animateTransform
+            attributeName="gradientTransform"
+            type="rotate"
+            from="0 50 50"
+            to="360 50 50"
+            dur={showLimbs ? "6s" : "20s"}
+            repeatCount="indefinite"
+          />
         </linearGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="3" result="blur" />
@@ -191,63 +189,88 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
         </filter>
       </defs>
       
-      {/* Limbs - straight thick marker lines */}
+      {/* Limbs - stick figure style like reference */}
       {showLimbs && (
         <g className={limbClass}>
-          {/* Left arm — swings while marching */}
-          <line x1="15" y1="48" x2="-5" y2="60" 
-            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-march-arm-left' : limbState === 'picked-up' ? 'animate-arm-raised-left' : ''}
-            style={{ transformOrigin: '15px 48px' }}
+          {/* Head - ring/circle outline */}
+          <circle cx="50" cy="-15" r="12" 
+            stroke="#1a1a1a" strokeWidth="5" fill="none" strokeLinecap="round"
           />
-          {/* Right arm — holds scanner while walking */}
-          <g className={limbState === 'walking' ? 'animate-march-arm-right' : limbState === 'picked-up' ? 'animate-arm-raised-right' : ''}
-             style={{ transformOrigin: '85px 48px' }}>
-            <line x1="85" y1="48" x2="108" y2="60"
-              stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+          {/* Neck */}
+          <line x1="50" y1="-3" x2="50" y2="10" 
+            stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
+          />
+          
+          {/* Left arm — bent at hip like reference */}
+          <g className={limbState === 'walking' ? 'animate-march-arm-left' : limbState === 'picked-up' ? 'animate-arm-raised-left' : ''}
+             style={{ transformOrigin: '35px 35px' }}>
+            <line x1="35" y1="35" x2="15" y2="48" 
+              stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
             />
-            {/* Scanner device — marker style */}
-            {limbState === 'walking' && (
-              <g>
-                {/* Scanner body */}
-                <line x1="108" y1="60" x2="118" y2="52" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
-                <line x1="118" y1="52" x2="126" y2="48" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-                {/* Red scanner tip with glow */}
-                <circle cx="128" cy="47" r="2.5" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
-                  <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
-                </circle>
-                <circle cx="128" cy="47" r="5" fill="#ff3b3b" opacity="0.15">
-                  <animate attributeName="r" values="4;7;4" dur="1.2s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.15;0.05;0.15" dur="1.2s" repeatCount="indefinite" />
-                </circle>
-              </g>
+            <line x1="15" y1="48" x2="30" y2="65" 
+              stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
+            />
+          </g>
+          
+          {/* Right arm — holds scanner while walking, bent at hip when idle */}
+          <g className={limbState === 'walking' ? 'animate-march-arm-right' : limbState === 'picked-up' ? 'animate-arm-raised-right' : ''}
+             style={{ transformOrigin: '65px 35px' }}>
+            {limbState === 'walking' ? (
+              <>
+                <line x1="65" y1="35" x2="90" y2="50"
+                  stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
+                />
+                {/* Scanner device — marker style */}
+                <g>
+                  <line x1="90" y1="50" x2="100" y2="42" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" />
+                  <line x1="100" y1="42" x2="110" y2="38" stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round" />
+                  {/* Red scanner tip with glow */}
+                  <circle cx="113" cy="36" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="113" cy="36" r="6" fill="#ff3b3b" opacity="0.15">
+                    <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
+                    <animate attributeName="opacity" values="0.15;0.05;0.15" dur="1.2s" repeatCount="indefinite" />
+                  </circle>
+                </g>
+              </>
+            ) : (
+              <>
+                <line x1="65" y1="35" x2="85" y2="48" 
+                  stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
+                />
+                <line x1="85" y1="48" x2="70" y2="65" 
+                  stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
+                />
+              </>
             )}
           </g>
+          
           {/* Left leg — marching */}
-          <line x1="38" y1="86" x2="32" y2="138"
-            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+          <line x1="42" y1="88" x2="35" y2="135"
+            stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
             className={limbState === 'walking' ? 'animate-march-leg-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
-            style={{ transformOrigin: '38px 86px' }}
+            style={{ transformOrigin: '42px 88px' }}
           />
           {/* Right leg — marching */}
-          <line x1="62" y1="86" x2="68" y2="138"
-            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+          <line x1="58" y1="88" x2="65" y2="135"
+            stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
             className={limbState === 'walking' ? 'animate-march-leg-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
-            style={{ transformOrigin: '62px 86px' }}
+            style={{ transformOrigin: '58px 88px' }}
           />
           {/* Feet */}
           {limbState !== 'picked-up' && (
             <>
-              <line x1="32" y1="138" x2="26" y2="140" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" 
-                className={limbState === 'walking' ? 'animate-march-leg-left' : ''} style={{ transformOrigin: '38px 86px' }} />
-              <line x1="68" y1="138" x2="74" y2="140" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
-                className={limbState === 'walking' ? 'animate-march-leg-right' : ''} style={{ transformOrigin: '62px 86px' }} />
+              <line x1="35" y1="135" x2="28" y2="138" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" 
+                className={limbState === 'walking' ? 'animate-march-leg-left' : ''} style={{ transformOrigin: '42px 88px' }} />
+              <line x1="65" y1="135" x2="72" y2="138" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
+                className={limbState === 'walking' ? 'animate-march-leg-right' : ''} style={{ transformOrigin: '58px 88px' }} />
             </>
           )}
         </g>
       )}
       
-      {/* Main body — gradient spins, shape morphs, but no rotation */}
+      {/* Main body — gradient spins (slow when not minimized, faster when minimized) */}
       <g>
         <path
           d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
