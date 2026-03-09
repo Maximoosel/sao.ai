@@ -146,7 +146,7 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 
 // Animated morphing abstract shape (used in overlay)
 const AbstractShape = ({ size = 48, showLimbs = false }: { size?: number; showLimbs?: boolean }) => (
-  <svg width={size} height={showLimbs ? size * 1.6 : size} viewBox={showLimbs ? "0 0 100 160" : "0 0 100 100"} className="overflow-visible">
+  <svg width={size} height={showLimbs ? size * 1.6 : size} viewBox={showLimbs ? "0 0 100 160" : "0 0 100 100"} className={`overflow-visible ${!showLimbs ? 'animate-morph-shape' : ''}`}>
     <defs>
       <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stopColor="#4B6A6A" />
@@ -165,39 +165,51 @@ const AbstractShape = ({ size = 48, showLimbs = false }: { size?: number; showLi
       </filter>
     </defs>
     
-    {/* Arms - animate in when showLimbs */}
+    {/* Arms - thin black marker lines */}
     {showLimbs && (
       <>
         {/* Left arm */}
-        <g className="animate-wave-left" style={{ transformOrigin: '20px 50px' }}>
+        <g className="animate-wave-left" style={{ transformOrigin: '15px 50px' }}>
           <path
-            d="M20,50 Q5,45 -5,55 Q-8,60 -5,65 Q0,68 5,65 Q12,58 20,55"
-            fill="url(#shape-grad)"
-            opacity="0.85"
+            d="M18,48 Q8,42 -2,48 Q-6,52 -2,56"
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
         {/* Right arm */}
-        <g className="animate-wave-right" style={{ transformOrigin: '80px 50px' }}>
+        <g className="animate-wave-right" style={{ transformOrigin: '85px 50px' }}>
           <path
-            d="M80,50 Q95,45 105,55 Q108,60 105,65 Q100,68 95,65 Q88,58 80,55"
-            fill="url(#shape-grad)"
-            opacity="0.85"
+            d="M82,48 Q92,42 102,48 Q106,52 102,56"
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
         {/* Left leg */}
-        <g className="animate-step-left" style={{ transformOrigin: '35px 90px' }}>
+        <g className="animate-step-left" style={{ transformOrigin: '38px 88px' }}>
           <path
-            d="M35,85 Q32,105 28,125 Q26,132 30,135 Q36,138 40,132 Q42,120 40,100 Q39,92 38,88"
-            fill="url(#shape-grad)"
-            opacity="0.85"
+            d="M38,86 Q34,108 30,128 Q28,135 32,138"
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
         {/* Right leg */}
-        <g className="animate-step-right" style={{ transformOrigin: '65px 90px' }}>
+        <g className="animate-step-right" style={{ transformOrigin: '62px 88px' }}>
           <path
-            d="M65,85 Q68,105 72,125 Q74,132 70,135 Q64,138 60,132 Q58,120 60,100 Q61,92 62,88"
-            fill="url(#shape-grad)"
-            opacity="0.85"
+            d="M62,86 Q66,108 70,128 Q72,135 68,138"
+            fill="none"
+            stroke="#1a1a1a"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </g>
       </>
@@ -211,16 +223,6 @@ const AbstractShape = ({ size = 48, showLimbs = false }: { size?: number; showLi
       opacity="0.9"
       className={showLimbs ? "animate-body-bounce" : ""}
     />
-    
-    {/* Eyes when showing limbs */}
-    {showLimbs && (
-      <>
-        <circle cx="38" cy="45" r="4" fill="white" opacity="0.9" className="animate-blink" />
-        <circle cx="62" cy="45" r="4" fill="white" opacity="0.9" className="animate-blink" />
-        <circle cx="39" cy="46" r="1.5" fill="#2a2a2a" />
-        <circle cx="63" cy="46" r="1.5" fill="#2a2a2a" />
-      </>
-    )}
   </svg>
 );
 
