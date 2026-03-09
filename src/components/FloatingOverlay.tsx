@@ -367,14 +367,14 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         let dir = 1;
         let posX = 0;
         walkIntervalRef.current = setInterval(() => {
-          posX += dir * 0.6;
+          posX += dir * 1.2;
           const maxX = window.innerWidth / 2 - 40;
           if (posX > maxX || posX < -maxX) {
             dir *= -1;
           }
           setWalkPos({ x: posX, y: 0 });
           setWalkDirection(dir);
-        }, 50);
+        }, 100);
       }, 600);
     }, 5000);
   }, []);
