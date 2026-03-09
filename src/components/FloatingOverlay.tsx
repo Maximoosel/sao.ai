@@ -453,9 +453,14 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 </span>
               )}
               {isScanning && (
-                <span className="text-xs text-primary animate-pulse flex items-center gap-1">
-                  <FolderOpen size={10} /> Scanning...
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-primary animate-pulse flex items-center gap-1">
+                    <FolderOpen size={10} /> {scanProgress}%
+                  </span>
+                  {scanETA && (
+                    <span className="text-[10px] text-white/40">{scanETA}</span>
+                  )}
+                </div>
               )}
             </div>
             <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as any}>
