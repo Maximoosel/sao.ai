@@ -479,6 +479,20 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </div>
           </div>
 
+          {/* Scan progress bar */}
+          {isScanning && (
+            <div className="px-4 py-1.5 border-b border-white/10">
+              <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-primary"
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${scanProgress}%` }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Recently Swept dropdown */}
           <AnimatePresence>
             {showRecents && (
