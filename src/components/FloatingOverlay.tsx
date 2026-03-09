@@ -495,7 +495,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-white/30" />
-              {showLimbs && limbState === 'walking' ? (
+              {showLimbs ? (
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0">
                   <AbstractShape size={22} />
                 </div>
