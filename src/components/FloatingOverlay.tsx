@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
   Clock, BarChart3, Trash2, Check, GripVertical, Maximize2, Minimize2,
-  ChevronDown, Undo2, History
+  ChevronDown, Undo2, History, ExternalLink
 } from 'lucide-react';
 import { AbstractShape } from './SplashScreen';
 import FileCard from './FileCard';
@@ -14,6 +14,7 @@ import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
 import { useDeviceStorage } from '@/hooks/useDeviceStorage';
 import { mockFiles, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { toast } from 'sonner';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
 
@@ -183,6 +184,27 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 
       // Add to recents
       setRecentlySwept(prev => [{ files: swept, totalSize: totalSwept, timestamp: new Date() }, ...prev].slice(0, 20));
+
+      // Show toast with option to open Trash
+      if (pathsToTrash.length > 0) {
+        toast.success(`Moved ${swept.length} file${swept.length > 1 ? 's' : ''} to Trash`, {
+          description: `${formatSize(totalSwept)} freed · Restore anytime from Trash`,
+          action: {
+            label: 'Open Trash',
+            onClick: async () => {
+              if ('require' in window) {
+                try {
+                  const { ipcRenderer } = (window as any).require('electron');
+                  await ipcRenderer.invoke('open-trash');
+                } catch (e) {
+                  console.log('Could not open Trash');
+                }
+              }
+            }
+          },
+          duration: 5000,
+        });
+      }
       
       setTimeout(() => {
         setShowTick(false);
