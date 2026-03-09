@@ -184,6 +184,27 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 
       // Add to recents
       setRecentlySwept(prev => [{ files: swept, totalSize: totalSwept, timestamp: new Date() }, ...prev].slice(0, 20));
+
+      // Show toast with option to open Trash
+      if (pathsToTrash.length > 0) {
+        toast.success(`Moved ${swept.length} file${swept.length > 1 ? 's' : ''} to Trash`, {
+          description: `${formatSize(totalSwept)} freed · Restore anytime from Trash`,
+          action: {
+            label: 'Open Trash',
+            onClick: () => {
+              if ('require' in window) {
+                try {
+                  const { shell } = (window as any).require('electron');
+                  shell.openPath(`${process.env.HOME}/.Trash`);
+                } catch (e) {
+                  console.log('Could not open Trash');
+                }
+              }
+            }
+          },
+          duration: 5000,
+        });
+      }
       
       setTimeout(() => {
         setShowTick(false);
