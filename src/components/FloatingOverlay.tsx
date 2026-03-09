@@ -62,7 +62,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [showRecents, setShowRecents] = useState(false);
 
   const { isScanning, scanFolder, trashFiles, scanProgress, scanETA } = useFileScanner();
-  const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
+  const { isAnalyzing, analysisProgress, analysisETA, analyzeFiles } = useRelevanceScoring();
 
   // Resize electron window when expanded state changes
   useEffect(() => {
@@ -556,9 +556,14 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 className="scale-75 ml-1"
               />
               {isAnalyzing && (
-                <span className="text-xs text-primary animate-pulse flex items-center gap-1">
-                  <Sparkles size={10} /> Analyzing...
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-primary animate-pulse flex items-center gap-1">
+                    <Sparkles size={10} /> {analysisProgress}%
+                  </span>
+                  {analysisETA && (
+                    <span className="text-[10px] text-white/40">{analysisETA}</span>
+                  )}
+                </div>
               )}
               {isScanning && (
                 <div className="flex items-center gap-2">
@@ -601,7 +606,28 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             </div>
           )}
 
-          {/* Recently Swept dropdown */}
+          {/* Analysis progress bar */}
+          {isAnalyzing && (
+            <div className="px-4 py-1.5 border-b border-white/10">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-white/50 flex items-center gap-1">
+                  <Sparkles size={10} className="text-primary" /> Analyzing files...
+                </span>
+                {analysisETA && (
+                  <span className="text-[10px] text-white/40">ETA: {analysisETA}</span>
+                )}
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70"
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${analysisProgress}%` }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+          )}
+
           <AnimatePresence>
             {showRecents && (
               <motion.div
