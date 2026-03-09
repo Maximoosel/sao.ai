@@ -50,7 +50,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [recentlySwept, setRecentlySwept] = useState<SweptEntry[]>([]);
   const [showRecents, setShowRecents] = useState(false);
 
-  const { isScanning, scanFolder } = useFileScanner();
+  const { isScanning, scanFolder, trashFiles } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
   // Resize electron window when expanded state changes
@@ -118,28 +118,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     setSelectedIds(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
   }, []);
 
-  const trashSingle = useCallback((id: string) => {
+  const trashSingle = useCallback(async (id: string) => {
     const file = files.find(f => f.id === id);
     if (!file) return;
-    // Save for undo
-    setUndoData({ files: [file], size: file.size });
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    undoTimerRef.current = setTimeout(() => setUndoData(null), 10000);
+
+    // Actually trash the file
+    if (file.path !== 'Unknown' && !file.path.startsWith('mock/')) {
+      await trashFiles([file.path]);
+    }
 
     setFiles(prev => prev.filter(f => f.id !== id));
     setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     setCurrentUsed(prev => prev - file.size);
     setRecentlySwept(prev => [{ files: [file], totalSize: file.size, timestamp: new Date() }, ...prev].slice(0, 20));
-  }, [files]);
+  }, [files, trashFiles]);
 
   const handleUndo = useCallback(() => {
-    if (!undoData) return;
-    setFiles(prev => [...prev, ...undoData.files]);
-    setCurrentUsed(prev => prev + undoData.size);
+    // Undo is disabled since files are moved to OS Trash
     setUndoData(null);
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    setRecentlySwept(prev => prev.slice(1));
-  }, [undoData]);
+  }, []);
 
   const sweepSelected = useCallback(() => {
     const swept = files.filter(f => selectedIds.has(f.id));
@@ -162,18 +159,19 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     
     setSweepAnimating(true);
     
-    setTimeout(() => {
+    setTimeout(async () => {
+      // Actually trash the files
+      const pathsToTrash = swept.map(f => f.path).filter(p => p !== 'Unknown' && !p.startsWith('mock/'));
+      if (pathsToTrash.length > 0) {
+        await trashFiles(pathsToTrash);
+      }
+
       setFiles(prev => prev.filter(f => !selectedIds.has(f.id)));
       setCurrentUsed(prev => prev - totalSwept);
       setSelectedIds(new Set());
       setSweepAnimating(false);
       setShowTick(true);
       setSweepResult({ count: swept.length, size: totalSwept });
-
-      // Save for undo
-      setUndoData({ files: swept, size: totalSwept });
-      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-      undoTimerRef.current = setTimeout(() => setUndoData(null), 10000);
 
       // Add to recents
       setRecentlySwept(prev => [{ files: swept, totalSize: totalSwept, timestamp: new Date() }, ...prev].slice(0, 20));
@@ -183,7 +181,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         setSweepResult(null);
       }, 1200);
     }, 1200);
-  }, [files, selectedIds]);
+  }, [files, selectedIds, trashFiles]);
 
   const handleScanFolder = async () => {
     const scanned = await scanFolder();

@@ -45,17 +45,23 @@ export function useFileScanner() {
     if ('require' in window) {
       try {
         setIsScanning(true);
+        const { ipcRenderer } = (window as any).require('electron');
         const fs = (window as any).require('fs');
         const path = (window as any).require('path');
         const os = (window as any).require('os');
         
-        const docsPath = path.join(os.homedir(), 'Documents');
-        const downloadsPath = path.join(os.homedir(), 'Downloads');
+        // Ask user to select directory
+        const selectedDir = await ipcRenderer.invoke('select-directory');
+        if (!selectedDir) {
+          setIsScanning(false);
+          return [];
+        }
+
         const files: SweepFile[] = [];
         let id = 1000;
         
         const scanDir = (dir: string, depth = 0) => {
-          if (depth > 2) return;
+          if (depth > 5) return;
           try {
             const entries = fs.readdirSync(dir, { withFileTypes: true });
             for (const entry of entries) {
@@ -77,7 +83,7 @@ export function useFileScanner() {
                   files.push({
                     id: String(id++),
                     name: entry.name,
-                    path: fullPath.replace(os.homedir(), '~'),
+                    path: fullPath,
                     size: stats.size,
                     lastOpened: new Date(stats.atimeMs).toISOString().split('T')[0],
                     type: getFileType(entry.name),
@@ -90,9 +96,7 @@ export function useFileScanner() {
         };
         
         await new Promise(resolve => setTimeout(resolve, 50)); 
-        
-        scanDir(docsPath);
-        scanDir(downloadsPath);
+        scanDir(selectedDir);
         
         setScannedFiles(files);
         setIsScanning(false);
@@ -184,5 +188,24 @@ export function useFileScanner() {
     });
   }, []);
 
-  return { isScanning, scannedFiles, scanFolder };
+  const trashFiles = useCallback(async (filePaths: string[]) => {
+    if ('require' in window) {
+      try {
+        const { ipcRenderer } = (window as any).require('electron');
+        let successCount = 0;
+        for (const path of filePaths) {
+          const success = await ipcRenderer.invoke('trash-file', path);
+          if (success) successCount++;
+        }
+        return successCount === filePaths.length;
+      } catch (e) {
+        console.error('Failed to trash files:', e);
+        return false;
+      }
+    }
+    console.log('Not in Electron, skipping real trash for:', filePaths);
+    return false;
+  }, []);
+
+  return { isScanning, scannedFiles, scanFolder, trashFiles };
 }
