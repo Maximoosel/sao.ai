@@ -62,7 +62,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [showRecents, setShowRecents] = useState(false);
 
   const { isScanning, scanFolder, trashFiles, scanProgress, scanETA } = useFileScanner();
-  const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
+  const { isAnalyzing, analysisProgress, analysisETA, analyzeFiles } = useRelevanceScoring();
 
   // Resize electron window when expanded state changes
   useEffect(() => {
