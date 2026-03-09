@@ -12,7 +12,8 @@ import EmptyState from './EmptyState';
 import CategoryTabs from './CategoryTabs';
 import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
-import { mockFiles, totalStorage, usedStorage, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { useDeviceStorage } from '@/hooks/useDeviceStorage';
+import { mockFiles, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
 
