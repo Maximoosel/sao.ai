@@ -145,9 +145,11 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 };
 
 // Animated morphing abstract shape (used in overlay)
-const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { size?: number; showLimbs?: boolean; limbState?: 'idle' | 'walking' | 'picked-up' | 'popping' }) => {
+const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkDirection = 1 }: { size?: number; showLimbs?: boolean; limbState?: 'idle' | 'walking' | 'picked-up' | 'popping'; walkDirection?: number }) => {
   const limbClass = limbState === 'popping' ? 'animate-pop-in' : '';
   const isWalking = limbState === 'walking';
+  // Backpack on opposite side of walking direction
+  const backpackSide = walkDirection === 1 ? 'left' : 'right';
   
   return (
     <svg 
@@ -157,13 +159,13 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
       className={`overflow-visible ${isWalking ? 'animate-walk-bounce' : ''}`}
     >
       <defs>
+        {/* Seamless gradient - no harsh white, smooth fade */}
         <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#4B6A6A" />
-          <stop offset="20%" stopColor="#6B9B9B" />
-          <stop offset="40%" stopColor="#F5F0E8" />
-          <stop offset="60%" stopColor="#D4A5B0" />
-          <stop offset="80%" stopColor="#B87A8C" />
-          <stop offset="100%" stopColor="#5A1F2A" />
+          <stop offset="25%" stopColor="#6B9B9B" />
+          <stop offset="50%" stopColor="#9BBBBB" />
+          <stop offset="75%" stopColor="#C4A5A5" />
+          <stop offset="100%" stopColor="#8B5A6A" />
           <animateTransform
             attributeName="gradientTransform"
             type="rotate"
@@ -180,11 +182,6 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        {/* Sketchy effect filter */}
-        <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%">
-          <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="noise" seed="2"/>
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
-        </filter>
         {/* Red glow for scanner tip */}
         <filter id="red-glow">
           <feGaussianBlur stdDeviation="2" result="blur" />
@@ -195,35 +192,67 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
         </filter>
       </defs>
       
-      {/* Backpack - crosshatched style, behind the ball */}
+      {/* Backpack - on opposite side of walking direction */}
       {showLimbs && (
-        <g className={`${limbClass} ${isWalking ? 'animate-backpack-bob' : ''}`} style={{ transformOrigin: '50px 50px' }}>
-          {/* Backpack body - rounded rectangle with crosshatch */}
-          <rect x="62" y="25" width="28" height="45" rx="6" ry="6" 
-            fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
-          />
-          {/* Crosshatch lines */}
-          <line x1="66" y1="30" x2="86" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-          <line x1="66" y1="40" x2="86" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-          <line x1="66" y1="50" x2="82" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-          <line x1="86" y1="30" x2="66" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-          <line x1="86" y1="40" x2="66" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-          <line x1="86" y1="50" x2="70" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
-          {/* Backpack straps */}
-          <path d="M62 35 Q55 38 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M62 55 Q55 52 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Backpack flap */}
-          <path d="M64 25 Q76 18 88 25" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
-          {/* Scanner/flashlight in backpack pocket */}
-          {isWalking && (
+        <g className={`${limbClass} ${isWalking ? 'animate-backpack-bob' : ''}`} 
+           style={{ transformOrigin: '50px 50px' }}>
+          {backpackSide === 'left' ? (
+            // Backpack on left side (walking right)
             <g>
-              <line x1="78" y1="70" x2="78" y2="82" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
-              <circle cx="78" cy="85" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
-                <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
-              </circle>
-              <circle cx="78" cy="85" r="6" fill="#ff3b3b" opacity="0.15">
-                <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
-              </circle>
+              <rect x="10" y="25" width="28" height="45" rx="6" ry="6" 
+                fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
+              />
+              {/* Crosshatch lines */}
+              <line x1="14" y1="30" x2="34" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="14" y1="40" x2="34" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="14" y1="50" x2="30" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="34" y1="30" x2="14" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="34" y1="40" x2="14" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="34" y1="50" x2="18" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              {/* Backpack strap */}
+              <path d="M38 35 Q45 38 45 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M38 55 Q45 52 45 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              {/* Backpack flap */}
+              <path d="M12 25 Q24 18 36 25" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              {/* Scanner hanging from pocket */}
+              {isWalking && (
+                <g>
+                  <line x1="22" y1="70" x2="22" y2="82" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                  <circle cx="22" cy="85" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="22" cy="85" r="6" fill="#ff3b3b" opacity="0.15">
+                    <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
+                  </circle>
+                </g>
+              )}
+            </g>
+          ) : (
+            // Backpack on right side (walking left)
+            <g>
+              <rect x="62" y="25" width="28" height="45" rx="6" ry="6" 
+                fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
+              />
+              <line x1="66" y1="30" x2="86" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="66" y1="40" x2="86" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="66" y1="50" x2="82" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="86" y1="30" x2="66" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="86" y1="40" x2="66" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <line x1="86" y1="50" x2="70" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+              <path d="M62 35 Q55 38 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M62 55 Q55 52 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M64 25 Q76 18 88 25" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+              {isWalking && (
+                <g>
+                  <line x1="78" y1="70" x2="78" y2="82" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                  <circle cx="78" cy="85" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
+                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
+                  </circle>
+                  <circle cx="78" cy="85" r="6" fill="#ff3b3b" opacity="0.15">
+                    <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
+                  </circle>
+                </g>
+              )}
             </g>
           )}
         </g>
@@ -249,23 +278,20 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
             <line x1="42" y1="85" x2="38" y2="130"
               stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
             />
-            {/* Left foot - simple */}
             {limbState !== 'picked-up' && (
               <ellipse cx="36" cy="132" rx="6" ry="3" fill="none" stroke="#1a1a1a" strokeWidth="3" />
             )}
           </g>
           
-          {/* Right leg - with striped/hatched shoe */}
+          {/* Right leg - with striped shoe */}
           <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
              style={{ transformOrigin: '58px 85px' }}>
             <line x1="58" y1="85" x2="62" y2="130"
               stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
             />
-            {/* Right foot - striped shoe */}
             {limbState !== 'picked-up' && (
               <g>
                 <ellipse cx="64" cy="132" rx="7" ry="4" fill="none" stroke="#1a1a1a" strokeWidth="3" />
-                {/* Stripes on shoe */}
                 <line x1="60" y1="130" x2="60" y2="134" stroke="#1a1a1a" strokeWidth="1.5" />
                 <line x1="64" y1="129" x2="64" y2="135" stroke="#1a1a1a" strokeWidth="1.5" />
                 <line x1="68" y1="130" x2="68" y2="134" stroke="#1a1a1a" strokeWidth="1.5" />

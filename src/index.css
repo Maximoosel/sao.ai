@@ -396,28 +396,30 @@
     animation: backpackBob 0.9s ease-in-out infinite 0.05s;
   }
 
-  /* Leg pendulum - left leg, loose swing */
+  /* Leg pendulum - left leg, more natural swing with easing */
   @keyframes legPendulumLeft {
-    0%, 100% { transform: rotate(25deg); }   /* forward contact */
-    25% { transform: rotate(15deg); }        /* down */
-    50% { transform: rotate(-25deg); }       /* back contact */
-    75% { transform: rotate(-15deg); }       /* passing */
+    0% { transform: rotate(20deg); }     /* forward */
+    25% { transform: rotate(5deg); }     /* passing back */
+    50% { transform: rotate(-20deg); }   /* back */
+    75% { transform: rotate(-5deg); }    /* passing forward */
+    100% { transform: rotate(20deg); }   /* forward */
   }
 
   .animate-leg-pendulum-left {
-    animation: legPendulumLeft 0.9s ease-in-out infinite;
+    animation: legPendulumLeft 0.9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* Leg pendulum - right leg, opposite phase */
   @keyframes legPendulumRight {
-    0%, 100% { transform: rotate(-25deg); }  /* back contact */
-    25% { transform: rotate(-15deg); }       /* passing */
-    50% { transform: rotate(25deg); }        /* forward contact */
-    75% { transform: rotate(15deg); }        /* down */
+    0% { transform: rotate(-20deg); }    /* back */
+    25% { transform: rotate(-5deg); }    /* passing forward */
+    50% { transform: rotate(20deg); }    /* forward */
+    75% { transform: rotate(5deg); }     /* passing back */
+    100% { transform: rotate(-20deg); }  /* back */
   }
 
   .animate-leg-pendulum-right {
-    animation: legPendulumRight 0.9s ease-in-out infinite;
+    animation: legPendulumRight 0.9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* Idle/raised arm animations (for picked-up state) */

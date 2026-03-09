@@ -410,7 +410,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           transition={limbState === 'walking' ? { duration: 0.06, ease: 'linear' } : { type: 'spring', stiffness: 300, damping: 25 }}
           style={{ 
             WebkitAppRegion: 'no-drag',
-            scaleX: walkDirection === -1 ? -1 : 1,
           } as any}
         >
           <motion.div
@@ -422,7 +421,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
-            <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} />
+            <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} walkDirection={walkDirection} />
           </motion.div>
         </motion.div>
       </div>
