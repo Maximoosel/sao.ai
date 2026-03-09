@@ -12,7 +12,8 @@ import EmptyState from './EmptyState';
 import CategoryTabs from './CategoryTabs';
 import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
-import { mockFiles, totalStorage, usedStorage, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { useDeviceStorage } from '@/hooks/useDeviceStorage';
+import { mockFiles, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
 
@@ -28,6 +29,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const minimizeDragLockRef = useRef(false);
 
   const isElectron = useMemo(() => typeof window !== 'undefined' && 'require' in (window as any), []);
+  const { totalStorage, usedStorage: deviceUsedStorage } = useDeviceStorage();
 
   const [files, setFiles] = useState<SweepFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
