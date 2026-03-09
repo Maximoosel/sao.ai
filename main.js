@@ -37,8 +37,8 @@ function createWindow() {
   // Minimize → fullscreen transparent overlay so character walks entire screen
   ipcMain.on('enter-overlay-mode', () => {
     const display = screen.getPrimaryDisplay();
-    const { width, height } = display.size;
-    win.setPosition(0, 0);
+    const { width, height } = display.workAreaSize; // logical pixels — works on all Retina resolutions
+    win.setPosition(0, display.workArea.y); // account for menubar offset
     win.setSize(width, height, false);
     win.setIgnoreMouseEvents(true, { forward: true });
     win.setAlwaysOnTop(true, 'screen-saver');
@@ -56,10 +56,11 @@ function createWindow() {
     win.setSize(ww, wh, true);
   });
 
-  // Get full screen dimensions for perimeter walking
+  // Get full screen dimensions (logical pixels, accounting for Retina scaleFactor)
   ipcMain.handle('get-screen-size', () => {
     const d = screen.getPrimaryDisplay();
-    return { width: d.size.width, height: d.size.height };
+    // Use workAreaSize (excludes menubar/dock) in logical pixels — works on all MacBook resolutions
+    return { width: d.workAreaSize.width, height: d.workAreaSize.height, scaleFactor: d.scaleFactor };
   });
   
   ipcMain.handle('select-directory', async () => {

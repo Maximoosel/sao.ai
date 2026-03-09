@@ -318,6 +318,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const perimeterRef = useRef(0);
   const screenDimsRef = useRef({ w: window.innerWidth, h: window.innerHeight });
 
+  // Keep screen dims updated on resize (web preview)
+  useEffect(() => {
+    const onResize = () => {
+      if (!isElectron) {
+        screenDimsRef.current = { w: window.innerWidth, h: window.innerHeight };
+      }
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [isElectron]);
+
   // Enter/exit fullscreen overlay mode in Electron
   useEffect(() => {
     if (!isElectron) return;
@@ -325,8 +336,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       const { ipcRenderer } = (window as any).require('electron');
       if (isMinimized) {
         ipcRenderer.send('enter-overlay-mode');
-        // Get actual screen size for perimeter
-        ipcRenderer.invoke('get-screen-size').then((size: { width: number; height: number }) => {
+        ipcRenderer.invoke('get-screen-size').then((size: { width: number; height: number; scaleFactor?: number }) => {
           screenDimsRef.current = { w: size.width, h: size.height };
         });
       } else {
@@ -343,22 +353,22 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
     const charOffset = 20;
 
     if (p < W) {
-      // Top edge: walking right, upside down (feet stick to ceiling)
       return { x: p, y: charOffset, rotation: 180, flipY: -1, dir: 1 };
     } else if (p < W + H) {
-      // Right edge: walking down, rotated sideways
       const along = p - W;
       return { x: W - charOffset, y: along, rotation: -90, flipY: -1, dir: 1 };
     } else if (p < 2 * W + H) {
-      // Bottom edge: walking left, normal orientation
       const along = p - W - H;
       return { x: W - along, y: H - charOffset, rotation: 0, flipY: 1, dir: -1 };
     } else {
-      // Left edge: walking up, rotated sideways
       const along = p - 2 * W - H;
       return { x: charOffset, y: H - along, rotation: 90, flipY: -1, dir: -1 };
     }
   }, []);
+
+  // Consistent walk speed: ~120 logical px/sec regardless of screen size
+  const WALK_SPEED = 2.4; // px per tick
+  const TICK_MS = 50;
 
   // Start perimeter walking when minimized
   useEffect(() => {
@@ -367,14 +377,12 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setLimbState('idle');
       setWalkPos({ x: 0, y: 0 });
 
-      // Update screen dims for web fallback
       if (!isElectron) {
         screenDimsRef.current = { w: window.innerWidth, h: window.innerHeight };
       }
 
       const W = screenDimsRef.current.w;
       const H = screenDimsRef.current.h;
-      // Start at bottom-center
       perimeterRef.current = W + H + W / 2;
 
       idleTimerRef.current = setTimeout(() => {
@@ -385,13 +393,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           setLimbState('walking');
           
           walkIntervalRef.current = setInterval(() => {
-            perimeterRef.current += 2; // walking speed
+            perimeterRef.current += WALK_SPEED;
             const pos = getPerimeterPos(perimeterRef.current);
             setWalkPos({ x: pos.x, y: pos.y });
             setWalkDirection(pos.dir);
             setWalkRotation(pos.rotation);
             setWalkFlipY(pos.flipY);
-          }, 50);
+          }, TICK_MS);
         }, 600);
       }, 3000);
     }
@@ -416,13 +424,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setTimeout(() => {
         setLimbState('walking');
         walkIntervalRef.current = setInterval(() => {
-          perimeterRef.current += 2;
+          perimeterRef.current += WALK_SPEED;
           const pos = getPerimeterPos(perimeterRef.current);
           setWalkPos({ x: pos.x, y: pos.y });
           setWalkDirection(pos.dir);
           setWalkRotation(pos.rotation);
           setWalkFlipY(pos.flipY);
-        }, 50);
+        }, TICK_MS);
       }, 600);
     }, 3000);
   }, [getPerimeterPos]);
