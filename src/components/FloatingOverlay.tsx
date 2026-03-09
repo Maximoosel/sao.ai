@@ -23,6 +23,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [isExpanded, setIsExpanded] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
 
+  // Minimized dragging (web) + click guard
+  const minimizeBoundsRef = useRef<HTMLDivElement>(null);
+  const minimizeDragLockRef = useRef(false);
+
   const [files, setFiles] = useState<SweepFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeCategory, setActiveCategory] = useState<FileCategory | 'all'>('all');
