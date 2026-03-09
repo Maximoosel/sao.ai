@@ -145,8 +145,8 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 };
 
 // Animated morphing abstract shape (used in overlay)
-const AbstractShape = ({ size = 48 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 100 100" className="animate-morph-shape">
+const AbstractShape = ({ size = 48, showLimbs = false }: { size?: number; showLimbs?: boolean }) => (
+  <svg width={size} height={showLimbs ? size * 1.6 : size} viewBox={showLimbs ? "0 0 100 160" : "0 0 100 100"} className="overflow-visible">
     <defs>
       <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%">
         <stop offset="0%" stopColor="#4B6A6A" />
@@ -164,12 +164,63 @@ const AbstractShape = ({ size = 48 }: { size?: number }) => (
         </feMerge>
       </filter>
     </defs>
+    
+    {/* Arms - animate in when showLimbs */}
+    {showLimbs && (
+      <>
+        {/* Left arm */}
+        <g className="animate-wave-left" style={{ transformOrigin: '20px 50px' }}>
+          <path
+            d="M20,50 Q5,45 -5,55 Q-8,60 -5,65 Q0,68 5,65 Q12,58 20,55"
+            fill="url(#shape-grad)"
+            opacity="0.85"
+          />
+        </g>
+        {/* Right arm */}
+        <g className="animate-wave-right" style={{ transformOrigin: '80px 50px' }}>
+          <path
+            d="M80,50 Q95,45 105,55 Q108,60 105,65 Q100,68 95,65 Q88,58 80,55"
+            fill="url(#shape-grad)"
+            opacity="0.85"
+          />
+        </g>
+        {/* Left leg */}
+        <g className="animate-step-left" style={{ transformOrigin: '35px 90px' }}>
+          <path
+            d="M35,85 Q32,105 28,125 Q26,132 30,135 Q36,138 40,132 Q42,120 40,100 Q39,92 38,88"
+            fill="url(#shape-grad)"
+            opacity="0.85"
+          />
+        </g>
+        {/* Right leg */}
+        <g className="animate-step-right" style={{ transformOrigin: '65px 90px' }}>
+          <path
+            d="M65,85 Q68,105 72,125 Q74,132 70,135 Q64,138 60,132 Q58,120 60,100 Q61,92 62,88"
+            fill="url(#shape-grad)"
+            opacity="0.85"
+          />
+        </g>
+      </>
+    )}
+    
+    {/* Main body */}
     <path
       d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
       fill="url(#shape-grad)"
       filter="url(#glow)"
       opacity="0.9"
+      className={showLimbs ? "animate-body-bounce" : ""}
     />
+    
+    {/* Eyes when showing limbs */}
+    {showLimbs && (
+      <>
+        <circle cx="38" cy="45" r="4" fill="white" opacity="0.9" className="animate-blink" />
+        <circle cx="62" cy="45" r="4" fill="white" opacity="0.9" className="animate-blink" />
+        <circle cx="39" cy="46" r="1.5" fill="#2a2a2a" />
+        <circle cx="63" cy="46" r="1.5" fill="#2a2a2a" />
+      </>
+    )}
   </svg>
 );
 

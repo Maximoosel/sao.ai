@@ -337,4 +337,64 @@
   .animate-morph-shape path {
     animation: morphShape 6s ease-in-out infinite;
   }
+
+  /* Character idle animations */
+  @keyframes waveLeft {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-25deg); }
+    50% { transform: rotate(-15deg); }
+    75% { transform: rotate(-30deg); }
+  }
+
+  @keyframes waveRight {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    50% { transform: rotate(30deg); }
+    75% { transform: rotate(15deg); }
+  }
+
+  @keyframes stepLeft {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(-8deg) translateY(-3px); }
+  }
+
+  @keyframes stepRight {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(8deg) translateY(-3px); }
+  }
+
+  @keyframes bodyBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-2px) scale(1.02); }
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+  }
+
+  .animate-wave-left {
+    animation: waveLeft 1.2s ease-in-out infinite;
+  }
+
+  .animate-wave-right {
+    animation: waveRight 1.4s ease-in-out infinite 0.2s;
+  }
+
+  .animate-step-left {
+    animation: stepLeft 0.8s ease-in-out infinite;
+  }
+
+  .animate-step-right {
+    animation: stepRight 0.8s ease-in-out infinite 0.4s;
+  }
+
+  .animate-body-bounce {
+    animation: bodyBounce 0.8s ease-in-out infinite;
+  }
+
+  .animate-blink {
+    animation: blink 3s ease-in-out infinite;
+    transform-origin: center;
+  }
 }

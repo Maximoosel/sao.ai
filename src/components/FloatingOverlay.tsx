@@ -321,7 +321,6 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             minimizeDragLockRef.current = true;
           }}
           onDragEnd={() => {
-            // let the click event (if any) flush first
             requestAnimationFrame(() => {
               minimizeDragLockRef.current = false;
             });
@@ -329,30 +328,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           className="absolute top-4 left-1/2 -translate-x-1/2"
           style={{ WebkitAppRegion: 'no-drag' } as any}
         >
-          <div className="relative">
-            <div
-              className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
-              style={{ WebkitAppRegion: isElectron ? 'drag' : 'no-drag' } as any}
-              onClick={() => {
-                if (!isElectron && !minimizeDragLockRef.current) setIsMinimized(false);
-              }}
-            >
-              <AbstractShape size={28} />
-            </div>
-
-            {/* Click target (kept small so the icon stays draggable in Electron) */}
-            <button
-              type="button"
-              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white/10 border border-white/15 text-white/80 text-[10px] leading-none flex items-center justify-center"
-              style={{ WebkitAppRegion: 'no-drag' } as any}
-              onClick={() => {
-                if (!minimizeDragLockRef.current) setIsMinimized(false);
-              }}
-              title="Open"
-            >
-              ↗
-            </button>
-          </div>
+          <motion.div
+            className="cursor-pointer"
+            style={{ WebkitAppRegion: isElectron ? 'drag' : 'no-drag' } as any}
+            onClick={() => {
+              if (!minimizeDragLockRef.current) setIsMinimized(false);
+            }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <AbstractShape size={40} showLimbs={true} />
+          </motion.div>
         </motion.div>
       </div>
     );
