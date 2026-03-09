@@ -359,8 +359,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               const rect = overlayRef.current.getBoundingClientRect();
               overlayDimsRef.current = { w: rect.width, h: rect.height };
             }
-            perimeterRef.current += WALK_SPEED;
-            const pos = getOverlayPerimeterPos(perimeterRef.current);
+            perimeterRef.current += WALK_SPEED * walkDirRef.current;
+            const pos = getTitleBarWalkPos(perimeterRef.current);
+            perimeterRef.current = pos.x; // sync after bounce
             setWalkPos({ x: pos.x, y: pos.y });
             setWalkDirection(pos.dir);
             setWalkRotation(pos.rotation);
