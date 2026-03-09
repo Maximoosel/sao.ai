@@ -307,30 +307,30 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   };
 
   // Walking character state — walks the overlay border when maximized
-  const [limbState, setLimbState] = useState<'idle' | 'popping' | 'walking'>('idle');
+  const [limbState, setLimbState] = useState<'idle' | 'bouncing' | 'popping' | 'walking'>('idle');
   const [showLimbs, setShowLimbs] = useState(false);
   const walkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const walkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [walkPos, setWalkPos] = useState({ x: 0, y: 0 });
+  const [walkPos, setWalkPos] = useState({ x: 60, y: 0 });
   const [walkDirection, setWalkDirection] = useState(1);
   const [walkRotation, setWalkRotation] = useState(0);
   const [walkFlipY, setWalkFlipY] = useState(1);
   const perimeterRef = useRef(0);
   const overlayDimsRef = useRef({ w: 420, h: 600 });
+  const [bounceY, setBounceY] = useState(22); // starts at title bar logo position
 
-  // Walk along the title bar bottom border line only — bounce back and forth
-  const titleBarHeight = 44; // approximate height of the title bar
+  // The Y position of the border line (storage section bottom border)
+  const WALK_LINE_Y = 103;
+
   const walkDirRef = useRef(1); // 1 = right, -1 = left
 
   const getTitleBarWalkPos = useCallback((x: number) => {
     const W = overlayDimsRef.current.w;
     const margin = 20;
-    // Right boundary: stop before the "Scanned Xm ago" text (~40% from right)
-    const rightLimit = W * 0.35;
-    // Clamp and bounce
-    if (x >= rightLimit) {
+    // Bounce at full width edges
+    if (x >= W - margin) {
       walkDirRef.current = -1;
-      x = rightLimit;
+      x = W - margin;
     } else if (x <= margin) {
       walkDirRef.current = 1;
       x = margin;
@@ -348,32 +348,43 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         const rect = overlayRef.current.getBoundingClientRect();
         overlayDimsRef.current = { w: rect.width, h: rect.height };
       }
-      // Start from top-left (where the logo is, ~60px in from left)
       perimeterRef.current = 60;
+      setWalkPos({ x: 60, y: 0 });
+      setBounceY(22);
 
       walkTimerRef.current = setTimeout(() => {
+        // Phase 1: Show the shape and bounce it down to the walk line
         setShowLimbs(true);
-        setLimbState('popping');
+        setLimbState('bouncing');
+        setBounceY(WALK_LINE_Y);
+
+        // Phase 2: After bounce lands, pop out limbs
         setTimeout(() => {
-          setLimbState('walking');
-          walkIntervalRef.current = setInterval(() => {
-            if (overlayRef.current) {
-              const rect = overlayRef.current.getBoundingClientRect();
-              overlayDimsRef.current = { w: rect.width, h: rect.height };
-            }
-            perimeterRef.current += WALK_SPEED * walkDirRef.current;
-            const pos = getTitleBarWalkPos(perimeterRef.current);
-            perimeterRef.current = pos.x; // sync after bounce
-            setWalkPos({ x: pos.x, y: pos.y });
-            setWalkDirection(pos.dir);
-            setWalkRotation(pos.rotation);
-            setWalkFlipY(pos.flipY);
-          }, TICK_MS);
+          setLimbState('popping');
+          
+          // Phase 3: Start walking
+          setTimeout(() => {
+            setLimbState('walking');
+            walkIntervalRef.current = setInterval(() => {
+              if (overlayRef.current) {
+                const rect = overlayRef.current.getBoundingClientRect();
+                overlayDimsRef.current = { w: rect.width, h: rect.height };
+              }
+              perimeterRef.current += WALK_SPEED * walkDirRef.current;
+              const pos = getTitleBarWalkPos(perimeterRef.current);
+              perimeterRef.current = pos.x;
+              setWalkPos({ x: pos.x, y: pos.y });
+              setWalkDirection(pos.dir);
+              setWalkRotation(pos.rotation);
+              setWalkFlipY(pos.flipY);
+            }, TICK_MS);
+          }, 500);
         }, 600);
       }, 4000);
     } else {
       setShowLimbs(false);
       setLimbState('idle');
+      setBounceY(22);
       if (walkIntervalRef.current) { clearInterval(walkIntervalRef.current); walkIntervalRef.current = null; }
       if (walkTimerRef.current) { clearTimeout(walkTimerRef.current); walkTimerRef.current = null; }
     }
@@ -416,14 +427,38 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         ref={overlayRef}
         className="fixed z-[100] inset-0 flex flex-col w-full h-full overflow-visible"
       >
-        {/* Walking character on overlay border — rendered outside overflow container */}
+        {/* Bouncing phase — shape drops from logo to the walk line */}
+        {showLimbs && limbState === 'bouncing' && (
+          <motion.div
+            className="absolute z-[201] pointer-events-none"
+            style={{ left: 0, top: 0 }}
+            initial={{ x: 60 - 14, y: 22 }}
+            animate={{ x: 60 - 14, y: bounceY }}
+            transition={{ type: 'spring', stiffness: 300, damping: 15, mass: 0.8 }}
+          >
+            <AbstractShape size={28} />
+          </motion.div>
+        )}
+
+        {/* Popping phase — limbs appear, still on the line */}
+        {showLimbs && limbState === 'popping' && (
+          <motion.div
+            className="absolute z-[201] pointer-events-none"
+            style={{ left: 0, top: 0 }}
+            animate={{ x: 60 - 14, y: WALK_LINE_Y }}
+          >
+            <AbstractShape size={28} showLimbs={true} limbState="popping" walkDirection={1} />
+          </motion.div>
+        )}
+
+        {/* Walking phase */}
         {showLimbs && limbState === 'walking' && (
           <motion.div
             className="absolute z-[201] pointer-events-none"
             style={{ left: 0, top: 0 }}
             animate={{
               x: walkPos.x - 14,
-              y: 103,
+              y: WALK_LINE_Y,
               rotate: walkRotation,
               scaleY: walkFlipY,
             }}
