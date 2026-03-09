@@ -114,22 +114,42 @@ export function useFileScanner() {
         const dirHandle = await (window as any).showDirectoryPicker({ mode: 'read' });
         const files: SweepFile[] = [];
         let id = 1000;
-        
+        const BATCH_SIZE = 50;
+        let pending: Promise<void>[] = [];
+
+        async function processFile(entry: any, path: string) {
+          try {
+            const file = await entry.getFile();
+            files.push({
+              id: String(id++),
+              name: file.name,
+              path: path,
+              size: file.size,
+              lastOpened: new Date(file.lastModified).toISOString().split('T')[0],
+              type: getFileType(file.name),
+              category: getFileCategory(file),
+            });
+          } catch { /* skip inaccessible files */ }
+        }
+
+        async function flushBatch() {
+          if (pending.length > 0) {
+            await Promise.all(pending);
+            pending = [];
+            // Update UI progressively so users see results appearing
+            setScannedFiles([...files]);
+            // Yield to main thread to keep UI responsive
+            await new Promise(r => setTimeout(r, 0));
+          }
+        }
+
         async function traverse(handle: any, path: string) {
           for await (const entry of handle.values()) {
             if (entry.kind === 'file') {
-              try {
-                const file = await entry.getFile();
-                files.push({
-                  id: String(id++),
-                  name: file.name,
-                  path: path,
-                  size: file.size,
-                  lastOpened: new Date(file.lastModified).toISOString().split('T')[0],
-                  type: getFileType(file.name),
-                  category: getFileCategory(file),
-                });
-              } catch { /* skip inaccessible files */ }
+              pending.push(processFile(entry, path));
+              if (pending.length >= BATCH_SIZE) {
+                await flushBatch();
+              }
             } else if (entry.kind === 'directory' && !entry.name.startsWith('.')) {
               await traverse(entry, `${path}/${entry.name}`);
             }
@@ -137,7 +157,8 @@ export function useFileScanner() {
         }
         
         await traverse(dirHandle, dirHandle.name);
-        setScannedFiles(files);
+        await flushBatch(); // flush remaining
+        setScannedFiles([...files]);
         setIsScanning(false);
         return files;
       } catch (e: any) {
