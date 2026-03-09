@@ -228,33 +228,32 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
-        className="fixed z-[100] cursor-pointer left-0 top-0"
-        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform' }}
-        onClick={() => setIsMinimized(false)}
+        className="fixed z-[100] cursor-pointer inset-0 flex items-center justify-center"
+        style={{ WebkitAppRegion: 'drag' } as any}
       >
-        <div className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
+        <div 
+          className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
+          style={{ WebkitAppRegion: 'no-drag' } as any}
+          onClick={() => setIsMinimized(false)}
+        >
           <AbstractShape size={28} />
         </div>
       </div>
     );
   }
 
-  const width = isExpanded ? 'w-[800px]' : 'w-[420px]';
-  const height = isExpanded ? 'h-[85vh]' : 'h-[600px]';
-
   return (
       <div
         ref={overlayRef}
-        className={`fixed z-[100] left-0 top-0 ${width} ${height} flex flex-col`}
-        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform', maxHeight: '90vh' }}
+        className="fixed z-[100] inset-0 flex flex-col w-full h-full"
       >
         <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10"
           style={{ background: `hsla(235, 24%, 15%, ${panelOpacity === 15 ? 0.95 : panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
           
           {/* Title bar - draggable */}
           <div
-            className="flex items-center justify-between px-4 py-3 cursor-move select-none border-b border-white/10"
-            onMouseDown={onMouseDown}
+            className="flex items-center justify-between px-4 py-3 select-none border-b border-white/10"
+            style={{ WebkitAppRegion: 'drag' } as any}
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-white/30" />
