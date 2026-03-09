@@ -159,19 +159,19 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
       className={`overflow-visible ${isWalking ? 'animate-walk-bounce' : ''}`}
     >
       <defs>
-        {/* Seamless gradient - no harsh white, smooth fade */}
+        {/* More vivid gradient with faster rotation */}
         <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#4B6A6A" />
-          <stop offset="25%" stopColor="#6B9B9B" />
-          <stop offset="50%" stopColor="#9BBBBB" />
-          <stop offset="75%" stopColor="#C4A5A5" />
-          <stop offset="100%" stopColor="#8B5A6A" />
+          <stop offset="0%" stopColor="#2D5A5A" />
+          <stop offset="30%" stopColor="#4ECDC4" />
+          <stop offset="50%" stopColor="#FF6B9D" />
+          <stop offset="70%" stopColor="#C44569" />
+          <stop offset="100%" stopColor="#2D5A5A" />
           <animateTransform
             attributeName="gradientTransform"
             type="rotate"
             from="0 50 50"
             to="360 50 50"
-            dur={showLimbs ? "6s" : "20s"}
+            dur={showLimbs ? "2s" : "8s"}
             repeatCount="indefinite"
           />
         </linearGradient>
@@ -269,32 +269,36 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle', walkD
         />
       </g>
       
-      {/* Legs - simple pendulum style extending from bottom of ball */}
+      {/* Legs - rounded jelly-like soft curves */}
       {showLimbs && (
         <g className={limbClass}>
-          {/* Left leg */}
+          {/* Left leg - soft rounded jelly */}
           <g className={isWalking ? 'animate-leg-pendulum-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
              style={{ transformOrigin: '42px 85px' }}>
-            <line x1="42" y1="85" x2="38" y2="130"
-              stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
+            <path 
+              d="M42 85 Q38 105 40 120 Q42 135 36 138"
+              fill="none" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
+              className={isWalking ? 'animate-jelly-wobble' : ''}
             />
             {limbState !== 'picked-up' && (
-              <ellipse cx="36" cy="132" rx="6" ry="3" fill="none" stroke="#1a1a1a" strokeWidth="3" />
+              <ellipse cx="34" cy="140" rx="8" ry="5" fill="#1a1a1a" opacity="0.8" />
             )}
           </g>
           
-          {/* Right leg - with striped shoe */}
+          {/* Right leg - soft rounded jelly with striped shoe */}
           <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
              style={{ transformOrigin: '58px 85px' }}>
-            <line x1="58" y1="85" x2="62" y2="130"
-              stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
+            <path 
+              d="M58 85 Q62 105 60 120 Q58 135 64 138"
+              fill="none" stroke="#1a1a1a" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
+              className={isWalking ? 'animate-jelly-wobble-delay' : ''}
             />
             {limbState !== 'picked-up' && (
               <g>
-                <ellipse cx="64" cy="132" rx="7" ry="4" fill="none" stroke="#1a1a1a" strokeWidth="3" />
-                <line x1="60" y1="130" x2="60" y2="134" stroke="#1a1a1a" strokeWidth="1.5" />
-                <line x1="64" y1="129" x2="64" y2="135" stroke="#1a1a1a" strokeWidth="1.5" />
-                <line x1="68" y1="130" x2="68" y2="134" stroke="#1a1a1a" strokeWidth="1.5" />
+                <ellipse cx="66" cy="140" rx="9" ry="6" fill="#1a1a1a" opacity="0.8" />
+                <line x1="60" y1="138" x2="60" y2="142" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+                <line x1="66" y1="137" x2="66" y2="143" stroke="#555" strokeWidth="2" strokeLinecap="round" />
+                <line x1="72" y1="138" x2="72" y2="142" stroke="#555" strokeWidth="2" strokeLinecap="round" />
               </g>
             )}
           </g>

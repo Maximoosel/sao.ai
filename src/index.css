@@ -364,20 +364,36 @@
     animation: walkBounce 0.9s ease-in-out infinite;
   }
 
-  /* Ball squash and stretch - MORE stretch (8% compression/elongation) */
+  /* Ball squash and stretch - MORE stretch (15% elongation) */
   @keyframes squashStretch {
     0%, 100% { transform: scaleX(1) scaleY(1); }      /* contact */
-    12.5% { transform: scaleX(1.08) scaleY(0.92); }   /* down - squash */
-    25% { transform: scaleX(1.02) scaleY(0.98); }     /* passing */
-    37.5% { transform: scaleX(0.92) scaleY(1.10); }   /* up - MORE stretch */
+    12.5% { transform: scaleX(1.12) scaleY(0.88); }   /* down - squash */
+    25% { transform: scaleX(1.04) scaleY(0.96); }     /* passing */
+    37.5% { transform: scaleX(0.85) scaleY(1.18); }   /* up - MORE stretch */
     50% { transform: scaleX(1) scaleY(1); }           /* contact */
-    62.5% { transform: scaleX(1.08) scaleY(0.92); }   /* down - squash */
-    75% { transform: scaleX(1.02) scaleY(0.98); }     /* passing */
-    87.5% { transform: scaleX(0.92) scaleY(1.10); }   /* up - MORE stretch */
+    62.5% { transform: scaleX(1.12) scaleY(0.88); }   /* down - squash */
+    75% { transform: scaleX(1.04) scaleY(0.96); }     /* passing */
+    87.5% { transform: scaleX(0.85) scaleY(1.18); }   /* up - MORE stretch */
   }
 
   .animate-squash-stretch {
     animation: squashStretch 0.9s ease-in-out infinite;
+  }
+
+  /* Jelly wobble effect for legs */
+  @keyframes jellyWobble {
+    0%, 100% { transform: scaleX(1) scaleY(1); }
+    25% { transform: scaleX(0.95) scaleY(1.05); }
+    50% { transform: scaleX(1.05) scaleY(0.95); }
+    75% { transform: scaleX(0.97) scaleY(1.03); }
+  }
+
+  .animate-jelly-wobble {
+    animation: jellyWobble 0.45s ease-in-out infinite;
+  }
+
+  .animate-jelly-wobble-delay {
+    animation: jellyWobble 0.45s ease-in-out infinite 0.225s;
   }
 
   /* Backpack bob - delayed behind ball */
