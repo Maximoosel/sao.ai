@@ -11,6 +11,7 @@ import FileCard from './FileCard';
 import StorageRing from './StorageRing';
 import EmptyState from './EmptyState';
 import CategoryTabs from './CategoryTabs';
+import { Switch } from '@/components/ui/switch';
 import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
 import { useDeviceStorage } from '@/hooks/useDeviceStorage';
