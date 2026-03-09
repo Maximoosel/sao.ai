@@ -227,13 +227,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
-        className="fixed z-[100] cursor-pointer inset-0 flex items-center justify-center"
+        className="fixed z-[100] inset-0"
         style={{ WebkitAppRegion: 'drag' } as any}
-        onClick={() => setIsMinimized(false)}
       >
         <div 
-          className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
-          style={{ WebkitAppRegion: 'drag' } as any}
+          className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform cursor-pointer"
+          style={{ WebkitAppRegion: 'no-drag' } as any}
+          onClick={() => setIsMinimized(false)}
         >
           <AbstractShape size={28} />
         </div>
