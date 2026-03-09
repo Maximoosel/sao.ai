@@ -9,11 +9,15 @@ const categoryMessages: Record<FileCategory | 'all', { emoji: string; title: str
   screenshots: { emoji: '📸', title: 'Screenshots clear', desc: 'No screenshot clutter detected' },
 };
 
-const EmptyState = ({ category = 'all' }: { category?: FileCategory | 'all' }) => {
+const EmptyState = ({ category = 'all', onScan }: { category?: FileCategory | 'all', onScan?: () => void }) => {
   const msg = categoryMessages[category] || categoryMessages.all;
+  const isAll = category === 'all';
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 animate-fade-in">
+    <div 
+      className={`flex flex-col items-center justify-center py-16 animate-fade-in ${isAll && onScan ? 'cursor-pointer hover:scale-105 transition-transform' : ''}`}
+      onClick={isAll && onScan ? onScan : undefined}
+    >
       <span className="text-4xl mb-3">{msg.emoji}</span>
       <h3 className="text-sm font-semibold text-white/80 mb-1">{msg.title}</h3>
       <p className="text-[11px] text-white/40">{msg.desc}</p>

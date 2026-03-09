@@ -326,7 +326,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               )}
             </div>
             <div className="flex gap-1.5">
-              <button onClick={handleScanFolder} disabled={isScanning} className="overlay-action-btn" title="Scan a folder">
+              <button onClick={handleScanFolder} disabled={isScanning} className={`overlay-action-btn ${files.length === 0 ? 'animate-[pulse_2s_ease-in-out_infinite] text-primary border border-primary/30 bg-primary/10' : ''}`} title="Scan a folder">
                 <FolderOpen size={14} />
               </button>
               <button onClick={handleAnalyze} disabled={isAnalyzing || files.length === 0} className="overlay-action-btn" title="AI Keep Priority analysis">
@@ -396,7 +396,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           {/* File list */}
           <div ref={fileListRef} className="flex-1 overflow-y-auto px-3 pb-2 space-y-1.5 no-drag relative">
             {filteredFiles.length === 0 && !sweepAnimating ? (
-              <EmptyState category={activeCategory} />
+              <EmptyState category={activeCategory} onScan={handleScanFolder} />
             ) : (
               <AnimatePresence mode="popLayout">
                 {filteredFiles.map((file) => {
