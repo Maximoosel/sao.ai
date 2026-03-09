@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import { useWindowPlatforms, type Platform } from '@/hooks/useWindowPlatforms';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
