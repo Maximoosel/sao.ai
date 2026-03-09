@@ -328,7 +328,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 
     if (p < W) {
       // Top edge: walking right, upside down — legs point UP toward edge
-      return { x: p, y: offset, rotation: 180, flipY: 1, dir: 1 };
+      return { x: p, y: offset, rotation: 180, flipY: -1, dir: 1 };
     } else if (p < W + H) {
       // Right edge: walking down
       const along = p - W;
