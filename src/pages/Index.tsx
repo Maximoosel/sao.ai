@@ -47,7 +47,7 @@ const Index = () => {
         <SplashScreen
           onComplete={() => setShowSplash(false)}
           bgBlur={bgBlur}
-          panelOpacity={splashOpacity}
+          panelOpacity={95}
         />
       )}
 
