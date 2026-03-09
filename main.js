@@ -42,6 +42,17 @@ function createWindow() {
       return false;
     }
   });
+
+  ipcMain.handle('open-trash', async () => {
+    try {
+      // On macOS, open Finder showing Trash
+      await shell.openPath(`${process.env.HOME}/.Trash`);
+      return true;
+    } catch (e) {
+      console.error('Failed to open Trash:', e);
+      return false;
+    }
+  });
 }
 
 app.whenReady().then(createWindow);
