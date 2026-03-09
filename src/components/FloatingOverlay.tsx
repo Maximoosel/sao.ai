@@ -397,9 +397,9 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             if (showLimbs) setLimbState('picked-up');
           }}
           onDragEnd={() => {
-            requestAnimationFrame(() => {
+            setTimeout(() => {
               minimizeDragLockRef.current = false;
-            });
+            }, 200);
             resetIdleTimer();
           }}
           className="absolute top-4 left-1/2 pointer-events-auto"
@@ -412,17 +412,23 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
             WebkitAppRegion: 'no-drag',
           } as any}
         >
-          <motion.div
+          <div
             className="cursor-pointer"
             style={{ WebkitAppRegion: isElectron ? 'drag' : 'no-drag' } as any}
-            onClick={() => {
-              if (!minimizeDragLockRef.current) setIsMinimized(false);
+            onPointerUp={(e) => {
+              e.stopPropagation();
+              if (!minimizeDragLockRef.current) {
+                setIsMinimized(false);
+              }
             }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
           >
-            <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} walkDirection={walkDirection} />
-          </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} walkDirection={walkDirection} />
+            </motion.div>
+          </div>
         </motion.div>
       </div>
     );
