@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { useWindowPlatforms, type Platform } from '@/hooks/useWindowPlatforms';
+// useWindowPlatforms available for Electron window-surface walking (not used in perimeter mode)
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Layers, X, Minus, Search, FolderOpen, Sparkles, ArrowDown, ArrowUp, 
