@@ -333,14 +333,14 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           let dir = 1;
           let posX = 0;
           walkIntervalRef.current = setInterval(() => {
-            posX += dir * 0.6;
+            posX += dir * 1.2;
             const maxX = window.innerWidth / 2 - 40;
             if (posX > maxX || posX < -maxX) {
               dir *= -1;
             }
             setWalkPos({ x: posX, y: 0 });
             setWalkDirection(dir);
-          }, 50);
+          }, 100);
         }, 600);
       }, 5000);
     }
@@ -367,14 +367,14 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         let dir = 1;
         let posX = 0;
         walkIntervalRef.current = setInterval(() => {
-          posX += dir * 0.6;
+          posX += dir * 1.2;
           const maxX = window.innerWidth / 2 - 40;
           if (posX > maxX || posX < -maxX) {
             dir *= -1;
           }
           setWalkPos({ x: posX, y: 0 });
           setWalkDirection(dir);
-        }, 50);
+        }, 100);
       }, 600);
     }, 5000);
   }, []);
@@ -382,52 +382,24 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
-        ref={minimizeBoundsRef}
-        className="fixed z-[100] inset-0 pointer-events-none"
-        style={{ WebkitAppRegion: 'drag' } as any}
+        className="fixed z-[100] top-4 left-0 right-0 flex justify-center pointer-events-none"
       >
         <motion.div
-          drag
-          dragConstraints={minimizeBoundsRef}
-          dragMomentum={false}
-          dragElastic={0.12}
-          onDragStart={() => {
-            minimizeDragLockRef.current = true;
-            if (walkIntervalRef.current) { clearInterval(walkIntervalRef.current); walkIntervalRef.current = null; }
-            if (showLimbs) setLimbState('picked-up');
-          }}
-          onDragEnd={() => {
-            setTimeout(() => {
-              minimizeDragLockRef.current = false;
-            }, 200);
-            resetIdleTimer();
-          }}
-          className="absolute top-4 left-1/2 pointer-events-auto"
+          className="pointer-events-auto"
           animate={{
-            x: limbState === 'walking' ? walkPos.x - 20 : -20,
+            x: limbState === 'walking' ? walkPos.x : 0,
             y: walkPos.y,
           }}
-          transition={limbState === 'walking' ? { duration: 0.06, ease: 'linear' } : { type: 'spring', stiffness: 300, damping: 25 }}
-          style={{ 
-            WebkitAppRegion: 'no-drag',
-          } as any}
+          transition={limbState === 'walking' ? { duration: 0.08, ease: 'linear' } : { type: 'spring', stiffness: 300, damping: 25 }}
         >
           <div
             className="cursor-pointer"
-            style={{ WebkitAppRegion: isElectron ? 'drag' : 'no-drag' } as any}
             onPointerUp={(e) => {
               e.stopPropagation();
-              if (!minimizeDragLockRef.current) {
-                setIsMinimized(false);
-              }
+              setIsMinimized(false);
             }}
           >
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} walkDirection={walkDirection} />
-            </motion.div>
+            <AbstractShape size={40} showLimbs={showLimbs} limbState={limbState} walkDirection={walkDirection} />
           </div>
         </motion.div>
       </div>
