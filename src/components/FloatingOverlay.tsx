@@ -437,9 +437,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-white/30" />
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center">
-                <AbstractShape size={22} />
-              </div>
+              {showLimbs && limbState === 'walking' ? (
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center opacity-0">
+                  <AbstractShape size={22} />
+                </div>
+              ) : (
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center">
+                  <AbstractShape size={22} />
+                </div>
+              )}
               <span className="text-sm font-semibold text-white tracking-tight">sao.ai</span>
               {isAnalyzing && (
                 <span className="text-xs text-primary animate-pulse flex items-center gap-1">
