@@ -141,9 +141,12 @@ export function useFileScanner() {
         setIsScanning(false);
         return files;
       } catch (e: any) {
-        if (e.name !== 'AbortError') console.error('Scan error:', e);
-        setIsScanning(false);
-        return [];
+        if (e.name === 'AbortError') {
+          setIsScanning(false);
+          return [];
+        }
+        console.error('Scan error, falling back:', e);
+        // Fall through to fallback input method
       }
     }
     
