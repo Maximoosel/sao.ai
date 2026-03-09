@@ -384,7 +384,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 const rect = overlayRef.current.getBoundingClientRect();
                 overlayDimsRef.current = { w: rect.width, h: rect.height };
               }
-              measureBorderLine(); // keep tracking
+              measureBorderLine();
               perimeterRef.current += WALK_SPEED * walkDirRef.current;
               const pos = getTitleBarWalkPos(perimeterRef.current);
               perimeterRef.current = pos.x;
@@ -392,7 +392,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
               setWalkDirection(pos.dir);
             }, TICK_MS);
           }, 600);
-        }, 800);
+        }, 2000); // wait for the 1.8s roll to finish
       }, 10000);
     } else {
       setShowLimbs(false);
