@@ -229,11 +229,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       <div
         className="fixed z-[100] cursor-pointer inset-0 flex items-center justify-center"
         style={{ WebkitAppRegion: 'drag' } as any}
+        onClick={() => setIsMinimized(false)}
       >
         <div 
           className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
-          style={{ WebkitAppRegion: 'no-drag' } as any}
-          onClick={() => setIsMinimized(false)}
+          style={{ WebkitAppRegion: 'drag' } as any}
         >
           <AbstractShape size={28} />
         </div>
