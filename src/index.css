@@ -143,8 +143,9 @@
 
   .size-badge {
     @apply px-3 py-1 rounded-xl text-xs font-semibold;
-    background: hsl(var(--primary) / 0.08);
+    background: hsl(var(--primary) / 0.15);
     color: hsl(var(--primary));
+    border: 0.5px solid hsl(var(--primary) / 0.2);
   }
 
   .search-input {
