@@ -145,86 +145,84 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 };
 
 // Animated morphing abstract shape (used in overlay)
-const AbstractShape = ({ size = 48, showLimbs = false }: { size?: number; showLimbs?: boolean }) => (
-  <svg width={size} height={showLimbs ? size * 1.6 : size} viewBox={showLimbs ? "0 0 100 160" : "0 0 100 100"} className={`overflow-visible ${!showLimbs ? 'animate-morph-shape' : ''}`}>
-    <defs>
-      <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#4B6A6A" />
-        <stop offset="20%" stopColor="#6B9B9B" />
-        <stop offset="40%" stopColor="#F5F0E8" />
-        <stop offset="60%" stopColor="#D4A5B0" />
-        <stop offset="80%" stopColor="#B87A8C" />
-        <stop offset="100%" stopColor="#5A1F2A" />
-      </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="3" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-    
-    {/* Arms - thin black marker lines */}
-    {showLimbs && (
-      <>
-        {/* Left arm */}
-        <g className="animate-wave-left" style={{ transformOrigin: '15px 50px' }}>
-          <path
-            d="M18,48 Q8,42 -2,48 Q-6,52 -2,56"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { size?: number; showLimbs?: boolean; limbState?: 'idle' | 'walking' | 'picked-up' | 'popping' }) => {
+  const limbClass = limbState === 'walking' ? 'animate-walk' : limbState === 'picked-up' ? 'animate-picked-up' : limbState === 'popping' ? 'animate-pop-in' : '';
+  
+  return (
+    <svg 
+      width={size} 
+      height={showLimbs ? size * 1.7 : size} 
+      viewBox={showLimbs ? "0 0 100 170" : "0 0 100 100"} 
+      className={`overflow-visible ${!showLimbs ? 'animate-morph-shape' : ''}`}
+    >
+      <defs>
+        <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#4B6A6A" />
+          <stop offset="20%" stopColor="#6B9B9B" />
+          <stop offset="40%" stopColor="#F5F0E8" />
+          <stop offset="60%" stopColor="#D4A5B0" />
+          <stop offset="80%" stopColor="#B87A8C" />
+          <stop offset="100%" stopColor="#5A1F2A" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      
+      {/* Limbs - straight thick marker lines */}
+      {showLimbs && (
+        <g className={limbClass}>
+          {/* Left arm — straight diagonal out */}
+          <line x1="15" y1="50" x2="-8" y2="38" 
+            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+            className={limbState === 'walking' ? 'animate-arm-swing-left' : limbState === 'picked-up' ? 'animate-arm-raised-left' : ''}
+            style={{ transformOrigin: '15px 50px' }}
           />
-        </g>
-        {/* Right arm */}
-        <g className="animate-wave-right" style={{ transformOrigin: '85px 50px' }}>
-          <path
-            d="M82,48 Q92,42 102,48 Q106,52 102,56"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* Right arm — straight diagonal out */}
+          <line x1="85" y1="50" x2="108" y2="38"
+            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+            className={limbState === 'walking' ? 'animate-arm-swing-right' : limbState === 'picked-up' ? 'animate-arm-raised-right' : ''}
+            style={{ transformOrigin: '85px 50px' }}
           />
-        </g>
-        {/* Left leg */}
-        <g className="animate-step-left" style={{ transformOrigin: '38px 88px' }}>
-          <path
-            d="M38,86 Q34,108 30,128 Q28,135 32,138"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* Left leg — straight down */}
+          <line x1="36" y1="88" x2="28" y2="140"
+            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+            className={limbState === 'walking' ? 'animate-leg-walk-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
+            style={{ transformOrigin: '36px 88px' }}
           />
-        </g>
-        {/* Right leg */}
-        <g className="animate-step-right" style={{ transformOrigin: '62px 88px' }}>
-          <path
-            d="M62,86 Q66,108 70,128 Q72,135 68,138"
-            fill="none"
-            stroke="#1a1a1a"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* Right leg — straight down */}
+          <line x1="64" y1="88" x2="72" y2="140"
+            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+            className={limbState === 'walking' ? 'animate-leg-walk-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
+            style={{ transformOrigin: '64px 88px' }}
           />
+          {/* Little feet */}
+          {limbState !== 'picked-up' && (
+            <>
+              <line x1="28" y1="140" x2="22" y2="142" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" 
+                className={limbState === 'walking' ? 'animate-leg-walk-left' : ''} style={{ transformOrigin: '36px 88px' }} />
+              <line x1="72" y1="140" x2="78" y2="142" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
+                className={limbState === 'walking' ? 'animate-leg-walk-right' : ''} style={{ transformOrigin: '64px 88px' }} />
+            </>
+          )}
         </g>
-      </>
-    )}
-    
-    {/* Main body */}
-    <path
-      d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
-      fill="url(#shape-grad)"
-      filter="url(#glow)"
-      opacity="0.9"
-      className={showLimbs ? "animate-body-bounce" : ""}
-    />
-  </svg>
-);
+      )}
+      
+      {/* Main body */}
+      <path
+        d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
+        fill="url(#shape-grad)"
+        filter="url(#glow)"
+        opacity="0.9"
+        className={showLimbs && limbState === 'walking' ? 'animate-body-bounce' : ''}
+      />
+    </svg>
+  );
+};
 
 export { AbstractShape };
 export default SplashScreen;
