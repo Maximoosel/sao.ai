@@ -146,7 +146,7 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 
 // Animated morphing abstract shape (used in overlay)
 const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { size?: number; showLimbs?: boolean; limbState?: 'idle' | 'walking' | 'picked-up' | 'popping' }) => {
-  const limbClass = limbState === 'walking' ? 'animate-walk' : limbState === 'picked-up' ? 'animate-picked-up' : limbState === 'popping' ? 'animate-pop-in' : '';
+  const limbClass = limbState === 'popping' ? 'animate-pop-in' : '';
   
   return (
     <svg 
@@ -179,50 +179,80 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        {/* Red glow for scanner tip */}
+        <filter id="red-glow">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
       
       {/* Limbs - straight thick marker lines */}
       {showLimbs && (
         <g className={limbClass}>
-          <line x1="15" y1="50" x2="-8" y2="38" 
+          {/* Left arm — swings while marching */}
+          <line x1="15" y1="48" x2="-5" y2="60" 
             stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-arm-swing-left' : limbState === 'picked-up' ? 'animate-arm-raised-left' : ''}
-            style={{ transformOrigin: '15px 50px' }}
+            className={limbState === 'walking' ? 'animate-march-arm-left' : limbState === 'picked-up' ? 'animate-arm-raised-left' : ''}
+            style={{ transformOrigin: '15px 48px' }}
           />
-          <line x1="85" y1="50" x2="108" y2="38"
+          {/* Right arm — holds scanner while walking */}
+          <g className={limbState === 'walking' ? 'animate-march-arm-right' : limbState === 'picked-up' ? 'animate-arm-raised-right' : ''}
+             style={{ transformOrigin: '85px 48px' }}>
+            <line x1="85" y1="48" x2="108" y2="60"
+              stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
+            />
+            {/* Scanner device — marker style */}
+            {limbState === 'walking' && (
+              <g>
+                {/* Scanner body */}
+                <line x1="108" y1="60" x2="118" y2="52" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                <line x1="118" y1="52" x2="126" y2="48" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+                {/* Red scanner tip with glow */}
+                <circle cx="128" cy="47" r="2.5" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
+                  <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
+                </circle>
+                <circle cx="128" cy="47" r="5" fill="#ff3b3b" opacity="0.15">
+                  <animate attributeName="r" values="4;7;4" dur="1.2s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.15;0.05;0.15" dur="1.2s" repeatCount="indefinite" />
+                </circle>
+              </g>
+            )}
+          </g>
+          {/* Left leg — marching */}
+          <line x1="38" y1="86" x2="32" y2="138"
             stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-arm-swing-right' : limbState === 'picked-up' ? 'animate-arm-raised-right' : ''}
-            style={{ transformOrigin: '85px 50px' }}
+            className={limbState === 'walking' ? 'animate-march-leg-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
+            style={{ transformOrigin: '38px 86px' }}
           />
-          <line x1="36" y1="88" x2="28" y2="140"
+          {/* Right leg — marching */}
+          <line x1="62" y1="86" x2="68" y2="138"
             stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-leg-walk-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
-            style={{ transformOrigin: '36px 88px' }}
+            className={limbState === 'walking' ? 'animate-march-leg-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
+            style={{ transformOrigin: '62px 86px' }}
           />
-          <line x1="64" y1="88" x2="72" y2="140"
-            stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-leg-walk-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
-            style={{ transformOrigin: '64px 88px' }}
-          />
+          {/* Feet */}
           {limbState !== 'picked-up' && (
             <>
-              <line x1="28" y1="140" x2="22" y2="142" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" 
-                className={limbState === 'walking' ? 'animate-leg-walk-left' : ''} style={{ transformOrigin: '36px 88px' }} />
-              <line x1="72" y1="140" x2="78" y2="142" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
-                className={limbState === 'walking' ? 'animate-leg-walk-right' : ''} style={{ transformOrigin: '64px 88px' }} />
+              <line x1="32" y1="138" x2="26" y2="140" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" 
+                className={limbState === 'walking' ? 'animate-march-leg-left' : ''} style={{ transformOrigin: '38px 86px' }} />
+              <line x1="68" y1="138" x2="74" y2="140" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
+                className={limbState === 'walking' ? 'animate-march-leg-right' : ''} style={{ transformOrigin: '62px 86px' }} />
             </>
           )}
         </g>
       )}
       
-      {/* Main body — always morphing + gradient spinning */}
-      <g className="animate-morph-shape">
+      {/* Main body — gradient spins, shape morphs, but no rotation */}
+      <g>
         <path
           d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
           fill="url(#shape-grad)"
           filter="url(#glow)"
           opacity="0.9"
-          className={showLimbs && limbState === 'walking' ? 'animate-body-bounce' : ''}
+          className="animate-morph-body"
         />
       </g>
     </svg>
