@@ -21,11 +21,7 @@ interface SweptEntry { files: SweepFile[]; totalSize: number; timestamp: Date }
 const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; panelOpacity?: number }) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const posRef = useRef({ x: 20, y: 20 });
-  const isDraggingRef = useRef(false);
-  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number | null>(null);
 
   const [files, setFiles] = useState<SweepFile[]>(mockFiles);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -57,32 +53,15 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const { isScanning, scanFolder } = useFileScanner();
   const { isAnalyzing, analyzeFiles } = useRelevanceScoring();
 
-  const applyPosition = useCallback(() => {
-    if (overlayRef.current) {
-      overlayRef.current.style.transform = `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`;
-    }
-  }, []);
-
-  const onMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('button, input, .no-drag')) return;
-    isDraggingRef.current = true;
-    dragRef.current = { startX: e.clientX, startY: e.clientY, origX: posRef.current.x, origY: posRef.current.y };
-  }, []);
-
+  // Resize electron window when expanded state changes
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      if (!isDraggingRef.current || !dragRef.current) return;
-      const dx = e.clientX - dragRef.current.startX;
-      const dy = e.clientY - dragRef.current.startY;
-      posRef.current = { x: dragRef.current.origX + dx, y: dragRef.current.origY + dy };
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(applyPosition);
-    };
-    const onUp = () => { isDraggingRef.current = false; };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    return () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
-  }, [applyPosition]);
+    if (typeof window !== 'undefined' && 'require' in window) {
+      try {
+        const { ipcRenderer } = (window as any).require('electron');
+        ipcRenderer.send('resize-window', isExpanded ? 800 : 420, isExpanded ? 600 : 600);
+      } catch (e) { console.log('Not in electron'); }
+    }
+  }, [isExpanded]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -249,33 +228,32 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     return (
       <div
-        className="fixed z-[100] cursor-pointer left-0 top-0"
-        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform' }}
-        onClick={() => setIsMinimized(false)}
+        className="fixed z-[100] cursor-pointer inset-0 flex items-center justify-center"
+        style={{ WebkitAppRegion: 'drag' } as any}
       >
-        <div className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
+        <div 
+          className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
+          style={{ WebkitAppRegion: 'no-drag' } as any}
+          onClick={() => setIsMinimized(false)}
+        >
           <AbstractShape size={28} />
         </div>
       </div>
     );
   }
 
-  const width = isExpanded ? 'w-[800px]' : 'w-[420px]';
-  const height = isExpanded ? 'h-[85vh]' : 'h-[600px]';
-
   return (
       <div
         ref={overlayRef}
-        className={`fixed z-[100] left-0 top-0 ${width} ${height} flex flex-col`}
-        style={{ transform: `translate3d(${posRef.current.x}px, ${posRef.current.y}px, 0)`, willChange: 'transform', maxHeight: '90vh' }}
+        className="fixed z-[100] inset-0 flex flex-col w-full h-full"
       >
         <div className="flex flex-col h-full rounded-3xl overflow-hidden shadow-2xl shadow-black/40 border border-white/10"
           style={{ background: `hsla(235, 24%, 15%, ${panelOpacity === 15 ? 0.95 : panelOpacity / 100})`, backdropFilter: `blur(${bgBlur}px) saturate(180%)`, WebkitBackdropFilter: `blur(${bgBlur}px) saturate(180%)` }}>
           
           {/* Title bar - draggable */}
           <div
-            className="flex items-center justify-between px-4 py-3 cursor-move select-none border-b border-white/10"
-            onMouseDown={onMouseDown}
+            className="flex items-center justify-between px-4 py-3 select-none border-b border-white/10"
+            style={{ WebkitAppRegion: 'drag' } as any}
           >
             <div className="flex items-center gap-2.5">
               <GripVertical size={14} className="text-white/30" />
@@ -294,7 +272,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as any}>
               <button onClick={() => setShowRecents(!showRecents)} className="p-1.5 rounded-lg hover:bg-white/10 text-white/40 transition-colors" title="Recently swept">
                 <History size={12} />
               </button>

@@ -41,6 +41,68 @@ export function useFileScanner() {
   const [scannedFiles, setScannedFiles] = useState<SweepFile[]>([]);
 
   const scanFolder = useCallback(async () => {
+    // 1. Try Native Electron scanning if available
+    if ('require' in window) {
+      try {
+        setIsScanning(true);
+        const fs = (window as any).require('fs');
+        const path = (window as any).require('path');
+        const os = (window as any).require('os');
+        
+        const docsPath = path.join(os.homedir(), 'Documents');
+        const downloadsPath = path.join(os.homedir(), 'Downloads');
+        const files: SweepFile[] = [];
+        let id = 1000;
+        
+        const scanDir = (dir: string, depth = 0) => {
+          if (depth > 2) return;
+          try {
+            const entries = fs.readdirSync(dir, { withFileTypes: true });
+            for (const entry of entries) {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.name.startsWith('.')) continue;
+              
+              if (entry.isDirectory()) {
+                scanDir(fullPath, depth + 1);
+              } else if (entry.isFile()) {
+                try {
+                  const stats = fs.statSync(fullPath);
+                  const mockFile = {
+                    name: entry.name,
+                    size: stats.size,
+                    lastModified: stats.mtimeMs,
+                    webkitRelativePath: fullPath,
+                  } as any as File;
+                  
+                  files.push({
+                    id: String(id++),
+                    name: entry.name,
+                    path: fullPath.replace(os.homedir(), '~'),
+                    size: stats.size,
+                    lastOpened: new Date(stats.atimeMs).toISOString().split('T')[0],
+                    type: getFileType(entry.name),
+                    category: getFileCategory(mockFile),
+                  });
+                } catch (e) { /* ignore */ }
+              }
+            }
+          } catch (e) { /* ignore */ }
+        };
+        
+        await new Promise(resolve => setTimeout(resolve, 50)); 
+        
+        scanDir(docsPath);
+        scanDir(downloadsPath);
+        
+        setScannedFiles(files);
+        setIsScanning(false);
+        return files;
+      } catch (e) {
+        console.error('Electron scan error:', e);
+        setIsScanning(false);
+      }
+    }
+
     // Try modern File System Access API first
     if ('showDirectoryPicker' in window) {
       try {
