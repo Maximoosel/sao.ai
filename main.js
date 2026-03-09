@@ -1,11 +1,17 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, screen } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { execSync } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+let mainWin = null;
+
 function createWindow() {
+  const display = screen.getPrimaryDisplay();
+  const { width: screenW, height: screenH } = display.workAreaSize;
+
   const win = new BrowserWindow({
     width: 420,
     height: 600,
@@ -18,6 +24,8 @@ function createWindow() {
       contextIsolation: false
     }
   });
+
+  mainWin = win;
 
   // Load the vite dev server url
   win.loadURL('http://localhost:8080');
@@ -45,13 +53,84 @@ function createWindow() {
 
   ipcMain.handle('open-trash', async () => {
     try {
-      // On macOS, open Finder showing Trash
       await shell.openPath(`${process.env.HOME}/.Trash`);
       return true;
     } catch (e) {
       console.error('Failed to open Trash:', e);
       return false;
     }
+  });
+
+  // ===== macOS Window Position Detection =====
+  // Uses Quartz CGWindowListCopyWindowInfo to get all on-screen windows
+  // Returns an array of { name, title, x, y, width, height, layer }
+  ipcMain.handle('get-window-positions', async () => {
+    if (process.platform !== 'darwin') {
+      return { windows: [], screenWidth: screenW, screenHeight: screenH };
+    }
+
+    try {
+      const pythonScript = `
+import Quartz, json
+wl = Quartz.CGWindowListCopyWindowInfo(
+    Quartz.kCGWindowListOptionOnScreenOnly | Quartz.kCGWindowListExcludeDesktopElements,
+    Quartz.kCGNullWindowID
+)
+out = []
+for w in wl:
+    b = w.get('kCGWindowBounds', {})
+    layer = int(w.get('kCGWindowLayer', 0))
+    alpha = float(w.get('kCGWindowAlpha', 1))
+    owner = str(w.get('kCGWindowOwnerName', ''))
+    title = str(w.get('kCGWindowName', ''))
+    ww = int(b.get('Width', 0))
+    hh = int(b.get('Height', 0))
+    # Skip tiny windows, menubar items, hidden windows, and our own app
+    if ww < 100 or hh < 50 or layer != 0 or alpha < 0.5:
+        continue
+    if owner in ('Window Server', 'Dock', 'SystemUIServer', 'Control Center'):
+        continue
+    out.append({
+        'name': owner,
+        'title': title,
+        'x': int(b.get('X', 0)),
+        'y': int(b.get('Y', 0)),
+        'width': ww,
+        'height': hh
+    })
+print(json.dumps(out))
+`.trim();
+
+      const result = execSync(`python3 -c "${pythonScript.replace(/"/g, '\\"')}"`, {
+        timeout: 2000,
+        encoding: 'utf-8'
+      });
+
+      const windows = JSON.parse(result.trim());
+      
+      // Get our own window bounds to exclude it
+      const ownBounds = mainWin ? mainWin.getBounds() : null;
+      const filtered = windows.filter(w => {
+        if (ownBounds) {
+          // Skip our own window (approximate match)
+          if (Math.abs(w.x - ownBounds.x) < 5 && Math.abs(w.y - ownBounds.y) < 5) {
+            return false;
+          }
+        }
+        return true;
+      });
+
+      return { windows: filtered, screenWidth: screenW, screenHeight: screenH };
+    } catch (e) {
+      console.error('Failed to get window positions:', e.message);
+      return { windows: [], screenWidth: screenW, screenHeight: screenH };
+    }
+  });
+
+  // Get screen dimensions
+  ipcMain.handle('get-screen-size', () => {
+    const d = screen.getPrimaryDisplay();
+    return { width: d.workAreaSize.width, height: d.workAreaSize.height };
   });
 }
 
