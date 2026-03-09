@@ -419,10 +419,11 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
         {/* Walking character on overlay border — rendered outside overflow container */}
         {showLimbs && limbState === 'walking' && (
           <motion.div
-            className="fixed z-[201] pointer-events-none"
+            className="absolute z-[201] pointer-events-none"
+            style={{ left: 0, top: 0 }}
             animate={{
               x: walkPos.x - 14,
-              y: -17,
+              y: 130,
               rotate: walkRotation,
               scaleY: walkFlipY,
             }}
