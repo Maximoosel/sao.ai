@@ -62,7 +62,7 @@ const Index = () => {
       {/* Tuning controls toggle */}
       <button
         onClick={() => setShowControls(!showControls)}
-        className="fixed bottom-4 right-4 z-[9999] p-2.5 rounded-xl transition-all"
+        className="fixed top-4 left-4 z-[9999] p-2.5 rounded-xl transition-all"
         style={{
           background: 'hsla(0,0%,100%,0.15)',
           backdropFilter: 'blur(20px)',
@@ -75,7 +75,7 @@ const Index = () => {
       {/* Tuning panel */}
       {showControls && (
         <div
-          className="fixed bottom-14 right-4 z-[9999] w-[260px] rounded-2xl p-4 space-y-4"
+          className="fixed top-16 left-4 z-[9999] w-[260px] rounded-2xl p-4 space-y-4"
           style={{
             background: 'hsla(0,0%,0%,0.6)',
             backdropFilter: 'blur(40px)',
