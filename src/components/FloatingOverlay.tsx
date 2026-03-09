@@ -257,7 +257,10 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           <div className="relative">
             <div
               className="w-12 h-12 rounded-2xl bg-black/80 shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform"
-              style={{ WebkitAppRegion: 'drag' } as any}
+              style={{ WebkitAppRegion: isElectron ? 'drag' : 'no-drag' } as any}
+              onClick={() => {
+                if (!isElectron && !minimizeDragLockRef.current) setIsMinimized(false);
+              }}
             >
               <AbstractShape size={28} />
             </div>
