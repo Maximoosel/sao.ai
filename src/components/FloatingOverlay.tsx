@@ -27,6 +27,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const minimizeBoundsRef = useRef<HTMLDivElement>(null);
   const minimizeDragLockRef = useRef(false);
 
+  const isElectron = useMemo(() => typeof window !== 'undefined' && 'require' in (window as any), []);
+
   const [files, setFiles] = useState<SweepFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeCategory, setActiveCategory] = useState<FileCategory | 'all'>('all');
