@@ -313,33 +313,48 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const walkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [walkPos, setWalkPos] = useState({ x: 0, y: 0 });
   const [walkDirection, setWalkDirection] = useState(1);
-  const [walkRotation, setWalkRotation] = useState(0); // degrees rotation for wall walking
-  const [walkFlipY, setWalkFlipY] = useState(1); // 1 normal, -1 upside down
-  // Perimeter progress: 0 = top-left going right along top edge
-  // Perimeter is: top (0 → W) → right (W → W+H) → bottom (W+H → 2W+H) → left (2W+H → 2W+2H)
+  const [walkRotation, setWalkRotation] = useState(0);
+  const [walkFlipY, setWalkFlipY] = useState(1);
   const perimeterRef = useRef(0);
+  const screenDimsRef = useRef({ w: window.innerWidth, h: window.innerHeight });
+
+  // Enter/exit fullscreen overlay mode in Electron
+  useEffect(() => {
+    if (!isElectron) return;
+    try {
+      const { ipcRenderer } = (window as any).require('electron');
+      if (isMinimized) {
+        ipcRenderer.send('enter-overlay-mode');
+        // Get actual screen size for perimeter
+        ipcRenderer.invoke('get-screen-size').then((size: { width: number; height: number }) => {
+          screenDimsRef.current = { w: size.width, h: size.height };
+        });
+      } else {
+        ipcRenderer.send('exit-overlay-mode');
+      }
+    } catch (e) { /* not in electron */ }
+  }, [isMinimized, isElectron]);
 
   const getPerimeterPos = useCallback((t: number) => {
-    const W = window.innerWidth;
-    const H = window.innerHeight;
+    const W = screenDimsRef.current.w;
+    const H = screenDimsRef.current.h;
     const totalPerimeter = 2 * W + 2 * H;
-    // Normalize t to [0, totalPerimeter)
     const p = ((t % totalPerimeter) + totalPerimeter) % totalPerimeter;
-    const charOffset = 20; // keep character slightly inset from edges
+    const charOffset = 20;
 
     if (p < W) {
-      // Top edge: walking right
+      // Top edge: walking right, upside down (feet stick to ceiling)
       return { x: p, y: charOffset, rotation: 180, flipY: -1, dir: 1 };
     } else if (p < W + H) {
-      // Right edge: walking down
+      // Right edge: walking down, rotated sideways
       const along = p - W;
       return { x: W - charOffset, y: along, rotation: -90, flipY: -1, dir: 1 };
     } else if (p < 2 * W + H) {
-      // Bottom edge: walking left
+      // Bottom edge: walking left, normal orientation
       const along = p - W - H;
       return { x: W - along, y: H - charOffset, rotation: 0, flipY: 1, dir: -1 };
     } else {
-      // Left edge: walking up
+      // Left edge: walking up, rotated sideways
       const along = p - 2 * W - H;
       return { x: charOffset, y: H - along, rotation: 90, flipY: -1, dir: -1 };
     }
@@ -351,8 +366,16 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setShowLimbs(false);
       setLimbState('idle');
       setWalkPos({ x: 0, y: 0 });
+
+      // Update screen dims for web fallback
+      if (!isElectron) {
+        screenDimsRef.current = { w: window.innerWidth, h: window.innerHeight };
+      }
+
+      const W = screenDimsRef.current.w;
+      const H = screenDimsRef.current.h;
       // Start at bottom-center
-      perimeterRef.current = window.innerWidth + window.innerHeight + window.innerWidth / 2;
+      perimeterRef.current = W + H + W / 2;
 
       idleTimerRef.current = setTimeout(() => {
         setShowLimbs(true);
@@ -362,13 +385,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
           setLimbState('walking');
           
           walkIntervalRef.current = setInterval(() => {
-            perimeterRef.current += 1.5; // speed along perimeter
+            perimeterRef.current += 2; // walking speed
             const pos = getPerimeterPos(perimeterRef.current);
             setWalkPos({ x: pos.x, y: pos.y });
             setWalkDirection(pos.dir);
             setWalkRotation(pos.rotation);
             setWalkFlipY(pos.flipY);
-          }, 100);
+          }, 50);
         }, 600);
       }, 3000);
     }
@@ -377,7 +400,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
       if (walkIntervalRef.current) clearInterval(walkIntervalRef.current);
     };
-  }, [isMinimized, getPerimeterPos]);
+  }, [isMinimized, isElectron, getPerimeterPos]);
 
   // Reset idle timer on interaction
   const resetIdleTimer = useCallback(() => {
@@ -393,13 +416,13 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
       setTimeout(() => {
         setLimbState('walking');
         walkIntervalRef.current = setInterval(() => {
-          perimeterRef.current += 1.5;
+          perimeterRef.current += 2;
           const pos = getPerimeterPos(perimeterRef.current);
           setWalkPos({ x: pos.x, y: pos.y });
           setWalkDirection(pos.dir);
           setWalkRotation(pos.rotation);
           setWalkFlipY(pos.flipY);
-        }, 100);
+        }, 50);
       }, 600);
     }, 3000);
   }, [getPerimeterPos]);
@@ -407,24 +430,25 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   if (isMinimized) {
     const isActive = limbState === 'walking' || limbState === 'jumping';
     return (
-      <div className="fixed z-[100] inset-0 pointer-events-none">
+      <div className="fixed z-[100] inset-0 pointer-events-none" style={{ width: '100vw', height: '100vh' }}>
         <motion.div
           className="pointer-events-auto absolute"
-          style={{ left: 0, top: 0, originX: '20px', originY: '20px' }}
+          style={{ left: 0, top: 0 }}
           animate={{
-            x: isActive ? walkPos.x - 20 : window.innerWidth / 2 - 20,
-            y: isActive ? walkPos.y - 20 : 4,
+            x: isActive ? walkPos.x - 20 : screenDimsRef.current.w / 2 - 20,
+            y: isActive ? walkPos.y - 20 : screenDimsRef.current.h - 40,
             rotate: isActive ? walkRotation : 0,
             scaleY: isActive ? walkFlipY : 1,
           }}
           transition={
             limbState === 'walking'
-              ? { duration: 0.1, ease: 'linear' }
+              ? { duration: 0.05, ease: 'linear' }
               : { type: 'spring', stiffness: 300, damping: 25 }
           }
         >
           <div
             className="cursor-pointer"
+            style={{ pointerEvents: 'auto' }}
             onPointerUp={(e) => {
               e.stopPropagation();
               setIsMinimized(false);

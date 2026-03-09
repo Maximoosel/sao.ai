@@ -33,6 +33,34 @@ function createWindow() {
   ipcMain.on('resize-window', (event, width, height) => {
     win.setSize(width, height, true);
   });
+
+  // Minimize → fullscreen transparent overlay so character walks entire screen
+  ipcMain.on('enter-overlay-mode', () => {
+    const display = screen.getPrimaryDisplay();
+    const { width, height } = display.size;
+    win.setPosition(0, 0);
+    win.setSize(width, height, false);
+    win.setIgnoreMouseEvents(true, { forward: true });
+    win.setAlwaysOnTop(true, 'screen-saver');
+  });
+
+  // Restore from overlay → normal app window
+  ipcMain.on('exit-overlay-mode', () => {
+    win.setIgnoreMouseEvents(false);
+    win.setAlwaysOnTop(true, 'floating');
+    // Center the window
+    const display = screen.getPrimaryDisplay();
+    const { width: sw, height: sh } = display.workAreaSize;
+    const [ww, wh] = [420, 600];
+    win.setPosition(Math.round((sw - ww) / 2), Math.round((sh - wh) / 2));
+    win.setSize(ww, wh, true);
+  });
+
+  // Get full screen dimensions for perimeter walking
+  ipcMain.handle('get-screen-size', () => {
+    const d = screen.getPrimaryDisplay();
+    return { width: d.size.width, height: d.size.height };
+  });
   
   ipcMain.handle('select-directory', async () => {
     const result = await dialog.showOpenDialog(win, {
@@ -127,11 +155,7 @@ print(json.dumps(out))
     }
   });
 
-  // Get screen dimensions
-  ipcMain.handle('get-screen-size', () => {
-    const d = screen.getPrimaryDisplay();
-    return { width: d.workAreaSize.width, height: d.workAreaSize.height };
-  });
+  // Duplicate removed — get-screen-size is defined above
 }
 
 app.whenReady().then(createWindow);
