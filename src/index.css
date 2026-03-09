@@ -343,27 +343,84 @@
     animation: morphShape 6s ease-in-out infinite;
   }
 
-  /* Marching animations — slow, deliberate */
-  @keyframes marchArmLeft {
-    0%, 100% { transform: rotate(12deg); }
-    50% { transform: rotate(-12deg); }
+  /* ============================================
+     WALK CYCLE ANIMATIONS - Disney squash/stretch
+     4 frames: contact → down → passing → up
+     ============================================ */
+
+  /* Whole character bounce - 4px up/down per step */
+  @keyframes walkBounce {
+    0%, 100% { transform: translateY(0); } /* contact */
+    12.5% { transform: translateY(4px); }   /* down */
+    25% { transform: translateY(2px); }     /* passing */
+    37.5% { transform: translateY(-2px); }  /* up */
+    50% { transform: translateY(0); }       /* contact (other foot) */
+    62.5% { transform: translateY(4px); }   /* down */
+    75% { transform: translateY(2px); }     /* passing */
+    87.5% { transform: translateY(-2px); }  /* up */
   }
 
-  @keyframes marchArmRight {
-    0%, 100% { transform: rotate(-8deg); }
-    50% { transform: rotate(8deg); }
+  .animate-walk-bounce {
+    animation: walkBounce 0.9s ease-in-out infinite;
   }
 
-  @keyframes marchLegLeft {
-    0%, 100% { transform: rotate(14deg); }
-    50% { transform: rotate(-14deg); }
+  /* Ball squash and stretch - 5% compression/elongation */
+  @keyframes squashStretch {
+    0%, 100% { transform: scaleX(1) scaleY(1); }      /* contact */
+    12.5% { transform: scaleX(1.05) scaleY(0.95); }   /* down - squash */
+    25% { transform: scaleX(1) scaleY(1); }           /* passing */
+    37.5% { transform: scaleX(0.95) scaleY(1.05); }   /* up - stretch */
+    50% { transform: scaleX(1) scaleY(1); }           /* contact */
+    62.5% { transform: scaleX(1.05) scaleY(0.95); }   /* down - squash */
+    75% { transform: scaleX(1) scaleY(1); }           /* passing */
+    87.5% { transform: scaleX(0.95) scaleY(1.05); }   /* up - stretch */
   }
 
-  @keyframes marchLegRight {
-    0%, 100% { transform: rotate(-14deg); }
-    50% { transform: rotate(14deg); }
+  .animate-squash-stretch {
+    animation: squashStretch 0.9s ease-in-out infinite;
   }
 
+  /* Backpack bob - delayed behind ball */
+  @keyframes backpackBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    15% { transform: translateY(3px) rotate(2deg); }
+    30% { transform: translateY(1px) rotate(0deg); }
+    45% { transform: translateY(-1px) rotate(-1deg); }
+    55% { transform: translateY(0) rotate(0deg); }
+    65% { transform: translateY(3px) rotate(-2deg); }
+    80% { transform: translateY(1px) rotate(0deg); }
+    95% { transform: translateY(-1px) rotate(1deg); }
+  }
+
+  .animate-backpack-bob {
+    animation: backpackBob 0.9s ease-in-out infinite 0.05s;
+  }
+
+  /* Leg pendulum - left leg, loose swing */
+  @keyframes legPendulumLeft {
+    0%, 100% { transform: rotate(25deg); }   /* forward contact */
+    25% { transform: rotate(15deg); }        /* down */
+    50% { transform: rotate(-25deg); }       /* back contact */
+    75% { transform: rotate(-15deg); }       /* passing */
+  }
+
+  .animate-leg-pendulum-left {
+    animation: legPendulumLeft 0.9s ease-in-out infinite;
+  }
+
+  /* Leg pendulum - right leg, opposite phase */
+  @keyframes legPendulumRight {
+    0%, 100% { transform: rotate(-25deg); }  /* back contact */
+    25% { transform: rotate(-15deg); }       /* passing */
+    50% { transform: rotate(25deg); }        /* forward contact */
+    75% { transform: rotate(15deg); }        /* down */
+  }
+
+  .animate-leg-pendulum-right {
+    animation: legPendulumRight 0.9s ease-in-out infinite;
+  }
+
+  /* Idle/raised arm animations (for picked-up state) */
   @keyframes armRaisedLeft {
     0%, 100% { transform: rotate(-50deg); }
     50% { transform: rotate(-40deg); }
@@ -375,35 +432,19 @@
   }
 
   @keyframes legDangleLeft {
-    0%, 100% { transform: rotate(5deg); }
-    50% { transform: rotate(-5deg); }
+    0%, 100% { transform: rotate(8deg); }
+    50% { transform: rotate(-8deg); }
   }
 
   @keyframes legDangleRight {
-    0%, 100% { transform: rotate(-5deg); }
-    50% { transform: rotate(5deg); }
+    0%, 100% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
   }
 
   @keyframes popIn {
     0% { opacity: 0; transform: scale(0); }
     60% { opacity: 1; transform: scale(1.2); }
     100% { opacity: 1; transform: scale(1); }
-  }
-
-  .animate-march-arm-left {
-    animation: marchArmLeft 0.8s ease-in-out infinite;
-  }
-
-  .animate-march-arm-right {
-    animation: marchArmRight 0.8s ease-in-out infinite;
-  }
-
-  .animate-march-leg-left {
-    animation: marchLegLeft 0.8s ease-in-out infinite;
-  }
-
-  .animate-march-leg-right {
-    animation: marchLegRight 0.8s ease-in-out infinite 0.4s;
   }
 
   .animate-arm-raised-left {

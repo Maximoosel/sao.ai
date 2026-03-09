@@ -147,13 +147,14 @@ const SplashScreen = ({ onComplete, bgBlur = 60, panelOpacity = 35 }: SplashScre
 // Animated morphing abstract shape (used in overlay)
 const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { size?: number; showLimbs?: boolean; limbState?: 'idle' | 'walking' | 'picked-up' | 'popping' }) => {
   const limbClass = limbState === 'popping' ? 'animate-pop-in' : '';
+  const isWalking = limbState === 'walking';
   
   return (
     <svg 
       width={size} 
-      height={showLimbs ? size * 1.7 : size} 
-      viewBox={showLimbs ? "0 0 100 170" : "0 0 100 100"} 
-      className="overflow-visible"
+      height={showLimbs ? size * 1.6 : size} 
+      viewBox={showLimbs ? "0 0 100 160" : "0 0 100 100"} 
+      className={`overflow-visible ${isWalking ? 'animate-walk-bounce' : ''}`}
     >
       <defs>
         <linearGradient id="shape-grad" x1="0%" y1="0%" x2="100%" y2="100%" gradientUnits="userSpaceOnUse">
@@ -179,6 +180,11 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        {/* Sketchy effect filter */}
+        <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%">
+          <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="2" result="noise" seed="2"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
         {/* Red glow for scanner tip */}
         <filter id="red-glow">
           <feGaussianBlur stdDeviation="2" result="blur" />
@@ -189,89 +195,42 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
         </filter>
       </defs>
       
-      {/* Limbs - stick figure style like reference */}
+      {/* Backpack - crosshatched style, behind the ball */}
       {showLimbs && (
-        <g className={limbClass}>
-          {/* Head - ring/circle outline */}
-          <circle cx="50" cy="-15" r="12" 
-            stroke="#1a1a1a" strokeWidth="5" fill="none" strokeLinecap="round"
+        <g className={`${limbClass} ${isWalking ? 'animate-backpack-bob' : ''}`} style={{ transformOrigin: '50px 50px' }}>
+          {/* Backpack body - rounded rectangle with crosshatch */}
+          <rect x="62" y="25" width="28" height="45" rx="6" ry="6" 
+            fill="none" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round"
           />
-          {/* Neck */}
-          <line x1="50" y1="-3" x2="50" y2="10" 
-            stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-          />
-          
-          {/* Left arm — bent at hip like reference */}
-          <g className={limbState === 'walking' ? 'animate-march-arm-left' : limbState === 'picked-up' ? 'animate-arm-raised-left' : ''}
-             style={{ transformOrigin: '35px 35px' }}>
-            <line x1="35" y1="35" x2="15" y2="48" 
-              stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-            />
-            <line x1="15" y1="48" x2="30" y2="65" 
-              stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-            />
-          </g>
-          
-          {/* Right arm — holds scanner while walking, bent at hip when idle */}
-          <g className={limbState === 'walking' ? 'animate-march-arm-right' : limbState === 'picked-up' ? 'animate-arm-raised-right' : ''}
-             style={{ transformOrigin: '65px 35px' }}>
-            {limbState === 'walking' ? (
-              <>
-                <line x1="65" y1="35" x2="90" y2="50"
-                  stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-                />
-                {/* Scanner device — marker style */}
-                <g>
-                  <line x1="90" y1="50" x2="100" y2="42" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" />
-                  <line x1="100" y1="42" x2="110" y2="38" stroke="#1a1a1a" strokeWidth="3.5" strokeLinecap="round" />
-                  {/* Red scanner tip with glow */}
-                  <circle cx="113" cy="36" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
-                    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
-                  <circle cx="113" cy="36" r="6" fill="#ff3b3b" opacity="0.15">
-                    <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.15;0.05;0.15" dur="1.2s" repeatCount="indefinite" />
-                  </circle>
-                </g>
-              </>
-            ) : (
-              <>
-                <line x1="65" y1="35" x2="85" y2="48" 
-                  stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-                />
-                <line x1="85" y1="48" x2="70" y2="65" 
-                  stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-                />
-              </>
-            )}
-          </g>
-          
-          {/* Left leg — marching */}
-          <line x1="42" y1="88" x2="35" y2="135"
-            stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-march-leg-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
-            style={{ transformOrigin: '42px 88px' }}
-          />
-          {/* Right leg — marching */}
-          <line x1="58" y1="88" x2="65" y2="135"
-            stroke="#1a1a1a" strokeWidth="5" strokeLinecap="round"
-            className={limbState === 'walking' ? 'animate-march-leg-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
-            style={{ transformOrigin: '58px 88px' }}
-          />
-          {/* Feet */}
-          {limbState !== 'picked-up' && (
-            <>
-              <line x1="35" y1="135" x2="28" y2="138" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round" 
-                className={limbState === 'walking' ? 'animate-march-leg-left' : ''} style={{ transformOrigin: '42px 88px' }} />
-              <line x1="65" y1="135" x2="72" y2="138" stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
-                className={limbState === 'walking' ? 'animate-march-leg-right' : ''} style={{ transformOrigin: '58px 88px' }} />
-            </>
+          {/* Crosshatch lines */}
+          <line x1="66" y1="30" x2="86" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+          <line x1="66" y1="40" x2="86" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+          <line x1="66" y1="50" x2="82" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+          <line x1="86" y1="30" x2="66" y2="50" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+          <line x1="86" y1="40" x2="66" y2="60" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+          <line x1="86" y1="50" x2="70" y2="66" stroke="#1a1a1a" strokeWidth="1.5" opacity="0.6" />
+          {/* Backpack straps */}
+          <path d="M62 35 Q55 38 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M62 55 Q55 52 55 45" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Backpack flap */}
+          <path d="M64 25 Q76 18 88 25" fill="none" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Scanner/flashlight in backpack pocket */}
+          {isWalking && (
+            <g>
+              <line x1="78" y1="70" x2="78" y2="82" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="78" cy="85" r="3" fill="#ff3b3b" filter="url(#red-glow)" opacity="0.9">
+                <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite" />
+              </circle>
+              <circle cx="78" cy="85" r="6" fill="#ff3b3b" opacity="0.15">
+                <animate attributeName="r" values="5;8;5" dur="1.2s" repeatCount="indefinite" />
+              </circle>
+            </g>
           )}
         </g>
       )}
       
-      {/* Main body — gradient spins (slow when not minimized, faster when minimized) */}
-      <g>
+      {/* Main ball body — squash and stretch when walking */}
+      <g className={isWalking ? 'animate-squash-stretch' : ''} style={{ transformOrigin: '50px 50px' }}>
         <path
           d="M50,10 C70,10 90,30 90,50 C90,70 70,90 50,90 C30,90 10,70 10,50 C10,30 30,10 50,10"
           fill="url(#shape-grad)"
@@ -280,6 +239,41 @@ const AbstractShape = ({ size = 48, showLimbs = false, limbState = 'idle' }: { s
           className="animate-morph-body"
         />
       </g>
+      
+      {/* Legs - simple pendulum style extending from bottom of ball */}
+      {showLimbs && (
+        <g className={limbClass}>
+          {/* Left leg */}
+          <g className={isWalking ? 'animate-leg-pendulum-left' : limbState === 'picked-up' ? 'animate-leg-dangle-left' : ''}
+             style={{ transformOrigin: '42px 85px' }}>
+            <line x1="42" y1="85" x2="38" y2="130"
+              stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
+            />
+            {/* Left foot - simple */}
+            {limbState !== 'picked-up' && (
+              <ellipse cx="36" cy="132" rx="6" ry="3" fill="none" stroke="#1a1a1a" strokeWidth="3" />
+            )}
+          </g>
+          
+          {/* Right leg - with striped/hatched shoe */}
+          <g className={isWalking ? 'animate-leg-pendulum-right' : limbState === 'picked-up' ? 'animate-leg-dangle-right' : ''}
+             style={{ transformOrigin: '58px 85px' }}>
+            <line x1="58" y1="85" x2="62" y2="130"
+              stroke="#1a1a1a" strokeWidth="4" strokeLinecap="round"
+            />
+            {/* Right foot - striped shoe */}
+            {limbState !== 'picked-up' && (
+              <g>
+                <ellipse cx="64" cy="132" rx="7" ry="4" fill="none" stroke="#1a1a1a" strokeWidth="3" />
+                {/* Stripes on shoe */}
+                <line x1="60" y1="130" x2="60" y2="134" stroke="#1a1a1a" strokeWidth="1.5" />
+                <line x1="64" y1="129" x2="64" y2="135" stroke="#1a1a1a" strokeWidth="1.5" />
+                <line x1="68" y1="130" x2="68" y2="134" stroke="#1a1a1a" strokeWidth="1.5" />
+              </g>
+            )}
+          </g>
+        </g>
+      )}
     </svg>
   );
 };
