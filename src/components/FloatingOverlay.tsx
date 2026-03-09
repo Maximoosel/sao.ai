@@ -318,30 +318,22 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const perimeterRef = useRef(0);
   const overlayDimsRef = useRef({ w: 420, h: 600 });
 
-  // Walk the overlay border: starts from top-left (logo position) going right
-  const getOverlayPerimeterPos = useCallback((t: number) => {
-    const W = overlayDimsRef.current.w;
-    const H = overlayDimsRef.current.h;
-    const totalPerimeter = 2 * W + 2 * H;
-    const p = ((t % totalPerimeter) + totalPerimeter) % totalPerimeter;
-    const offset = 8;
+  // Walk along the title bar bottom border line only — bounce back and forth
+  const titleBarHeight = 44; // approximate height of the title bar
+  const walkDirRef = useRef(1); // 1 = right, -1 = left
 
-    if (p < W) {
-      // Top edge: walking right, upside down — legs point UP toward edge
-      return { x: p, y: offset, rotation: 180, flipY: 1, dir: -1 };
-    } else if (p < W + H) {
-      // Right edge: walking down
-      const along = p - W;
-      return { x: W - offset, y: along, rotation: -90, flipY: 1, dir: 1 };
-    } else if (p < 2 * W + H) {
-      // Bottom edge: walking left, normal upright
-      const along = p - W - H;
-      return { x: W - along, y: H - offset, rotation: 0, flipY: 1, dir: -1 };
-    } else {
-      // Left edge: walking up
-      const along = p - 2 * W - H;
-      return { x: offset, y: H - along, rotation: 90, flipY: 1, dir: -1 };
+  const getTitleBarWalkPos = useCallback((x: number) => {
+    const W = overlayDimsRef.current.w;
+    const margin = 20;
+    // Clamp and bounce
+    if (x >= W - margin) {
+      walkDirRef.current = -1;
+      x = W - margin;
+    } else if (x <= margin) {
+      walkDirRef.current = 1;
+      x = margin;
     }
+    return { x, y: titleBarHeight, rotation: 0, flipY: 1, dir: walkDirRef.current };
   }, []);
 
   const WALK_SPEED = 1.8;
