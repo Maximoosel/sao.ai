@@ -556,9 +556,14 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 className="scale-75 ml-1"
               />
               {isAnalyzing && (
-                <span className="text-xs text-primary animate-pulse flex items-center gap-1">
-                  <Sparkles size={10} /> Analyzing...
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-primary animate-pulse flex items-center gap-1">
+                    <Sparkles size={10} /> {analysisProgress}%
+                  </span>
+                  {analysisETA && (
+                    <span className="text-[10px] text-white/40">{analysisETA}</span>
+                  )}
+                </div>
               )}
               {isScanning && (
                 <div className="flex items-center gap-2">
