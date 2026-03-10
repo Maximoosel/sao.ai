@@ -64,7 +64,7 @@ const Auth = () => {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="text-sm text-white/30 mb-6">
-            {isLogin ? 'Sign in to your account' : 'Start your 7-day free trial'}
+            {isLogin ? 'Sign in to your account' : 'Get started with sao.ai'}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
