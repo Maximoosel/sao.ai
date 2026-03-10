@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Apple, Monitor } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
+import { supabase } from '@/integrations/supabase/client';
 
 // Animated GB counter
 const GBCounter = () => {
