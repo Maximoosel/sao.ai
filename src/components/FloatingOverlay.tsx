@@ -63,7 +63,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const [showRecents, setShowRecents] = useState(false);
 
   const { isScanning, scanFolder, trashFiles, scanProgress, scanETA } = useFileScanner();
-  const { isAnalyzing, analysisProgress, analysisETA, analyzeFiles } = useRelevanceScoring();
+  const { isAnalyzing, analysisProgress, analysisETA, analyzeFiles, cancelAnalysis } = useRelevanceScoring();
   const { incrementScan, scansRemaining, subscription } = useAuth();
 
   // Resize electron window when expanded state changes
@@ -619,9 +619,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                 <span className="text-[10px] text-white/50 flex items-center gap-1">
                   <Sparkles size={10} className="text-primary" /> Analyzing files...
                 </span>
-                {analysisETA && (
-                  <span className="text-[10px] text-white/40">ETA: {analysisETA}</span>
-                )}
+                <div className="flex items-center gap-2">
+                  {analysisETA && (
+                    <span className="text-[10px] text-white/40">ETA: {analysisETA}</span>
+                  )}
+                  <button
+                    onClick={cancelAnalysis}
+                    className="text-[10px] text-white/40 hover:text-white/70 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
               <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
                 <motion.div
