@@ -216,6 +216,21 @@ const DownloadPage = () => {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  // Check for tip=thanks query param
+  const [showThanks, setShowThanks] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tip') === 'thanks';
+  });
+
+  useEffect(() => {
+    if (showThanks) {
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('tip');
+      window.history.replaceState({}, '', url.pathname + url.hash);
+    }
+  }, [showThanks]);
+
   return (
     <div className="min-h-screen bg-[hsl(235,24%,8%)] text-foreground overflow-x-hidden selection:bg-primary/30">
       {/* Ambient glow */}
