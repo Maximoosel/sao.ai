@@ -109,19 +109,19 @@ const DownloadPage = () => {
           >
             <div className="inline-flex items-center gap-2 border border-white/[0.08] bg-white/[0.04] rounded-full px-4 py-1.5 mb-8 backdrop-blur-xl">
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">AI-Powered File Intelligence</span>
+              <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">AI cleans your Mac in seconds</span>
             </div>
 
             <h1 className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-              <span className="text-foreground">Clean your Mac.</span>
+              <span className="text-foreground">Seconds to scan.</span>
               <br />
               <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                Intelligently.
+                Gigabytes freed.
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-white/35 max-w-lg mb-10 leading-relaxed font-light">
-              Two-pass AI analysis finds forgotten files — old downloads, duplicate screenshots, massive installers — and helps you reclaim gigabytes in seconds.
+              Point sao.ai at any folder and watch AI instantly identify what's safe to delete. No manual sorting — just scan, review, sweep. Done before your coffee gets cold.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
