@@ -123,5 +123,5 @@ export function useRelevanceScoring() {
     }
   }, []);
 
-  return { isAnalyzing, analysisProgress, analysisETA, analyzeFiles };
+  return { isAnalyzing, analysisProgress, analysisETA, analyzeFiles, cancelAnalysis };
 }
