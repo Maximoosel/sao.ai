@@ -348,25 +348,53 @@ const DownloadPage = () => {
           <div className="relative">
             <div className="hidden md:block absolute top-8 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                ['01', 'Scan', 'Point at any folder. AI scans thousands of files in seconds — not minutes.'],
-                ['02', 'Review', 'AI scores every file instantly. Confidence ratings highlight what\'s safe to remove.'],
-                ['03', 'Sweep', 'One click. Gigabytes freed. Files go to Trash — undo anytime.'],
-              ].map(([step, title, desc], i) => (
+                {
+                  step: '01',
+                  title: 'Scan',
+                  desc: 'AI scans thousands of files in seconds.',
+                  detail: 'Point sao.ai at any folder — Desktop, Downloads, Documents. It recursively discovers every file, extracts metadata like size, age, and type, then passes it all to the AI engine. The whole process takes under 30 seconds.',
+                },
+                {
+                  step: '02',
+                  title: 'Review',
+                  desc: 'Confidence ratings highlight what\'s safe.',
+                  detail: 'Two-pass AI analysis scores each file\'s keep-priority. Files with low confidence get flagged so you can review them manually. Smart categories automatically sort everything into Big Offenders, Old Files, Screenshots, and more.',
+                },
+                {
+                  step: '03',
+                  title: 'Sweep',
+                  desc: 'One click. Gigabytes freed.',
+                  detail: 'Select files individually or by category, then sweep them all to Trash with a single click. Nothing is permanently deleted — you can undo anytime. Most users reclaim 10GB+ on their first scan.',
+                },
+              ].map((item, i) => (
                 <motion.div
-                  key={step}
-                  className="text-center relative"
+                  key={item.step}
+                  className="group text-center relative rounded-2xl border border-transparent hover:border-white/[0.08] hover:bg-white/[0.02] p-6 transition-colors duration-300 cursor-default"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.15 }}
                 >
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl border border-white/[0.06] bg-white/[0.03] mb-5">
-                    <span className="text-lg font-black text-primary/40">{step}</span>
+                  <motion.div
+                    className="inline-flex items-center justify-center w-16 h-16 rounded-2xl border border-white/[0.06] bg-white/[0.03] mb-5"
+                    whileHover={{ scale: 1.1, borderColor: 'rgba(59,130,246,0.3)' }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                  >
+                    <span className="text-lg font-black text-primary/40 group-hover:text-primary/70 transition-colors duration-300">{item.step}</span>
+                  </motion.div>
+                  <h3 className="text-base font-bold mb-2">{item.title}</h3>
+                  <p className="text-xs text-white/30 leading-relaxed">{item.desc}</p>
+
+                  {/* Expandable detail on hover */}
+                  <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
+                    <div className="overflow-hidden">
+                      <div className="pt-4 border-t border-white/[0.06] mt-4">
+                        <p className="text-[11px] text-white/25 leading-relaxed">{item.detail}</p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-base font-bold mb-2">{title}</h3>
-                  <p className="text-xs text-white/30 leading-relaxed">{desc}</p>
                 </motion.div>
               ))}
             </div>
