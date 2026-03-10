@@ -64,7 +64,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 
   const { isScanning, scanFolder, trashFiles, scanProgress, scanETA } = useFileScanner();
   const { isAnalyzing, analysisProgress, analysisETA, analyzeFiles } = useRelevanceScoring();
-  const { incrementScan } = useAuth();
+  const { incrementScan, scansRemaining, subscription } = useAuth();
 
   // Resize electron window when expanded state changes
   useEffect(() => {
