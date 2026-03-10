@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
-const FREE_SCAN_LIMIT = 2;
+const FREE_SCAN_LIMIT = 1;
 
 interface SubscriptionStatus {
   subscribed: boolean;
