@@ -16,6 +16,7 @@ import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
 import { useDeviceStorage } from '@/hooks/useDeviceStorage';
 import { mockFiles, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
