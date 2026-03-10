@@ -286,7 +286,7 @@ const DownloadPage = () => {
             animate={{ y: [0, -8, 0], rotate: [0, 2, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <FloatingCardStack scale={0.6} rotate={-15} />
+            <FloatingCardStack scale={0.6} rotate={-15} fanStyle="A" />
           </motion.div>
         </div>
         <div className="hidden lg:block absolute bottom-16 right-8 opacity-20">
