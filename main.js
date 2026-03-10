@@ -6,6 +6,8 @@ import { execSync } from 'child_process';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const isDev = !app.isPackaged;
+
 let mainWin = null;
 
 function createWindow() {
@@ -27,8 +29,12 @@ function createWindow() {
 
   mainWin = win;
 
-  // Load the vite dev server url
-  win.loadURL('http://localhost:8080');
+  // In dev, load vite dev server; in production, load built files
+  if (isDev) {
+    win.loadURL('http://localhost:8080');
+  } else {
+    win.loadFile(path.join(__dirname, 'dist', 'index.html'));
+  }
 
   ipcMain.on('resize-window', (event, width, height) => {
     win.setSize(width, height, true);
@@ -37,8 +43,8 @@ function createWindow() {
   // Minimize → fullscreen transparent overlay so character walks entire screen
   ipcMain.on('enter-overlay-mode', () => {
     const display = screen.getPrimaryDisplay();
-    const { width, height } = display.workAreaSize; // logical pixels — works on all Retina resolutions
-    win.setPosition(0, display.workArea.y); // account for menubar offset
+    const { width, height } = display.workAreaSize;
+    win.setPosition(0, display.workArea.y);
     win.setSize(width, height, false);
     win.setIgnoreMouseEvents(true, { forward: true });
     win.setAlwaysOnTop(true, 'screen-saver');
@@ -48,7 +54,6 @@ function createWindow() {
   ipcMain.on('exit-overlay-mode', () => {
     win.setIgnoreMouseEvents(false);
     win.setAlwaysOnTop(true, 'floating');
-    // Center the window
     const display = screen.getPrimaryDisplay();
     const { width: sw, height: sh } = display.workAreaSize;
     const [ww, wh] = [420, 600];
@@ -56,10 +61,8 @@ function createWindow() {
     win.setSize(ww, wh, true);
   });
 
-  // Get full screen dimensions (logical pixels, accounting for Retina scaleFactor)
   ipcMain.handle('get-screen-size', () => {
     const d = screen.getPrimaryDisplay();
-    // Use workAreaSize (excludes menubar/dock) in logical pixels — works on all MacBook resolutions
     return { width: d.workAreaSize.width, height: d.workAreaSize.height, scaleFactor: d.scaleFactor };
   });
   
@@ -90,9 +93,6 @@ function createWindow() {
     }
   });
 
-  // ===== macOS Window Position Detection =====
-  // Uses Quartz CGWindowListCopyWindowInfo to get all on-screen windows
-  // Returns an array of { name, title, x, y, width, height, layer }
   ipcMain.handle('get-window-positions', async () => {
     if (process.platform !== 'darwin') {
       return { windows: [], screenWidth: screenW, screenHeight: screenH };
@@ -114,7 +114,6 @@ for w in wl:
     title = str(w.get('kCGWindowName', ''))
     ww = int(b.get('Width', 0))
     hh = int(b.get('Height', 0))
-    # Skip tiny windows, menubar items, hidden windows, and our own app
     if ww < 100 or hh < 50 or layer != 0 or alpha < 0.5:
         continue
     if owner in ('Window Server', 'Dock', 'SystemUIServer', 'Control Center'):
@@ -137,11 +136,9 @@ print(json.dumps(out))
 
       const windows = JSON.parse(result.trim());
       
-      // Get our own window bounds to exclude it
       const ownBounds = mainWin ? mainWin.getBounds() : null;
       const filtered = windows.filter(w => {
         if (ownBounds) {
-          // Skip our own window (approximate match)
           if (Math.abs(w.x - ownBounds.x) < 5 && Math.abs(w.y - ownBounds.y) < 5) {
             return false;
           }
@@ -155,8 +152,6 @@ print(json.dumps(out))
       return { windows: [], screenWidth: screenW, screenHeight: screenH };
     }
   });
-
-  // Duplicate removed — get-screen-size is defined above
 }
 
 app.whenReady().then(createWindow);
