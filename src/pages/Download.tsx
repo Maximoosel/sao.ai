@@ -209,16 +209,16 @@ const DownloadPage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-black mb-3">Built different</h2>
-            <p className="text-white/30 text-sm max-w-sm mx-auto">A desktop overlay that lives alongside your apps. No windows to switch.</p>
+            <h2 className="text-3xl sm:text-4xl font-black mb-3">Speed meets intelligence</h2>
+            <p className="text-white/30 text-sm max-w-sm mx-auto">AI does the thinking so you don't have to. Scan → review → clean in under a minute.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              ['AI-Powered Analysis', 'Two-pass AI scoring identifies which files are safe to remove with confidence ratings.'],
-              ['Smart Categories', 'Automatically sorts into Big Offenders, Old Files, Screenshots, Downloads & Duplicates.'],
-              ['One-Click Sweep', 'Select and sweep junk files to Trash. Undo anytime — nothing is permanently deleted.'],
-              ['Privacy First', 'Runs locally on your Mac. Files never leave your machine — only metadata is analyzed.'],
+              ['Instant AI Scoring', 'AI analyzes every file in seconds — not hours. Two-pass verification ensures nothing important gets flagged.'],
+              ['Smart Categories', 'Automatically sorts into Big Offenders, Old Files, Screenshots, Downloads & Duplicates. Zero manual work.'],
+              ['One-Click Sweep', 'Select all junk with one click and sweep to Trash. Undo anytime — nothing is permanently deleted.'],
+              ['100% Local & Private', 'Runs entirely on your Mac. No uploads, no cloud processing — only metadata touches AI.'],
             ].map(([title, desc], i) => (
               <motion.div
                 key={title}
