@@ -83,6 +83,16 @@ const FloatingCardStack = ({
     { gradient: 'linear-gradient(135deg, rgba(67,233,123,0.2), rgba(56,249,215,0.2))', label: 'Archives', offset: { x: 2, y: -24, r: 1.5 } },
   ];
 
+  // Generate shimmer particles
+  const particles = Array.from({ length: 8 }, (_, i) => ({
+    id: i,
+    x: (Math.random() - 0.5) * 120 * scale,
+    y: (Math.random() - 0.5) * 160 * scale,
+    size: (1 + Math.random() * 2) * scale,
+    delay: Math.random() * 0.4,
+    duration: 0.8 + Math.random() * 0.6,
+  }));
+
   return (
     <div 
       className={`relative cursor-pointer ${className}`} 
@@ -90,6 +100,49 @@ const FloatingCardStack = ({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Shimmer particles on fan-out */}
+      <AnimatePresence>
+        {hovered && particles.map((p) => (
+          <motion.div
+            key={`particle-${p.id}`}
+            className="absolute rounded-full pointer-events-none"
+            style={{
+              width: p.size,
+              height: p.size,
+              left: '50%',
+              top: '50%',
+              background: 'radial-gradient(circle, rgba(255,255,255,0.8), rgba(59,130,246,0.4))',
+              boxShadow: `0 0 ${4 * scale}px rgba(59,130,246,0.3)`,
+              zIndex: 20,
+            }}
+            initial={{ opacity: 0, x: 0, y: 0, scale: 0 }}
+            animate={{
+              opacity: [0, 1, 0],
+              x: p.x,
+              y: p.y,
+              scale: [0, 1.5, 0],
+            }}
+            exit={{ opacity: 0, scale: 0 }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              ease: 'easeOut',
+            }}
+          />
+        ))}
+      </AnimatePresence>
+
+      {/* Glow pulse on hover */}
+      <motion.div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ 
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%)',
+          zIndex: 0,
+        }}
+        animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1.3 : 0.8 }}
+        transition={{ duration: 0.5 }}
+      />
+
       {cards.map((card, i) => {
         const stacked = card.offset;
         const fanned = fan[i];
@@ -131,6 +184,15 @@ const FloatingCardStack = ({
               delay: i * 0.03,
             }}
           >
+            {/* Shimmer sweep across card on hover */}
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%)',
+              }}
+              animate={hovered ? { x: ['-100%', '200%'] } : { x: '-100%' }}
+              transition={{ duration: 0.8, delay: i * 0.06, ease: 'easeInOut' }}
+            />
             <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-3">
               <div className="w-full h-[1px] bg-white/[0.06] rounded-full mb-1.5" />
