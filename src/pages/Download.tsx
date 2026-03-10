@@ -3,6 +3,62 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { Apple, Monitor } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
 
+// Reusable floating card stack component — the transparent file cards from the splash screen
+const FloatingCardStack = ({ 
+  scale = 1, 
+  rotate = 0, 
+  className = '' 
+}: { 
+  scale?: number; 
+  rotate?: number; 
+  className?: string;
+}) => {
+  const cards = [
+    { gradient: 'linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2))', label: 'Documents', offset: { x: 0, y: 0, r: -3 } },
+    { gradient: 'linear-gradient(135deg, rgba(240,147,251,0.2), rgba(245,87,108,0.2))', label: 'Downloads', offset: { x: 4, y: -8, r: 2 } },
+    { gradient: 'linear-gradient(135deg, rgba(79,172,254,0.2), rgba(0,242,254,0.2))', label: 'Screenshots', offset: { x: -3, y: -16, r: -1 } },
+    { gradient: 'linear-gradient(135deg, rgba(67,233,123,0.2), rgba(56,249,215,0.2))', label: 'Archives', offset: { x: 2, y: -24, r: 1.5 } },
+  ];
+
+  return (
+    <div 
+      className={`relative ${className}`} 
+      style={{ width: 120 * scale, height: 160 * scale, transform: `rotate(${rotate}deg)` }}
+    >
+      {cards.map((card, i) => (
+        <motion.div
+          key={card.label}
+          className="absolute rounded-xl overflow-hidden"
+          style={{
+            width: 100 * scale,
+            height: 130 * scale,
+            background: card.gradient,
+            backdropFilter: 'blur(12px)',
+            border: '0.5px solid rgba(255,255,255,0.12)',
+            left: '50%',
+            top: '50%',
+            marginLeft: (-50 * scale) + card.offset.x * scale,
+            marginTop: (-65 * scale) + card.offset.y * scale,
+            transform: `rotate(${card.offset.r}deg)`,
+            zIndex: cards.length - i,
+          }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 0.9, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: i * 0.08 }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-3">
+            <div className="w-full h-[1px] bg-white/[0.06] rounded-full mb-1.5" />
+            <div className="w-3/4 h-[1px] bg-white/[0.04] rounded-full mb-2" />
+            <span className="text-white/30 font-medium" style={{ fontSize: 8 * scale }}>{card.label}</span>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
 const DownloadPage = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -41,95 +97,65 @@ const DownloadPage = () => {
       {/* Hero */}
       <section ref={heroRef} className="relative pt-36 pb-10 px-6">
         <motion.div
-          className="max-w-3xl mx-auto text-center"
+          className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12"
           style={{ y: heroY, opacity: heroOpacity }}
         >
+          {/* Left: Text */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            className="flex-1 text-center lg:text-left"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="inline-flex items-center gap-2 border border-white/[0.08] bg-white/[0.04] rounded-full px-4 py-1.5 mb-8 backdrop-blur-xl">
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">AI-Powered File Intelligence</span>
             </div>
+
+            <h1 className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6">
+              <span className="text-foreground">Clean your Mac.</span>
+              <br />
+              <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+                Intelligently.
+              </span>
+            </h1>
+
+            <p className="text-base sm:text-lg text-white/35 max-w-lg mb-10 leading-relaxed font-light">
+              Two-pass AI analysis finds forgotten files — old downloads, duplicate screenshots, massive installers — and helps you reclaim gigabytes in seconds.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <a
+                href="#download"
+                className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+              >
+                <Apple size={16} />
+                Download for macOS
+              </a>
+              <a
+                href="#how"
+                className="inline-flex items-center justify-center gap-2 border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl px-7 py-3.5 rounded-2xl text-sm font-medium text-white/50 hover:text-white/70 hover:bg-white/[0.06] transition-all"
+              >
+                How it works
+              </a>
+            </div>
           </motion.div>
 
-          <motion.h1
-            className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="text-foreground">Clean your Mac.</span>
-            <br />
-            <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-              Intelligently.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            className="text-base sm:text-lg text-white/35 max-w-lg mx-auto mb-10 leading-relaxed font-light"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          >
-            Two-pass AI analysis finds forgotten files — old downloads, duplicate screenshots, massive installers — and helps you reclaim gigabytes in seconds.
-          </motion.p>
-
+          {/* Right: Floating transparent card stack */}
           <motion.div
-            className="flex flex-col sm:flex-row gap-3 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="flex-1 flex items-center justify-center relative"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <a
-              href="#download"
-              className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+            <div className="absolute inset-0 bg-primary/[0.06] rounded-full blur-[80px]" />
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Apple size={16} />
-              Download for macOS
-            </a>
-            <a
-              href="#how"
-              className="inline-flex items-center justify-center gap-2 border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl px-7 py-3.5 rounded-2xl text-sm font-medium text-white/50 hover:text-white/70 hover:bg-white/[0.06] transition-all"
-            >
-              How it works
-            </a>
+              <FloatingCardStack scale={1.8} />
+            </motion.div>
           </motion.div>
-        </motion.div>
-
-        {/* Demo video / App preview */}
-        <motion.div
-          className="max-w-4xl mx-auto mt-16 relative"
-          initial={{ opacity: 0, y: 50, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {/* Glow behind video */}
-          <div className="absolute -inset-4 bg-primary/[0.08] rounded-[2rem] blur-[60px]" />
-
-          <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40">
-            {/* macOS title bar */}
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-              <div className="w-3 h-3 rounded-full bg-[hsl(0,72%,55%)]" />
-              <div className="w-3 h-3 rounded-full bg-[hsl(45,90%,55%)]" />
-              <div className="w-3 h-3 rounded-full bg-[hsl(120,50%,50%)]" />
-              <span className="text-[10px] text-white/20 ml-2 font-medium">sao.ai</span>
-            </div>
-
-            {/* Video */}
-            <div className="aspect-video bg-background/50">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                src="/videos/splash-effect.mp4"
-              />
-            </div>
-          </div>
         </motion.div>
       </section>
 
@@ -156,9 +182,27 @@ const DownloadPage = () => {
         </div>
       </section>
 
-      {/* Features - minimal, no icons */}
-      <section className="py-20 px-6">
-        <div className="max-w-3xl mx-auto">
+      {/* Features with card stacks as decoration */}
+      <section className="py-20 px-6 relative">
+        {/* Decorative card stacks */}
+        <div className="hidden lg:block absolute top-16 left-8 opacity-30">
+          <motion.div
+            animate={{ y: [0, -8, 0], rotate: [0, 2, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <FloatingCardStack scale={0.6} rotate={-15} />
+          </motion.div>
+        </div>
+        <div className="hidden lg:block absolute bottom-16 right-8 opacity-20">
+          <motion.div
+            animate={{ y: [0, -10, 0], rotate: [0, -3, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+          >
+            <FloatingCardStack scale={0.5} rotate={12} />
+          </motion.div>
+        </div>
+
+        <div className="max-w-3xl mx-auto relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -178,7 +222,7 @@ const DownloadPage = () => {
             ].map(([title, desc], i) => (
               <motion.div
                 key={title}
-                className="group relative p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-500"
+                className="group relative p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-500 backdrop-blur-sm"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -190,52 +234,6 @@ const DownloadPage = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Mascot scanning section */}
-      <section className="py-16 px-6 overflow-hidden">
-        <div className="max-w-3xl mx-auto relative">
-          <motion.div
-            className="flex items-end justify-center gap-8"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            {/* Lil dude scanning across mock file cards */}
-            <div className="relative w-full h-48">
-              {/* Ground line */}
-              <div className="absolute bottom-6 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
-              
-              {/* Mock file cards being scanned */}
-              {['Doc.pdf', 'IMG_0234.png', 'backup.zip', 'old_project.dmg'].map((name, i) => (
-                <motion.div
-                  key={name}
-                  className="absolute bottom-8 rounded-lg border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm px-3 py-2"
-                  style={{ left: `${10 + i * 22}%` }}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 0.5, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 + i * 0.1 }}
-                >
-                  <span className="text-[9px] text-white/30 font-medium">{name}</span>
-                </motion.div>
-              ))}
-
-              {/* Lil dude walking and scanning */}
-              <motion.div
-                className="absolute bottom-0"
-                initial={{ left: '-10%' }}
-                whileInView={{ left: '85%' }}
-                viewport={{ once: true }}
-                transition={{ duration: 4, delay: 0.5, ease: 'linear', repeat: Infinity, repeatDelay: 1 }}
-              >
-                <AbstractShape size={36} showLimbs limbState="walking" walkDirection={1} />
-              </motion.div>
-            </div>
-          </motion.div>
-          <p className="text-center text-[11px] text-white/20 mt-4 font-medium">lil dude scanning your files</p>
         </div>
       </section>
 
@@ -280,18 +278,26 @@ const DownloadPage = () => {
         </div>
       </section>
 
-      {/* Download CTA */}
-      <section id="download" className="py-24 px-6">
+      {/* Download CTA with floating cards */}
+      <section id="download" className="py-24 px-6 relative">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/[0.04] rounded-full blur-[100px]" />
+        </div>
         <motion.div
-          className="max-w-xl mx-auto text-center"
+          className="max-w-xl mx-auto text-center relative z-10"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="relative inline-block mb-6">
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-[40px]" />
-            <AbstractShape size={44} />
-          </div>
+          {/* Small card stack as visual accent */}
+          <motion.div
+            className="inline-block mb-8"
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <FloatingCardStack scale={0.7} />
+          </motion.div>
+
           <h2 className="text-3xl sm:text-4xl font-black mb-3">Reclaim your space</h2>
           <p className="text-white/30 text-sm mb-8 max-w-sm mx-auto">
             Download sao.ai and start cleaning in under 30 seconds. Free to use.
