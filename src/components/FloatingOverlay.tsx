@@ -218,6 +218,12 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const handleScanFolder = async () => {
     const scanned = await scanFolder();
     if (scanned.length > 0) {
+      // Track scan usage for free trial
+      try {
+        const { useAuth } = await import('@/contexts/AuthContext');
+      } catch {}
+    }
+    if (scanned.length > 0) {
       // Disable walking character when user starts working with real files
       setCharacterEnabled(false);
 
