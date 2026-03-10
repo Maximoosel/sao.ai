@@ -1,8 +1,11 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Apple, Monitor } from 'lucide-react';
+import { Apple, Monitor, Loader2 } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+
+const DOWNLOAD_URL = 'https://github.com/your-repo/releases/download/v1.0.0/sao.ai-1.0.0-universal.dmg';
 
 // Animated GB counter
 const GBCounter = () => {
@@ -208,6 +211,8 @@ const FloatingCardStack = ({
 };
 
 const DownloadPage = () => {
+  const { subscription, user } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -674,13 +679,36 @@ const DownloadPage = () => {
           <p className="text-white/30 text-sm mb-8 max-w-sm mx-auto">
             Download sao.ai and start cleaning in under 30 seconds. Free to use.
           </p>
-          <a
-            href="#"
-            className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
-          >
-            <Apple size={18} />
-            Download for macOS
-          </a>
+          {subscription.subscribed ? (
+            <a
+              href={DOWNLOAD_URL}
+              className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
+            >
+              <Apple size={18} />
+              Download for macOS
+            </a>
+          ) : (
+            <button
+              disabled={checkoutLoading}
+              onClick={async () => {
+                if (!user) {
+                  window.location.href = '/auth';
+                  return;
+                }
+                setCheckoutLoading(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke('create-checkout');
+                  if (data?.url) window.open(data.url, '_blank');
+                } finally {
+                  setCheckoutLoading(false);
+                }
+              }}
+              className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 disabled:opacity-50"
+            >
+              {checkoutLoading ? <Loader2 size={18} className="animate-spin" /> : <Apple size={18} />}
+              {checkoutLoading ? 'Loading...' : 'Subscribe to Download'}
+            </button>
+          )}
           <div className="flex items-center justify-center gap-3 mt-5 text-[11px] text-white/20">
             <span className="flex items-center gap-1"><Monitor size={11} /> macOS 12+</span>
             <span className="text-white/10">·</span>
