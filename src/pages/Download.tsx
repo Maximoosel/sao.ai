@@ -590,9 +590,9 @@ const DownloadPage = () => {
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">Support the dev</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black mb-2">Tip Jar</h2>
+            <h2 className="text-2xl sm:text-3xl font-black mb-2">Show Your Support</h2>
             <p className="text-white/30 text-sm max-w-xs mx-auto">
-              If sao.ai saved you time, consider buying me a coffee. Every bit helps keep the project alive.
+              If sao.ai saved you time, every bit helps keep the project alive.
             </p>
           </motion.div>
 
@@ -619,9 +619,9 @@ const DownloadPage = () => {
 
           <div className="grid grid-cols-3 gap-3">
             {[
-              { amount: '$2', label: 'Coffee', tier: 'coffee' },
+              { amount: '$2', label: 'Hot Chocolate', tier: 'coffee' },
               { amount: '$5', label: 'Lunch', tier: 'lunch' },
-              { amount: '$10', label: 'Hero', tier: 'hero' },
+              { amount: '$10', label: 'A Sandwich', tier: 'hero' },
             ].map((tip, i) => (
               <motion.button
                 key={tip.amount}
