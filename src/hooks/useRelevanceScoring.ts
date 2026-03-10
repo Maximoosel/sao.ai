@@ -23,12 +23,26 @@ export function useRelevanceScoring() {
       for (let i = 0; i < files.length; i += batchSize) {
         const batchIndex = Math.floor(i / batchSize);
         const batch = files.slice(i, i + batchSize);
-        const payload = batch.map(f => ({
-          name: f.name,
-          size: formatSize(f.size),
-          lastOpened: f.lastOpened,
-          path: f.path,
-        }));
+
+        // Send richer context per file
+        const payload = batch.map(f => {
+          const ext = f.name.includes('.') ? f.name.split('.').pop()?.toLowerCase() : '';
+          const pathParts = f.path.split('/');
+          const parentDir = pathParts.length > 1 ? pathParts[pathParts.length - 2] : '';
+          const lastOpenedDate = new Date(f.lastOpened);
+          const daysSinceOpened = Math.floor((Date.now() - lastOpenedDate.getTime()) / (1000 * 60 * 60 * 24));
+
+          return {
+            name: f.name,
+            size: formatSize(f.size),
+            lastOpened: f.lastOpened,
+            path: f.path,
+            extension: ext,
+            fileType: f.type,
+            parentDir,
+            daysSinceOpened: isNaN(daysSinceOpened) ? undefined : daysSinceOpened,
+          };
+        });
 
         const { data, error } = await supabase.functions.invoke('analyze-files', {
           body: { files: payload },
@@ -44,7 +58,7 @@ export function useRelevanceScoring() {
           allAnalyses.push(...data.analyses);
         }
 
-        // Update progress
+        // Update progress — two passes means each batch takes ~2x, so scale accordingly
         const completedBatches = batchIndex + 1;
         const progress = Math.round((completedBatches / totalBatches) * 100);
         setAnalysisProgress(progress);
@@ -70,6 +84,7 @@ export function useRelevanceScoring() {
             keepPriority: analysis.keepPriority,
             relevanceTag: analysis.tag,
             relevanceReason: analysis.reason,
+            confidence: analysis.confidence,
           };
         }
         return file;
@@ -78,6 +93,15 @@ export function useRelevanceScoring() {
       setIsAnalyzing(false);
       setAnalysisProgress(100);
       setAnalysisETA(null);
+
+      // Notify about low-confidence files
+      const lowConfidence = updated.filter(f => f.confidence !== undefined && f.confidence < 60);
+      if (lowConfidence.length > 0) {
+        toast.info(`${lowConfidence.length} file${lowConfidence.length > 1 ? 's' : ''} flagged as uncertain — review manually`, {
+          duration: 4000,
+        });
+      }
+
       return updated;
     } catch (e) {
       console.error('Analysis error:', e);
