@@ -8,7 +8,7 @@ import { Shield, Zap, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Paywall = () => {
-  const { user, subscription, signOut } = useAuth();
+  const { user, subscription, signOut, scansUsed } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -69,7 +69,7 @@ const Paywall = () => {
     );
   }
 
-  // Show paywall
+  // Show paywall — free scans used up
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md px-6"
@@ -85,15 +85,15 @@ const Paywall = () => {
         <div className="inline-flex items-center gap-2 border border-primary/20 bg-primary/[0.08] rounded-full px-4 py-1.5 mb-6">
           <Zap size={12} className="text-primary" />
           <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-            Subscribe to continue
+            {scansUsed} of 2 free scans used
           </span>
         </div>
 
         <h2 className="text-2xl font-black text-foreground mb-2">
-          Get sao.ai Pro
+          Upgrade to sao.ai Pro
         </h2>
         <p className="text-sm text-white/30 mb-8 max-w-xs mx-auto">
-          Unlimited AI-powered scanning, cleaning, and file management for your Mac.
+          You've used your 2 free scans. Subscribe for unlimited AI-powered scanning and cleaning.
         </p>
 
         <div className="space-y-3 mb-8 text-left">
