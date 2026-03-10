@@ -1,8 +1,11 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Apple, Monitor } from 'lucide-react';
+import { Apple, Monitor, Loader2 } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+
+const DOWNLOAD_URL = 'https://github.com/your-repo/releases/download/v1.0.0/sao.ai-1.0.0-universal.dmg';
 
 // Animated GB counter
 const GBCounter = () => {
