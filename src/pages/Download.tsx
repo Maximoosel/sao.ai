@@ -485,7 +485,7 @@ const DownloadPage = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl sm:text-4xl font-black mb-3">Simple pricing</h2>
-            <p className="text-white/30 text-sm max-w-sm mx-auto">Try 2 scans free. Upgrade for unlimited cleaning power.</p>
+            <p className="text-white/30 text-sm max-w-sm mx-auto">Try 1 scan free. Upgrade for unlimited cleaning power.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
