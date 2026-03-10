@@ -85,7 +85,7 @@ const Paywall = () => {
         <div className="inline-flex items-center gap-2 border border-primary/20 bg-primary/[0.08] rounded-full px-4 py-1.5 mb-6">
           <Zap size={12} className="text-primary" />
           <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-            {scansUsed} of 2 free scans used
+            {scansUsed} of 1 free scan used
           </span>
         </div>
 
@@ -93,7 +93,7 @@ const Paywall = () => {
           Upgrade to sao.ai Pro
         </h2>
         <p className="text-sm text-white/30 mb-8 max-w-xs mx-auto">
-          You've used your 2 free scans. Subscribe for unlimited AI-powered scanning and cleaning.
+          You've used your free scan. Subscribe for unlimited AI-powered scanning and cleaning.
         </p>
 
         <div className="space-y-3 mb-8 text-left">

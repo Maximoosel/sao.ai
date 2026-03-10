@@ -233,6 +233,12 @@ const DownloadPage = () => {
             </div>
             <div className="flex items-center gap-2">
               <a
+                href="#pricing"
+                className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+              >
+                Pricing
+              </a>
+              <a
                 href="/auth"
                 className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
               >
@@ -485,7 +491,7 @@ const DownloadPage = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl sm:text-4xl font-black mb-3">Simple pricing</h2>
-            <p className="text-white/30 text-sm max-w-sm mx-auto">Try 2 scans free. Upgrade for unlimited cleaning power.</p>
+            <p className="text-white/30 text-sm max-w-sm mx-auto">Try 1 scan free. Upgrade for unlimited cleaning power.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
@@ -501,9 +507,9 @@ const DownloadPage = () => {
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-3xl font-black text-foreground">$0</span>
               </div>
-              <p className="text-xs text-white/25 mb-6">2 scans included</p>
+              <p className="text-xs text-white/25 mb-6">1 scan included</p>
               <div className="space-y-2.5">
-                {['2 folder scans', 'AI file analysis', 'One-click sweep'].map((f) => (
+                {['1 folder scan', 'AI file analysis', 'One-click sweep'].map((f) => (
                   <div key={f} className="flex items-center gap-2.5 text-xs text-white/40">
                     <div className="w-1 h-1 rounded-full bg-white/20" />
                     {f}
