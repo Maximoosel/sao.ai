@@ -37,17 +37,6 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
     logStep("User authenticated", { email: user.email });
 
-    // Check trial status
-    const { data: profile } = await supabaseClient
-      .from("profiles")
-      .select("trial_start_date")
-      .eq("id", user.id)
-      .single();
-
-    const trialStartDate = profile?.trial_start_date ? new Date(profile.trial_start_date) : new Date();
-    const trialEndDate = new Date(trialStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const isInTrial = new Date() < trialEndDate;
-
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
