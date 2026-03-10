@@ -472,6 +472,86 @@ const DownloadPage = () => {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section id="pricing" className="py-24 px-6 relative">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/[0.05] rounded-full blur-[120px]" />
+        </div>
+        <div className="max-w-3xl mx-auto relative z-10">
+          <motion.div
+            className="text-center mb-14"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-black mb-3">Simple pricing</h2>
+            <p className="text-white/30 text-sm max-w-sm mx-auto">Try 2 scans free. Upgrade for unlimited cleaning power.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            {/* Free */}
+            <motion.div
+              className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+            >
+              <div className="text-xs font-semibold text-white/40 uppercase tracking-wide mb-4">Free</div>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="text-3xl font-black text-foreground">$0</span>
+              </div>
+              <p className="text-xs text-white/25 mb-6">2 scans included</p>
+              <div className="space-y-2.5">
+                {['2 folder scans', 'AI file analysis', 'One-click sweep'].map((f) => (
+                  <div key={f} className="flex items-center gap-2.5 text-xs text-white/40">
+                    <div className="w-1 h-1 rounded-full bg-white/20" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="/auth"
+                className="mt-6 w-full inline-flex items-center justify-center border border-white/[0.08] bg-white/[0.03] px-5 py-2.5 rounded-xl text-xs font-semibold text-white/50 hover:text-white/70 hover:bg-white/[0.06] transition-all"
+              >
+                Get Started
+              </a>
+            </motion.div>
+
+            {/* Pro */}
+            <motion.div
+              className="rounded-2xl border border-primary/20 bg-primary/[0.04] p-6 backdrop-blur-sm relative overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl">Popular</div>
+              <div className="text-xs font-semibold text-primary uppercase tracking-wide mb-4">Pro</div>
+              <div className="flex items-baseline gap-1 mb-1">
+                <span className="text-3xl font-black text-foreground">$3.99</span>
+                <span className="text-xs text-white/30">/mo</span>
+              </div>
+              <p className="text-xs text-white/25 mb-6">Unlimited scans</p>
+              <div className="space-y-2.5">
+                {['Unlimited folder scans', 'AI file analysis', 'One-click sweep', 'Priority support'].map((f) => (
+                  <div key={f} className="flex items-center gap-2.5 text-xs text-white/50">
+                    <div className="w-1 h-1 rounded-full bg-primary" />
+                    {f}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="/auth"
+                className="mt-6 w-full inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-xs font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20"
+              >
+                Subscribe — $3.99/mo
+              </a>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Download CTA with floating cards */}
       <section id="download" className="py-24 px-6 relative">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
