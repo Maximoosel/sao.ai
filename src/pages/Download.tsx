@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Apple, Monitor } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
+import { supabase } from '@/integrations/supabase/client';
 
 // Animated GB counter
 const GBCounter = () => {
@@ -582,9 +583,9 @@ const DownloadPage = () => {
 
           <div className="grid grid-cols-3 gap-3">
             {[
-              { amount: '$2', label: 'Coffee' },
-              { amount: '$5', label: 'Lunch' },
-              { amount: '$10', label: 'Hero' },
+              { amount: '$2', label: 'Coffee', tier: 'coffee' },
+              { amount: '$5', label: 'Lunch', tier: 'lunch' },
+              { amount: '$10', label: 'Hero', tier: 'hero' },
             ].map((tip, i) => (
               <motion.button
                 key={tip.amount}
@@ -595,9 +596,11 @@ const DownloadPage = () => {
                 transition={{ delay: i * 0.08 }}
                 whileHover={{ scale: 1.03, y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  // TODO: wire to payment
-                  window.open(`https://buy.stripe.com/test`, '_blank');
+                onClick={async () => {
+                  const { data, error } = await supabase.functions.invoke('create-tip', {
+                    body: { tier: tip.tier },
+                  });
+                  if (data?.url) window.open(data.url, '_blank');
                 }}
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
