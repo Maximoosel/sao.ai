@@ -109,19 +109,19 @@ const DownloadPage = () => {
           >
             <div className="inline-flex items-center gap-2 border border-white/[0.08] bg-white/[0.04] rounded-full px-4 py-1.5 mb-8 backdrop-blur-xl">
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">AI-Powered File Intelligence</span>
+              <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">AI cleans your Mac in seconds</span>
             </div>
 
             <h1 className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-              <span className="text-foreground">Clean your Mac.</span>
+              <span className="text-foreground">Seconds to scan.</span>
               <br />
               <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                Intelligently.
+                Gigabytes freed.
               </span>
             </h1>
 
             <p className="text-base sm:text-lg text-white/35 max-w-lg mb-10 leading-relaxed font-light">
-              Two-pass AI analysis finds forgotten files — old downloads, duplicate screenshots, massive installers — and helps you reclaim gigabytes in seconds.
+              Point sao.ai at any folder and watch AI instantly identify what's safe to delete. No manual sorting — just scan, review, sweep. Done before your coffee gets cold.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -159,13 +159,13 @@ const DownloadPage = () => {
         </motion.div>
       </section>
 
-      {/* Stats */}
+      {/* Speed-focused stats */}
       <section className="py-20 px-6">
         <div className="max-w-3xl mx-auto grid grid-cols-3 gap-6">
           {[
+            ['< 30s', 'Full folder scan'],
             ['10GB+', 'Avg. reclaimed'],
-            ['2-pass', 'AI verification'],
-            ['100%', 'Local & private'],
+            ['1-click', 'Sweep to clean'],
           ].map(([value, label], i) => (
             <motion.div
               key={label}
@@ -209,16 +209,16 @@ const DownloadPage = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-black mb-3">Built different</h2>
-            <p className="text-white/30 text-sm max-w-sm mx-auto">A desktop overlay that lives alongside your apps. No windows to switch.</p>
+            <h2 className="text-3xl sm:text-4xl font-black mb-3">Speed meets intelligence</h2>
+            <p className="text-white/30 text-sm max-w-sm mx-auto">AI does the thinking so you don't have to. Scan → review → clean in under a minute.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              ['AI-Powered Analysis', 'Two-pass AI scoring identifies which files are safe to remove with confidence ratings.'],
-              ['Smart Categories', 'Automatically sorts into Big Offenders, Old Files, Screenshots, Downloads & Duplicates.'],
-              ['One-Click Sweep', 'Select and sweep junk files to Trash. Undo anytime — nothing is permanently deleted.'],
-              ['Privacy First', 'Runs locally on your Mac. Files never leave your machine — only metadata is analyzed.'],
+              ['Instant AI Scoring', 'AI analyzes every file in seconds — not hours. Two-pass verification ensures nothing important gets flagged.'],
+              ['Smart Categories', 'Automatically sorts into Big Offenders, Old Files, Screenshots, Downloads & Duplicates. Zero manual work.'],
+              ['One-Click Sweep', 'Select all junk with one click and sweep to Trash. Undo anytime — nothing is permanently deleted.'],
+              ['100% Local & Private', 'Runs entirely on your Mac. No uploads, no cloud processing — only metadata touches AI.'],
             ].map(([title, desc], i) => (
               <motion.div
                 key={title}
@@ -254,9 +254,9 @@ const DownloadPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                ['01', 'Scan', 'Point at any folder — Desktop, Downloads, Documents. It recursively finds all files.'],
-                ['02', 'Analyze', 'Two-pass AI scores each file\'s keep-priority with confidence levels.'],
-                ['03', 'Sweep', 'Select files to sweep. They go to Trash — undo anytime.'],
+                ['01', 'Scan', 'Point at any folder. AI scans thousands of files in seconds — not minutes.'],
+                ['02', 'Review', 'AI scores every file instantly. Confidence ratings highlight what\'s safe to remove.'],
+                ['03', 'Sweep', 'One click. Gigabytes freed. Files go to Trash — undo anytime.'],
               ].map(([step, title, desc], i) => (
                 <motion.div
                   key={step}
