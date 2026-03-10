@@ -95,7 +95,7 @@ const Auth = () => {
               disabled={loading}
               className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold hover:brightness-110 shadow-lg shadow-primary/20"
             >
-              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Start Free Trial'}
+              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
 
