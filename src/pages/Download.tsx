@@ -602,7 +602,6 @@ const DownloadPage = () => {
               >
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative">
-                  <span className="text-2xl mb-2 block">{tip.emoji}</span>
                   <div className="text-xl font-black bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent mb-0.5">{tip.amount}</div>
                   <div className="text-[10px] text-white/30 font-medium">{tip.label}</div>
                 </div>
