@@ -391,7 +391,7 @@ const DownloadPage = () => {
             animate={{ y: [0, -6, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <FloatingCardStack scale={0.7} />
+            <FloatingCardStack scale={0.7} fanStyle="B" />
           </motion.div>
 
           <h2 className="text-3xl sm:text-4xl font-black mb-3">Reclaim your space</h2>
