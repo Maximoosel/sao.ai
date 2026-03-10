@@ -1,4 +1,4 @@
-import { Trash2, Check, FileText, Film, Image, Archive, Package, Disc, File } from 'lucide-react';
+import { Trash2, Check, FileText, Film, Image, Archive, Package, Disc, File, AlertCircle } from 'lucide-react';
 import { SweepFile, formatSize, formatDate } from '@/lib/mockData';
 
 const typeIconMap: Record<string, React.ReactNode> = {
@@ -8,6 +8,14 @@ const typeIconMap: Record<string, React.ReactNode> = {
   image: <Image size={18} className="text-green-500" />,
   document: <FileText size={18} className="text-blue-500" />,
   installer: <Disc size={18} className="text-rose-500" />,
+};
+
+const tagColors: Record<string, string> = {
+  'essential': 'bg-emerald-500/20 text-emerald-400',
+  'useful': 'bg-blue-500/20 text-blue-400',
+  'questionable': 'bg-yellow-500/20 text-yellow-400',
+  'low-priority': 'bg-orange-500/20 text-orange-400',
+  'safe-to-remove': 'bg-red-500/20 text-red-400',
 };
 
 interface FileCardProps {
@@ -20,6 +28,7 @@ interface FileCardProps {
 
 const FileCard = ({ file, selected, onToggle, onTrash, index }: FileCardProps) => {
   const icon = typeIconMap[file.type] || <File size={18} className="text-muted-foreground" />;
+  const isLowConfidence = file.confidence !== undefined && file.confidence < 60;
 
   return (
     <div
@@ -49,9 +58,42 @@ const FileCard = ({ file, selected, onToggle, onTrash, index }: FileCardProps) =
 
       {/* File info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-white/90 truncate">{file.name}</p>
-        <p className="text-xs text-white/50 truncate">{file.path} · {formatDate(file.lastOpened)}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-medium text-white/90 truncate">{file.name}</p>
+          {isLowConfidence && (
+            <AlertCircle size={12} className="text-yellow-400 flex-shrink-0" title="Low confidence — review manually" />
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="text-xs text-white/50 truncate">{file.path}</p>
+          {file.relevanceTag && (
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${tagColors[file.relevanceTag] || 'bg-white/10 text-white/60'}`}>
+              {file.relevanceTag}
+            </span>
+          )}
+          {file.confidence !== undefined && (
+            <span className={`text-[10px] flex-shrink-0 ${file.confidence >= 80 ? 'text-white/30' : file.confidence >= 60 ? 'text-white/40' : 'text-yellow-400/70'}`}>
+              {file.confidence}
+            </span>
+          )}
+        </div>
       </div>
+
+      {/* Keep priority bar */}
+      {file.keepPriority !== undefined && (
+        <div className="flex items-center gap-1.5 flex-shrink-0" title={file.relevanceReason}>
+          <div className="w-12 h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${file.keepPriority}%`,
+                background: file.keepPriority > 60 ? 'hsl(var(--primary))' : file.keepPriority > 30 ? '#f59e0b' : '#ef4444',
+              }}
+            />
+          </div>
+          <span className="text-[10px] text-white/40 w-4">{file.keepPriority}</span>
+        </div>
+      )}
 
       {/* Size badge */}
       <span className="size-badge flex-shrink-0">{formatSize(file.size)}</span>
