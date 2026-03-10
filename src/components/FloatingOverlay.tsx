@@ -969,10 +969,10 @@ const OverlayFileCard = ({ file, selected, onToggle, onTrash, totalStorage }: {
               <AnimatePresence>
                 {showTooltip && file.relevanceReason && (
                   <motion.div
-                    initial={{ opacity: 0, y: 4 }}
+                    initial={{ opacity: 0, y: -4 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 4 }}
-                    className="absolute bottom-full left-0 mb-2 w-48 p-2 rounded-lg bg-black/90 backdrop-blur-sm border border-white/10 z-50"
+                    exit={{ opacity: 0, y: -4 }}
+                    className="absolute top-full left-0 mt-2 w-48 p-2 rounded-lg bg-black/90 backdrop-blur-sm border border-white/10 z-[999]"
                   >
                     <p className="text-[10px] text-white/80 leading-relaxed">{file.relevanceReason}</p>
                     {file.confidence !== undefined && (
