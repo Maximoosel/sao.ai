@@ -15,7 +15,7 @@ export function useRelevanceScoring() {
     setAnalysisETA(null);
 
     try {
-      const batchSize = 20;
+      const batchSize = 40;
       const totalBatches = Math.ceil(files.length / batchSize);
       const allAnalyses: any[] = [];
       const startTime = Date.now();
