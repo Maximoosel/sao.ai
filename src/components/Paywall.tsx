@@ -46,10 +46,6 @@ const Paywall = () => {
     }
   };
 
-  const trialDaysLeft = subscription.trialEnd
-    ? Math.max(0, Math.ceil((new Date(subscription.trialEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0;
-
   // If subscribed, show manage button
   if (subscription.subscribed) {
     return (
@@ -73,7 +69,7 @@ const Paywall = () => {
     );
   }
 
-  // Trial or expired — show paywall
+  // Show paywall
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md px-6"
@@ -89,12 +85,12 @@ const Paywall = () => {
         <div className="inline-flex items-center gap-2 border border-primary/20 bg-primary/[0.08] rounded-full px-4 py-1.5 mb-6">
           <Zap size={12} className="text-primary" />
           <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">
-            {subscription.isInTrial ? `${trialDaysLeft} days left in trial` : 'Trial expired'}
+            Subscribe to continue
           </span>
         </div>
 
         <h2 className="text-2xl font-black text-foreground mb-2">
-          {subscription.isInTrial ? 'Upgrade to Pro' : 'Subscribe to continue'}
+          Get sao.ai Pro
         </h2>
         <p className="text-sm text-white/30 mb-8 max-w-xs mx-auto">
           Unlimited AI-powered scanning, cleaning, and file management for your Mac.
@@ -124,7 +120,7 @@ const Paywall = () => {
 
         <div className="flex items-center justify-center gap-1.5 text-white/20 text-[11px]">
           <Clock size={10} />
-          <span>Cancel anytime · 7-day free trial</span>
+          <span>Cancel anytime</span>
         </div>
 
         {user && (

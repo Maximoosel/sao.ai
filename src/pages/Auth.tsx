@@ -64,7 +64,7 @@ const Auth = () => {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="text-sm text-white/30 mb-6">
-            {isLogin ? 'Sign in to your account' : 'Start your 7-day free trial'}
+            {isLogin ? 'Sign in to your account' : 'Get started with sao.ai'}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -95,7 +95,7 @@ const Auth = () => {
               disabled={loading}
               className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-semibold hover:brightness-110 shadow-lg shadow-primary/20"
             >
-              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Start Free Trial'}
+              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
 
@@ -123,7 +123,7 @@ const Auth = () => {
 
         {!isLogin && (
           <p className="text-[11px] text-white/20 text-center mt-4">
-            7-day free trial · Then $3.99/mo · Cancel anytime
+            $3.99/mo · Cancel anytime
           </p>
         )}
       </motion.div>

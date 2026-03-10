@@ -4,8 +4,6 @@ import type { User, Session } from '@supabase/supabase-js';
 
 interface SubscriptionStatus {
   subscribed: boolean;
-  isInTrial: boolean;
-  trialEnd: string | null;
   subscriptionEnd: string | null;
 }
 
@@ -16,7 +14,7 @@ interface AuthContextType {
   subscription: SubscriptionStatus;
   checkSubscription: () => Promise<void>;
   signOut: () => Promise<void>;
-  hasAccess: boolean; // true if subscribed OR in trial
+  hasAccess: boolean; // true if subscribed
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,8 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState<SubscriptionStatus>({
     subscribed: false,
-    isInTrial: false,
-    trialEnd: null,
     subscriptionEnd: null,
   });
 
@@ -54,8 +50,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setSubscription({
         subscribed: data.subscribed ?? false,
-        isInTrial: data.is_in_trial ?? false,
-        trialEnd: data.trial_end ?? null,
         subscriptionEnd: data.subscription_end ?? null,
       });
     } catch (err) {
@@ -72,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           setTimeout(() => checkSubscription(), 0);
         } else {
-          setSubscription({ subscribed: false, isInTrial: false, trialEnd: null, subscriptionEnd: null });
+          setSubscription({ subscribed: false, subscriptionEnd: null });
         }
       }
     );
@@ -98,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
-  const hasAccess = subscription.subscribed || subscription.isInTrial;
+  const hasAccess = subscription.subscribed;
 
   return (
     <AuthContext.Provider value={{ user, session, loading, subscription, checkSubscription, signOut, hasAccess }}>
