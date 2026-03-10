@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN scans_used integer NOT NULL DEFAULT 0;

@@ -19,6 +19,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          scans_used: number
           trial_start_date: string
           updated_at: string
         }
@@ -26,6 +27,7 @@ export type Database = {
           created_at?: string
           email: string
           id: string
+          scans_used?: number
           trial_start_date?: string
           updated_at?: string
         }
@@ -33,6 +35,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          scans_used?: number
           trial_start_date?: string
           updated_at?: string
         }
