@@ -558,6 +558,60 @@ const DownloadPage = () => {
         </div>
       </section>
 
+      {/* Tip Jar */}
+      <section className="py-20 px-6 relative">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-primary/[0.04] rounded-full blur-[100px]" />
+        </div>
+        <div className="max-w-xl mx-auto relative z-10">
+          <motion.div
+            className="text-center mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <div className="inline-flex items-center gap-2 border border-white/[0.08] bg-white/[0.04] rounded-full px-4 py-1.5 mb-6 backdrop-blur-xl">
+              <span className="text-lg">☕</span>
+              <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">Support the dev</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black mb-2">Tip Jar</h2>
+            <p className="text-white/30 text-sm max-w-xs mx-auto">
+              If sao.ai saved you time, consider buying me a coffee. Every bit helps keep the project alive.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { amount: '$2', label: 'Coffee', emoji: '☕' },
+              { amount: '$5', label: 'Lunch', emoji: '🍜' },
+              { amount: '$10', label: 'Hero', emoji: '🦸' },
+            ].map((tip, i) => (
+              <motion.button
+                key={tip.amount}
+                className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.12] p-5 backdrop-blur-sm transition-all duration-300 text-center cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ scale: 1.03, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  // TODO: wire to payment
+                  window.open(`https://buy.stripe.com/test`, '_blank');
+                }}
+              >
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative">
+                  <span className="text-2xl mb-2 block">{tip.emoji}</span>
+                  <div className="text-xl font-black bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent mb-0.5">{tip.amount}</div>
+                  <div className="text-[10px] text-white/30 font-medium">{tip.label}</div>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Download CTA with floating cards */}
       <section id="download" className="py-24 px-6 relative">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
