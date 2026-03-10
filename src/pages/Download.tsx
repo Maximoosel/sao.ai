@@ -216,6 +216,21 @@ const DownloadPage = () => {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  // Check for tip=thanks query param
+  const [showThanks, setShowThanks] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tip') === 'thanks';
+  });
+
+  useEffect(() => {
+    if (showThanks) {
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('tip');
+      window.history.replaceState({}, '', url.pathname + url.hash);
+    }
+  }, [showThanks]);
+
   return (
     <div className="min-h-screen bg-[hsl(235,24%,8%)] text-foreground overflow-x-hidden selection:bg-primary/30">
       {/* Ambient glow */}
@@ -580,6 +595,27 @@ const DownloadPage = () => {
               If sao.ai saved you time, consider buying me a coffee. Every bit helps keep the project alive.
             </p>
           </motion.div>
+
+          <AnimatePresence>
+            {showThanks && (
+              <motion.div
+                className="mb-8 rounded-2xl border border-primary/20 bg-primary/[0.06] backdrop-blur-sm p-5 text-center"
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              >
+                <div className="text-sm font-bold text-primary mb-1">Thank you for your support!</div>
+                <p className="text-xs text-white/40">Your generosity keeps sao.ai alive and improving. You're awesome.</p>
+                <button
+                  onClick={() => setShowThanks(false)}
+                  className="mt-3 text-[10px] text-white/25 hover:text-white/50 transition-colors"
+                >
+                  Dismiss
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className="grid grid-cols-3 gap-3">
             {[
