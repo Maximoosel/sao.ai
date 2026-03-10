@@ -501,9 +501,9 @@ const DownloadPage = () => {
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-3xl font-black text-foreground">$0</span>
               </div>
-              <p className="text-xs text-white/25 mb-6">2 scans included</p>
+              <p className="text-xs text-white/25 mb-6">1 scan included</p>
               <div className="space-y-2.5">
-                {['2 folder scans', 'AI file analysis', 'One-click sweep'].map((f) => (
+                {['1 folder scan', 'AI file analysis', 'One-click sweep'].map((f) => (
                   <div key={f} className="flex items-center gap-2.5 text-xs text-white/40">
                     <div className="w-1 h-1 rounded-full bg-white/20" />
                     {f}
