@@ -571,7 +571,7 @@ const DownloadPage = () => {
             viewport={{ once: true }}
           >
             <div className="inline-flex items-center gap-2 border border-white/[0.08] bg-white/[0.04] rounded-full px-4 py-1.5 mb-6 backdrop-blur-xl">
-              <span className="text-lg">☕</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">Support the dev</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black mb-2">Tip Jar</h2>
