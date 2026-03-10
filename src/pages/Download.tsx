@@ -211,6 +211,8 @@ const FloatingCardStack = ({
 };
 
 const DownloadPage = () => {
+  const { subscription, user } = useAuth();
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
