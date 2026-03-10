@@ -64,7 +64,7 @@ const Auth = () => {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="text-sm text-white/30 mb-6">
-            {isLogin ? 'Sign in to your account' : '2 free scans, then $3.99/mo'}
+            {isLogin ? 'Sign in to your account' : '1 free scan, then $3.99/mo'}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
