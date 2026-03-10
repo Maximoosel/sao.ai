@@ -159,13 +159,13 @@ const DownloadPage = () => {
         </motion.div>
       </section>
 
-      {/* Stats */}
+      {/* Speed-focused stats */}
       <section className="py-20 px-6">
         <div className="max-w-3xl mx-auto grid grid-cols-3 gap-6">
           {[
+            ['< 30s', 'Full folder scan'],
             ['10GB+', 'Avg. reclaimed'],
-            ['2-pass', 'AI verification'],
-            ['100%', 'Local & private'],
+            ['1-click', 'Sweep to clean'],
           ].map(([value, label], i) => (
             <motion.div
               key={label}
