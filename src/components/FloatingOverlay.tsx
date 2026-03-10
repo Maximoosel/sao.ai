@@ -670,6 +670,17 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
                   Scanned {timeAgo(lastScanTime)}
                 </span>
               )}
+              {/* Free scans badge */}
+              {!subscription.subscribed && (
+                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${scansRemaining > 0 ? 'text-primary border-primary/20 bg-primary/[0.08]' : 'text-destructive border-destructive/20 bg-destructive/[0.08]'}`}>
+                  {scansRemaining > 0 ? `${scansRemaining} free scan${scansRemaining !== 1 ? 's' : ''} left` : 'Upgrade for unlimited scans'}
+                </span>
+              )}
+              {subscription.subscribed && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full border text-primary border-primary/20 bg-primary/[0.08]">
+                  Pro · Unlimited
+                </span>
+              )}
             </div>
             <div className="flex gap-1.5">
               <button onClick={handleScanFolder} disabled={isScanning} className={`overlay-action-btn ${files.length === 0 ? 'animate-[pulse_2s_ease-in-out_infinite] text-primary border border-primary/30 bg-primary/10' : ''}`} title="Scan a folder">
