@@ -193,6 +193,52 @@ const DownloadPage = () => {
         </div>
       </section>
 
+      {/* Mascot scanning section */}
+      <section className="py-16 px-6 overflow-hidden">
+        <div className="max-w-3xl mx-auto relative">
+          <motion.div
+            className="flex items-end justify-center gap-8"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Lil dude scanning across mock file cards */}
+            <div className="relative w-full h-48">
+              {/* Ground line */}
+              <div className="absolute bottom-6 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+              
+              {/* Mock file cards being scanned */}
+              {['Doc.pdf', 'IMG_0234.png', 'backup.zip', 'old_project.dmg'].map((name, i) => (
+                <motion.div
+                  key={name}
+                  className="absolute bottom-8 rounded-lg border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm px-3 py-2"
+                  style={{ left: `${10 + i * 22}%` }}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 0.5, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                >
+                  <span className="text-[9px] text-white/30 font-medium">{name}</span>
+                </motion.div>
+              ))}
+
+              {/* Lil dude walking and scanning */}
+              <motion.div
+                className="absolute bottom-0"
+                initial={{ left: '-10%' }}
+                whileInView={{ left: '85%' }}
+                viewport={{ once: true }}
+                transition={{ duration: 4, delay: 0.5, ease: 'linear', repeat: Infinity, repeatDelay: 1 }}
+              >
+                <AbstractShape size={36} showLimbs limbState="walking" walkDirection={1} />
+              </motion.div>
+            </div>
+          </motion.div>
+          <p className="text-center text-[11px] text-white/20 mt-4 font-medium">lil dude scanning your files</p>
+        </div>
+      </section>
+
       {/* How it works */}
       <section id="how" className="py-20 px-6">
         <div className="max-w-3xl mx-auto">
@@ -206,7 +252,6 @@ const DownloadPage = () => {
           </motion.h2>
 
           <div className="relative">
-            {/* Connecting line */}
             <div className="hidden md:block absolute top-8 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
