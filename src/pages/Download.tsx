@@ -231,12 +231,20 @@ const DownloadPage = () => {
               <AbstractShape size={22} />
               <span className="text-sm font-bold tracking-tight text-foreground">sao.ai</span>
             </div>
-            <a
-              href="#download"
-              className="bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-xl text-xs font-semibold hover:bg-primary/20 transition-all"
-            >
-              Download
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href="/auth"
+                className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+              >
+                Sign In
+              </a>
+              <a
+                href="#download"
+                className="bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-xl text-xs font-semibold hover:bg-primary/20 transition-all"
+              >
+                Download
+              </a>
+            </div>
           </div>
         </div>
       </nav>
