@@ -46,12 +46,8 @@ const Paywall = () => {
     }
   };
 
-  const trialDaysLeft = subscription.trialEnd
-    ? Math.max(0, Math.ceil((new Date(subscription.trialEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0;
-
-  // If subscribed, show manage button
-  if (subscription.subscribed) {
+  // Show paywall
+  return (
     return (
       <div className="rounded-2xl border border-primary/20 bg-primary/[0.05] backdrop-blur-xl p-6 text-center">
         <div className="inline-flex items-center gap-2 text-primary text-sm font-semibold mb-2">
