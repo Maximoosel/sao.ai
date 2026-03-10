@@ -233,6 +233,12 @@ const DownloadPage = () => {
             </div>
             <div className="flex items-center gap-2">
               <a
+                href="#pricing"
+                className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+              >
+                Pricing
+              </a>
+              <a
                 href="/auth"
                 className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
               >
