@@ -14,7 +14,7 @@ interface AuthContextType {
   subscription: SubscriptionStatus;
   checkSubscription: () => Promise<void>;
   signOut: () => Promise<void>;
-  hasAccess: boolean; // true if subscribed OR in trial
+  hasAccess: boolean; // true if subscribed
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
