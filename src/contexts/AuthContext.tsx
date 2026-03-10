@@ -50,8 +50,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setSubscription({
         subscribed: data.subscribed ?? false,
-        isInTrial: data.is_in_trial ?? false,
-        trialEnd: data.trial_end ?? null,
         subscriptionEnd: data.subscription_end ?? null,
       });
     } catch (err) {
