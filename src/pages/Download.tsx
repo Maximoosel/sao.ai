@@ -1,153 +1,192 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Download, Shield, Zap, Brain, Trash2, ArrowRight, Apple, Monitor } from 'lucide-react';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Apple, Monitor } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
-import appIcon from '@/assets/app-icon.png';
-
-const features = [
-  {
-    icon: <Brain className="text-primary" size={24} />,
-    title: 'AI-Powered Analysis',
-    description: 'Two-pass AI scoring identifies which files are safe to remove with confidence ratings.',
-  },
-  {
-    icon: <Zap className="text-yellow-400" size={24} />,
-    title: 'Smart Categories',
-    description: 'Automatically sorts files into Big Offenders, Old Files, Screenshots, Downloads & Duplicates.',
-  },
-  {
-    icon: <Trash2 className="text-red-400" size={24} />,
-    title: 'One-Click Sweep',
-    description: 'Select and sweep junk files to Trash. Undo anytime — nothing is permanently deleted.',
-  },
-  {
-    icon: <Shield className="text-emerald-400" size={24} />,
-    title: 'Privacy First',
-    description: 'Runs locally on your Mac. Files never leave your machine — only metadata is analyzed.',
-  },
-];
 
 const DownloadPage = () => {
-  const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <div className="min-h-screen bg-[hsl(235,24%,10%)] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[hsl(235,24%,8%)] text-foreground overflow-x-hidden selection:bg-primary/30">
+      {/* Ambient glow */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/[0.07] rounded-full blur-[150px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/[0.04] rounded-full blur-[120px]" />
+      </div>
+
       {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-xl bg-[hsl(235,24%,10%)]/80 border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <AbstractShape size={28} />
-            <span className="text-lg font-bold tracking-tight">sao.ai</span>
+      <nav className="fixed top-0 w-full z-50">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="mt-4 flex items-center justify-between rounded-2xl px-5 h-14 border border-white/[0.06] bg-white/[0.03] backdrop-blur-2xl">
+            <div className="flex items-center gap-2.5">
+              <AbstractShape size={22} />
+              <span className="text-sm font-bold tracking-tight text-foreground">sao.ai</span>
+            </div>
+            <a
+              href="#download"
+              className="bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-xl text-xs font-semibold hover:bg-primary/20 transition-all"
+            >
+              Download
+            </a>
           </div>
-          <a
-            href="#download"
-            className="bg-primary text-primary-foreground px-5 py-2 rounded-xl text-sm font-semibold hover:brightness-110 transition-all"
-          >
-            Download
-          </a>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+      <section ref={heroRef} className="relative pt-36 pb-10 px-6">
+        <motion.div
+          className="max-w-3xl mx-auto text-center"
+          style={{ y: heroY, opacity: heroOpacity }}
+        >
           <motion.div
-            className="flex-1 text-center lg:text-left"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="text-xs font-medium text-primary">Smart File Intelligence</span>
-            </div>
-            <h1 className="text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight mb-6">
-              Clean your Mac.
-              <br />
-              <span className="text-primary">Intelligently.</span>
-            </h1>
-            <p className="text-lg text-white/50 max-w-md mb-8 leading-relaxed">
-              sao.ai uses two-pass AI analysis to find files you forgot about — old downloads, duplicate screenshots, massive installers — and helps you reclaim gigabytes in seconds.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <a
-                href="#download"
-                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20"
-              >
-                <Apple size={18} />
-                Download for macOS
-              </a>
-              <a
-                href="#features"
-                className="inline-flex items-center justify-center gap-2 bg-white/5 border border-white/10 px-7 py-3.5 rounded-2xl text-base font-medium text-white/70 hover:bg-white/10 transition-all"
-              >
-                Learn more
-                <ArrowRight size={16} />
-              </a>
+            <div className="inline-flex items-center gap-2 border border-white/[0.08] bg-white/[0.04] rounded-full px-4 py-1.5 mb-8 backdrop-blur-xl">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[11px] font-medium text-white/50 tracking-wide uppercase">AI-Powered File Intelligence</span>
             </div>
           </motion.div>
 
-          {/* App preview */}
-          <motion.div
-            className="flex-1 relative"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          <motion.h1
+            className="text-5xl sm:text-7xl font-black leading-[1.05] tracking-tight mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative mx-auto w-72 h-72">
-              {/* Glow */}
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-[80px]" />
-              <img
-                src={appIcon}
-                alt="sao.ai app icon"
-                className="relative w-full h-full object-contain drop-shadow-2xl"
+            <span className="text-foreground">Clean your Mac.</span>
+            <br />
+            <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+              Intelligently.
+            </span>
+          </motion.h1>
+
+          <motion.p
+            className="text-base sm:text-lg text-white/35 max-w-lg mx-auto mb-10 leading-relaxed font-light"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Two-pass AI analysis finds forgotten files — old downloads, duplicate screenshots, massive installers — and helps you reclaim gigabytes in seconds.
+          </motion.p>
+
+          <motion.div
+            className="flex flex-col sm:flex-row gap-3 justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <a
+              href="#download"
+              className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+            >
+              <Apple size={16} />
+              Download for macOS
+            </a>
+            <a
+              href="#how"
+              className="inline-flex items-center justify-center gap-2 border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl px-7 py-3.5 rounded-2xl text-sm font-medium text-white/50 hover:text-white/70 hover:bg-white/[0.06] transition-all"
+            >
+              How it works
+            </a>
+          </motion.div>
+        </motion.div>
+
+        {/* Demo video / App preview */}
+        <motion.div
+          className="max-w-4xl mx-auto mt-16 relative"
+          initial={{ opacity: 0, y: 50, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Glow behind video */}
+          <div className="absolute -inset-4 bg-primary/[0.08] rounded-[2rem] blur-[60px]" />
+
+          <div className="relative rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40">
+            {/* macOS title bar */}
+            <div className="flex items-center gap-2 px-4 py-3 border-b border-white/[0.06] bg-white/[0.02]">
+              <div className="w-3 h-3 rounded-full bg-[hsl(0,72%,55%)]" />
+              <div className="w-3 h-3 rounded-full bg-[hsl(45,90%,55%)]" />
+              <div className="w-3 h-3 rounded-full bg-[hsl(120,50%,50%)]" />
+              <span className="text-[10px] text-white/20 ml-2 font-medium">sao.ai</span>
+            </div>
+
+            {/* Video */}
+            <div className="aspect-video bg-background/50">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                src="/videos/splash-effect.mp4"
               />
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* Stats strip */}
-      <section className="border-y border-white/5 bg-white/[0.02]">
-        <div className="max-w-5xl mx-auto px-6 py-10 grid grid-cols-3 gap-8 text-center">
+      {/* Stats */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto grid grid-cols-3 gap-6">
           {[
-            ['10GB+', 'Avg. space reclaimed'],
+            ['10GB+', 'Avg. reclaimed'],
             ['2-pass', 'AI verification'],
             ['100%', 'Local & private'],
-          ].map(([value, label]) => (
-            <div key={label}>
-              <div className="text-3xl font-black text-primary">{value}</div>
-              <div className="text-sm text-white/40 mt-1">{label}</div>
-            </div>
+          ].map(([value, label], i) => (
+            <motion.div
+              key={label}
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.1 }}
+            >
+              <div className="text-2xl sm:text-3xl font-black bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent">{value}</div>
+              <div className="text-xs text-white/30 mt-1.5 font-medium">{label}</div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-24 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-black mb-4">Built for your workflow</h2>
-            <p className="text-white/40 max-w-md mx-auto">
-              A desktop overlay that lives alongside your apps — scan, analyze, and sweep without switching windows.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {features.map((feature, i) => (
+      {/* Features - minimal, no icons */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl sm:text-4xl font-black mb-3">Built different</h2>
+            <p className="text-white/30 text-sm max-w-sm mx-auto">A desktop overlay that lives alongside your apps. No windows to switch.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              ['AI-Powered Analysis', 'Two-pass AI scoring identifies which files are safe to remove with confidence ratings.'],
+              ['Smart Categories', 'Automatically sorts into Big Offenders, Old Files, Screenshots, Downloads & Duplicates.'],
+              ['One-Click Sweep', 'Select and sweep junk files to Trash. Undo anytime — nothing is permanently deleted.'],
+              ['Privacy First', 'Runs locally on your Mac. Files never leave your machine — only metadata is analyzed.'],
+            ].map(([title, desc], i) => (
               <motion.div
-                key={feature.title}
-                className="relative p-6 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-default"
-                onMouseEnter={() => setHoveredFeature(i)}
-                onMouseLeave={() => setHoveredFeature(null)}
+                key={title}
+                className="group relative p-5 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.1] transition-all duration-500"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
               >
-                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{feature.description}</p>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <h3 className="text-sm font-bold mb-1.5 relative">{title}</h3>
+                <p className="text-xs text-white/30 leading-relaxed relative">{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -155,66 +194,88 @@ const DownloadPage = () => {
       </section>
 
       {/* How it works */}
-      <section className="py-24 px-6 bg-white/[0.01] border-y border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-black text-center mb-16">Three steps to a cleaner Mac</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { step: '01', title: 'Scan a folder', desc: 'Point sao.ai at any folder — Desktop, Downloads, Documents. It recursively finds all files.' },
-              { step: '02', title: 'AI analyzes', desc: 'Two-pass AI scoring rates each file\'s keep-priority with confidence levels. Low-confidence files get flagged.' },
-              { step: '03', title: 'Sweep & free space', desc: 'Select files to sweep. They go to your Trash — nothing is permanently deleted. Undo anytime.' },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="text-5xl font-black text-primary/20 mb-4">{item.step}</div>
-                <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+      <section id="how" className="py-20 px-6">
+        <div className="max-w-3xl mx-auto">
+          <motion.h2
+            className="text-3xl sm:text-4xl font-black text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Three steps
+          </motion.h2>
+
+          <div className="relative">
+            {/* Connecting line */}
+            <div className="hidden md:block absolute top-8 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                ['01', 'Scan', 'Point at any folder — Desktop, Downloads, Documents. It recursively finds all files.'],
+                ['02', 'Analyze', 'Two-pass AI scores each file\'s keep-priority with confidence levels.'],
+                ['03', 'Sweep', 'Select files to sweep. They go to Trash — undo anytime.'],
+              ].map(([step, title, desc], i) => (
+                <motion.div
+                  key={step}
+                  className="text-center relative"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.15 }}
+                >
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl border border-white/[0.06] bg-white/[0.03] mb-5">
+                    <span className="text-lg font-black text-primary/40">{step}</span>
+                  </div>
+                  <h3 className="text-base font-bold mb-2">{title}</h3>
+                  <p className="text-xs text-white/30 leading-relaxed">{desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Download CTA */}
       <section id="download" className="py-24 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+        <motion.div
+          className="max-w-xl mx-auto text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="relative inline-block mb-6">
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-[40px]" />
+            <AbstractShape size={44} />
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-black mb-3">Reclaim your space</h2>
+          <p className="text-white/30 text-sm mb-8 max-w-sm mx-auto">
+            Download sao.ai and start cleaning in under 30 seconds. Free to use.
+          </p>
+          <a
+            href="#"
+            className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
           >
-            <AbstractShape size={48} />
-            <h2 className="text-4xl font-black mt-6 mb-4">Ready to reclaim your space?</h2>
-            <p className="text-white/40 mb-8 max-w-md mx-auto">
-              Download sao.ai and start cleaning in under 30 seconds. Free to use.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-lg font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25"
-              >
-                <Apple size={22} />
-                Download for macOS
-              </a>
-            </div>
-            <div className="flex items-center justify-center gap-4 mt-4 text-xs text-white/30">
-              <span className="flex items-center gap-1"><Monitor size={12} /> macOS 12+</span>
-              <span>·</span>
-              <span>Universal (Intel + Apple Silicon)</span>
-              <span>·</span>
-              <span>v1.0.0</span>
-            </div>
-          </motion.div>
-        </div>
+            <Apple size={18} />
+            Download for macOS
+          </a>
+          <div className="flex items-center justify-center gap-3 mt-5 text-[11px] text-white/20">
+            <span className="flex items-center gap-1"><Monitor size={11} /> macOS 12+</span>
+            <span className="text-white/10">·</span>
+            <span>Universal binary</span>
+            <span className="text-white/10">·</span>
+            <span>v1.0.0</span>
+          </div>
+        </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 py-8 px-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-xs text-white/30">
+      <footer className="border-t border-white/[0.04] py-8 px-6">
+        <div className="max-w-5xl mx-auto flex items-center justify-between text-[11px] text-white/20">
           <div className="flex items-center gap-2">
-            <AbstractShape size={16} />
+            <AbstractShape size={14} />
             <span>sao.ai</span>
           </div>
-          <span>© {new Date().getFullYear()} sao.ai. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} sao.ai</span>
         </div>
       </footer>
     </div>
