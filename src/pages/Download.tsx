@@ -1,18 +1,81 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Apple, Monitor } from 'lucide-react';
 import { AbstractShape } from '@/components/SplashScreen';
 
-// Reusable floating card stack component — the transparent file cards from the splash screen
+// Animated GB counter
+const GBCounter = () => {
+  const [count, setCount] = useState(0);
+  const target = 12.7;
+  const ref = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    if (!started) return;
+    let frame: number;
+    const duration = 2000;
+    const start = performance.now();
+    const animate = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(parseFloat((eased * target).toFixed(1)));
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [started]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStarted(true); },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="inline-flex items-baseline gap-1">
+      <span className="text-5xl sm:text-6xl font-black tabular-nums bg-gradient-to-b from-primary to-primary/60 bg-clip-text text-transparent">
+        {count.toFixed(1)}
+      </span>
+      <span className="text-lg font-bold text-white/30">GB freed</span>
+    </div>
+  );
+};
+
+// Fan-out presets
+const fanStyleA = [
+  { x: -60, y: 20, r: -18 },
+  { x: -20, y: -10, r: -6 },
+  { x: 20, y: -30, r: 6 },
+  { x: 60, y: -10, r: 18 },
+];
+
+const fanStyleB = [
+  { x: 0, y: 50, r: -12 },
+  { x: 0, y: 15, r: -4 },
+  { x: 0, y: -20, r: 4 },
+  { x: 0, y: -55, r: 12 },
+];
+
+// Reusable floating card stack with hover fan-out
 const FloatingCardStack = ({ 
   scale = 1, 
   rotate = 0, 
-  className = '' 
+  className = '',
+  fanStyle = 'A',
 }: { 
   scale?: number; 
   rotate?: number; 
   className?: string;
+  fanStyle?: 'A' | 'B';
 }) => {
+  const [hovered, setHovered] = useState(false);
+  const fan = fanStyle === 'A' ? fanStyleA : fanStyleB;
+
   const cards = [
     { gradient: 'linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2))', label: 'Documents', offset: { x: 0, y: 0, r: -3 } },
     { gradient: 'linear-gradient(135deg, rgba(240,147,251,0.2), rgba(245,87,108,0.2))', label: 'Downloads', offset: { x: 4, y: -8, r: 2 } },
@@ -22,39 +85,61 @@ const FloatingCardStack = ({
 
   return (
     <div 
-      className={`relative ${className}`} 
+      className={`relative cursor-pointer ${className}`} 
       style={{ width: 120 * scale, height: 160 * scale, transform: `rotate(${rotate}deg)` }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      {cards.map((card, i) => (
-        <motion.div
-          key={card.label}
-          className="absolute rounded-xl overflow-hidden"
-          style={{
-            width: 100 * scale,
-            height: 130 * scale,
-            background: card.gradient,
-            backdropFilter: 'blur(12px)',
-            border: '0.5px solid rgba(255,255,255,0.12)',
-            left: '50%',
-            top: '50%',
-            marginLeft: (-50 * scale) + card.offset.x * scale,
-            marginTop: (-65 * scale) + card.offset.y * scale,
-            transform: `rotate(${card.offset.r}deg)`,
-            zIndex: cards.length - i,
-          }}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 0.9, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: i * 0.08 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-3">
-            <div className="w-full h-[1px] bg-white/[0.06] rounded-full mb-1.5" />
-            <div className="w-3/4 h-[1px] bg-white/[0.04] rounded-full mb-2" />
-            <span className="text-white/30 font-medium" style={{ fontSize: 8 * scale }}>{card.label}</span>
-          </div>
-        </motion.div>
-      ))}
+      {cards.map((card, i) => {
+        const stacked = card.offset;
+        const fanned = fan[i];
+
+        return (
+          <motion.div
+            key={card.label}
+            className="absolute rounded-xl overflow-hidden"
+            style={{
+              width: 100 * scale,
+              height: 130 * scale,
+              background: card.gradient,
+              backdropFilter: 'blur(12px)',
+              border: '0.5px solid rgba(255,255,255,0.12)',
+              left: '50%',
+              top: '50%',
+              marginLeft: -50 * scale,
+              marginTop: -65 * scale,
+              zIndex: cards.length - i,
+            }}
+            animate={hovered ? {
+              x: fanned.x * scale,
+              y: fanned.y * scale,
+              rotate: fanned.r,
+              scale: 0.92,
+              opacity: 0.95,
+            } : {
+              x: stacked.x * scale,
+              y: stacked.y * scale,
+              rotate: stacked.r,
+              scale: 1,
+              opacity: 0.9,
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: hovered ? 120 : 80,
+              damping: hovered ? 14 : 20,
+              mass: 0.8,
+              delay: i * 0.03,
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+              <div className="w-full h-[1px] bg-white/[0.06] rounded-full mb-1.5" />
+              <div className="w-3/4 h-[1px] bg-white/[0.04] rounded-full mb-2" />
+              <span className="text-white/30 font-medium" style={{ fontSize: 8 * scale }}>{card.label}</span>
+            </div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 };
