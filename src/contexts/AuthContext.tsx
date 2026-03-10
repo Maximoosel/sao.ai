@@ -4,8 +4,6 @@ import type { User, Session } from '@supabase/supabase-js';
 
 interface SubscriptionStatus {
   subscribed: boolean;
-  isInTrial: boolean;
-  trialEnd: string | null;
   subscriptionEnd: string | null;
 }
 
