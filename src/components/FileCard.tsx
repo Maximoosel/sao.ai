@@ -61,7 +61,7 @@ const FileCard = ({ file, selected, onToggle, onTrash, index }: FileCardProps) =
         <div className="flex items-center gap-1.5">
           <p className="text-sm font-medium text-white/90 truncate">{file.name}</p>
           {isLowConfidence && (
-            <AlertCircle size={12} className="text-yellow-400 flex-shrink-0" title="Low confidence — review manually" />
+            <AlertCircle size={12} className="text-yellow-400 flex-shrink-0" />
           )}
         </div>
         <div className="flex items-center gap-2">
