@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
-  const hasAccess = subscription.subscribed || subscription.isInTrial;
+  const hasAccess = subscription.subscribed;
 
   return (
     <AuthContext.Provider value={{ user, session, loading, subscription, checkSubscription, signOut, hasAccess }}>

@@ -65,8 +65,6 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
-      is_in_trial: isInTrial,
-      trial_end: trialEndDate.toISOString(),
       subscription_end: subscriptionEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

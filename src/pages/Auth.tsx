@@ -123,7 +123,7 @@ const Auth = () => {
 
         {!isLogin && (
           <p className="text-[11px] text-white/20 text-center mt-4">
-            7-day free trial · Then $3.99/mo · Cancel anytime
+            $3.99/mo · Cancel anytime
           </p>
         )}
       </motion.div>

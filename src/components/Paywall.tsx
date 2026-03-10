@@ -69,8 +69,7 @@ const Paywall = () => {
     );
   }
 
-  // Trial or expired — show paywall
-  return (
+  /* Paywall removed trial badge, subscription manage is in-app */
     <motion.div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md px-6"
       initial={{ opacity: 0 }}
