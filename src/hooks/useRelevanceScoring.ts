@@ -7,9 +7,15 @@ export function useRelevanceScoring() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisETA, setAnalysisETA] = useState<string | null>(null);
+  const cancelledRef = useRef(false);
+
+  const cancelAnalysis = useCallback(() => {
+    cancelledRef.current = true;
+  }, []);
 
   const analyzeFiles = useCallback(async (files: SweepFile[]): Promise<SweepFile[]> => {
     if (files.length === 0) return files;
+    cancelledRef.current = false;
     setIsAnalyzing(true);
     setAnalysisProgress(0);
     setAnalysisETA(null);
@@ -21,6 +27,10 @@ export function useRelevanceScoring() {
       const startTime = Date.now();
 
       for (let i = 0; i < files.length; i += batchSize) {
+        if (cancelledRef.current) {
+          toast.info('Analysis cancelled');
+          break;
+        }
         const batchIndex = Math.floor(i / batchSize);
         const batch = files.slice(i, i + batchSize);
 
