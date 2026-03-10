@@ -205,9 +205,20 @@ const DownloadPage = () => {
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-white/35 max-w-lg mb-10 leading-relaxed font-light">
+            <p className="text-base sm:text-lg text-white/35 max-w-lg mb-6 leading-relaxed font-light">
               Point sao.ai at any folder and watch AI instantly identify what's safe to delete. No manual sorting — just scan, review, sweep. Done before your coffee gets cold.
             </p>
+
+            {/* Animated GB counter */}
+            <motion.div
+              className="mb-10"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <GBCounter />
+              <p className="text-[11px] text-white/20 mt-1">average per scan</p>
+            </motion.div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
               <a
