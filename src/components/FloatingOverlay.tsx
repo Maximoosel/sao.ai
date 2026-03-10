@@ -220,6 +220,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const handleScanFolder = async () => {
     const scanned = await scanFolder();
     if (scanned.length > 0) {
+      // Track scan usage
+      incrementScan();
       // Disable walking character when user starts working with real files
       setCharacterEnabled(false);
 
