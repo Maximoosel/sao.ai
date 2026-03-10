@@ -254,9 +254,9 @@ const DownloadPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {[
-                ['01', 'Scan', 'Point at any folder — Desktop, Downloads, Documents. It recursively finds all files.'],
-                ['02', 'Analyze', 'Two-pass AI scores each file\'s keep-priority with confidence levels.'],
-                ['03', 'Sweep', 'Select files to sweep. They go to Trash — undo anytime.'],
+                ['01', 'Scan', 'Point at any folder. AI scans thousands of files in seconds — not minutes.'],
+                ['02', 'Review', 'AI scores every file instantly. Confidence ratings highlight what\'s safe to remove.'],
+                ['03', 'Sweep', 'One click. Gigabytes freed. Files go to Trash — undo anytime.'],
               ].map(([step, title, desc], i) => (
                 <motion.div
                   key={step}
