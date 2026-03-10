@@ -619,9 +619,9 @@ const DownloadPage = () => {
 
           <div className="grid grid-cols-3 gap-3">
             {[
-              { amount: '$2', label: 'Coffee', tier: 'coffee' },
+              { amount: '$2', label: 'Hot Chocolate', tier: 'coffee' },
               { amount: '$5', label: 'Lunch', tier: 'lunch' },
-              { amount: '$10', label: 'Hero', tier: 'hero' },
+              { amount: '$10', label: 'A Sandwich', tier: 'hero' },
             ].map((tip, i) => (
               <motion.button
                 key={tip.amount}
