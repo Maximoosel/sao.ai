@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, useCallback, ReactNode 
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
+const FREE_SCAN_LIMIT = 2;
+
 interface SubscriptionStatus {
   subscribed: boolean;
   subscriptionEnd: string | null;
@@ -12,9 +14,12 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   subscription: SubscriptionStatus;
+  scansUsed: number;
+  scansRemaining: number;
   checkSubscription: () => Promise<void>;
+  incrementScan: () => Promise<void>;
   signOut: () => Promise<void>;
-  hasAccess: boolean; // true if subscribed
+  hasAccess: boolean; // true if subscribed or has free scans left
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,10 +34,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [scansUsed, setScansUsed] = useState(0);
   const [subscription, setSubscription] = useState<SubscriptionStatus>({
     subscribed: false,
     subscriptionEnd: null,
   });
+
+  const fetchScansUsed = useCallback(async (userId: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('scans_used')
+      .eq('id', userId)
+      .single();
+    if (data) setScansUsed(data.scans_used ?? 0);
+  }, []);
 
   const checkSubscription = useCallback(async () => {
     try {
@@ -57,6 +72,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const incrementScan = useCallback(async () => {
+    if (!user) return;
+    const newCount = scansUsed + 1;
+    setScansUsed(newCount);
+    await supabase
+      .from('profiles')
+      .update({ scans_used: newCount } as any)
+      .eq('id', user.id);
+  }, [user, scansUsed]);
+
   useEffect(() => {
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
@@ -65,8 +90,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
         if (session?.user) {
           setTimeout(() => checkSubscription(), 0);
+          fetchScansUsed(session.user.id);
         } else {
           setSubscription({ subscribed: false, subscriptionEnd: null });
+          setScansUsed(0);
         }
       }
     );
@@ -75,11 +102,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      if (session?.user) checkSubscription();
+      if (session?.user) {
+        checkSubscription();
+        fetchScansUsed(session.user.id);
+      }
     });
 
     return () => authSub.unsubscribe();
-  }, [checkSubscription]);
+  }, [checkSubscription, fetchScansUsed]);
 
   // Auto-refresh subscription every 60s
   useEffect(() => {
@@ -92,10 +122,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await supabase.auth.signOut();
   };
 
-  const hasAccess = subscription.subscribed;
+  const scansRemaining = Math.max(0, FREE_SCAN_LIMIT - scansUsed);
+  const hasAccess = subscription.subscribed || scansRemaining > 0;
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, subscription, checkSubscription, signOut, hasAccess }}>
+    <AuthContext.Provider value={{ user, session, loading, subscription, scansUsed, scansRemaining, checkSubscription, incrementScan, signOut, hasAccess }}>
       {children}
     </AuthContext.Provider>
   );

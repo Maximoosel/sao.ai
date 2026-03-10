@@ -64,7 +64,7 @@ const Auth = () => {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="text-sm text-white/30 mb-6">
-            {isLogin ? 'Sign in to your account' : 'Get started with sao.ai'}
+            {isLogin ? 'Sign in to your account' : '2 free scans, then $3.99/mo'}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -123,7 +123,7 @@ const Auth = () => {
 
         {!isLogin && (
           <p className="text-[11px] text-white/20 text-center mt-4">
-            $3.99/mo · Cancel anytime
+            2 free scans · Then $3.99/mo · Cancel anytime
           </p>
         )}
       </motion.div>

@@ -16,6 +16,7 @@ import { useFileScanner } from '@/hooks/useFileScanner';
 import { useRelevanceScoring } from '@/hooks/useRelevanceScoring';
 import { useDeviceStorage } from '@/hooks/useDeviceStorage';
 import { mockFiles, formatSize, formatSizeWithContext, timeAgo, type FileCategory, type SweepFile } from '@/lib/mockData';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 type SortMode = 'size' | 'lastOpened' | 'relevance';
@@ -63,6 +64,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 
   const { isScanning, scanFolder, trashFiles, scanProgress, scanETA } = useFileScanner();
   const { isAnalyzing, analysisProgress, analysisETA, analyzeFiles } = useRelevanceScoring();
+  const { incrementScan } = useAuth();
 
   // Resize electron window when expanded state changes
   useEffect(() => {
@@ -218,6 +220,8 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
   const handleScanFolder = async () => {
     const scanned = await scanFolder();
     if (scanned.length > 0) {
+      // Track scan usage
+      incrementScan();
       // Disable walking character when user starts working with real files
       setCharacterEnabled(false);
 
