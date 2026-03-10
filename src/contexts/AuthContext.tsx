@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (session?.user) {
           setTimeout(() => checkSubscription(), 0);
         } else {
-          setSubscription({ subscribed: false, isInTrial: false, trialEnd: null, subscriptionEnd: null });
+          setSubscription({ subscribed: false, subscriptionEnd: null });
         }
       }
     );
