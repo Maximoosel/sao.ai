@@ -31,8 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState<SubscriptionStatus>({
     subscribed: false,
-    isInTrial: false,
-    trialEnd: null,
     subscriptionEnd: null,
   });
 
