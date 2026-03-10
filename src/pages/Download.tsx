@@ -294,7 +294,7 @@ const DownloadPage = () => {
             animate={{ y: [0, -10, 0], rotate: [0, -3, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
           >
-            <FloatingCardStack scale={0.5} rotate={12} />
+            <FloatingCardStack scale={0.5} rotate={12} fanStyle="B" />
           </motion.div>
         </div>
 
