@@ -684,7 +684,7 @@ const FloatingOverlay = ({ bgBlur = 60, panelOpacity = 50 }: { bgBlur?: number; 
 
           {/* Category tabs with duplicate badge */}
           <div className="px-4 pt-3 pb-1">
-            <CategoryTabs active={activeCategory} onSelect={setActiveCategory} duplicateCount={duplicateCount} />
+            <CategoryTabs active={activeCategory} onSelect={(cat) => { setActiveCategory(cat); setSelectedIds(new Set()); }} duplicateCount={duplicateCount} />
           </div>
 
           {/* Search + Sort */}
