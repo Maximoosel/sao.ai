@@ -52,15 +52,12 @@ const Paywall = () => {
       <div className="rounded-2xl border border-primary/20 bg-primary/[0.05] backdrop-blur-xl p-6 text-center">
         <div className="inline-flex items-center gap-2 text-primary text-sm font-semibold mb-2">
           <Shield size={14} />
-          sao.ai Pro — Active
+          sao.ai Pro — Purchased
         </div>
         <p className="text-xs text-white/30 mb-4">
-          Renews {subscription.subscriptionEnd ? new Date(subscription.subscriptionEnd).toLocaleDateString() : 'soon'}
+          Unlimited access — thank you for your support!
         </p>
         <div className="flex gap-2 justify-center">
-          <Button onClick={handleManage} disabled={loading} variant="outline" className="rounded-xl border-white/[0.08] text-white/50 hover:text-foreground text-xs">
-            Manage Subscription
-          </Button>
           <Button onClick={signOut} variant="ghost" className="rounded-xl text-white/30 text-xs">
             Sign Out
           </Button>
@@ -90,10 +87,10 @@ const Paywall = () => {
         </div>
 
         <h2 className="text-2xl font-black text-foreground mb-2">
-          Upgrade to sao.ai Pro
+          Unlock sao.ai Pro
         </h2>
         <p className="text-sm text-white/30 mb-8 max-w-xs mx-auto">
-          You've used your free scan. Subscribe for unlimited AI-powered scanning and cleaning.
+          You've used your free scan. Purchase once for unlimited AI-powered scanning and cleaning — forever.
         </p>
 
         <div className="space-y-3 mb-8 text-left">
@@ -115,12 +112,12 @@ const Paywall = () => {
           disabled={loading}
           className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-bold text-base hover:brightness-110 shadow-lg shadow-primary/20 mb-3"
         >
-          {loading ? 'Loading...' : 'Subscribe — $3.99/mo'}
+          {loading ? 'Loading...' : 'Buy Now — $3.99 one-time'}
         </Button>
 
         <div className="flex items-center justify-center gap-1.5 text-white/20 text-[11px]">
-          <Clock size={10} />
-          <span>Cancel anytime</span>
+          <Shield size={10} />
+          <span>One-time purchase, unlimited forever</span>
         </div>
 
         {user && (

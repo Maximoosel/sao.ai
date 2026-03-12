@@ -49,22 +49,35 @@ serve(async (req) => {
     }
 
     const customerId = customers.data[0].id;
+    logStep("Found Stripe customer", { customerId });
+
+    // Check for completed one-time payments
+    const sessions = await stripe.checkout.sessions.list({
+      customer: customerId,
+      limit: 100,
+    });
+
+    const hasPurchased = sessions.data.some(
+      (s) => s.mode === "payment" && s.payment_status === "paid"
+    );
+    logStep("Purchase check", { hasPurchased });
+
+    // Also check for active subscriptions (legacy support)
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
       status: "active",
       limit: 1,
     });
-
     const hasActiveSub = subscriptions.data.length > 0;
-    let subscriptionEnd = null;
 
+    const subscribed = hasPurchased || hasActiveSub;
+    let subscriptionEnd = null;
     if (hasActiveSub) {
       subscriptionEnd = new Date(subscriptions.data[0].current_period_end * 1000).toISOString();
-      logStep("Active subscription found", { subscriptionEnd });
     }
 
     return new Response(JSON.stringify({
-      subscribed: hasActiveSub,
+      subscribed,
       subscription_end: subscriptionEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
