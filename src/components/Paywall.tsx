@@ -52,15 +52,12 @@ const Paywall = () => {
       <div className="rounded-2xl border border-primary/20 bg-primary/[0.05] backdrop-blur-xl p-6 text-center">
         <div className="inline-flex items-center gap-2 text-primary text-sm font-semibold mb-2">
           <Shield size={14} />
-          sao.ai Pro — Active
+          sao.ai Pro — Purchased
         </div>
         <p className="text-xs text-white/30 mb-4">
-          Renews {subscription.subscriptionEnd ? new Date(subscription.subscriptionEnd).toLocaleDateString() : 'soon'}
+          Unlimited access — thank you for your support!
         </p>
         <div className="flex gap-2 justify-center">
-          <Button onClick={handleManage} disabled={loading} variant="outline" className="rounded-xl border-white/[0.08] text-white/50 hover:text-foreground text-xs">
-            Manage Subscription
-          </Button>
           <Button onClick={signOut} variant="ghost" className="rounded-xl text-white/30 text-xs">
             Sign Out
           </Button>
