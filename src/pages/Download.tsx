@@ -648,6 +648,8 @@ const DownloadPage = () => {
           </p>
           <a
             href={DOWNLOAD_URL_DMG}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
           >
             <Apple size={18} />
