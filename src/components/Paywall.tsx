@@ -116,8 +116,8 @@ const Paywall = () => {
         </Button>
 
         <div className="flex items-center justify-center gap-1.5 text-white/20 text-[11px]">
-          <Clock size={10} />
-          <span>Cancel anytime</span>
+          <Shield size={10} />
+          <span>One-time purchase, unlimited forever</span>
         </div>
 
         {user && (
