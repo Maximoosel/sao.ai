@@ -5,7 +5,8 @@ import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-const DOWNLOAD_URL = 'https://github.com/your-repo/releases/download/v1.0.0/sao.ai-1.0.0-universal.dmg';
+const DOWNLOAD_URL_DMG = 'https://github.com/Maximoosel/sao.ai/raw/main/sao.ai-1.0.0-universal.dmg';
+const DOWNLOAD_URL_ZIP = 'https://github.com/Maximoosel/sao.ai/raw/main/sao.ai-1.0.0-universal-mac.zip';
 
 // Animated GB counter
 const GBCounter = () => {
