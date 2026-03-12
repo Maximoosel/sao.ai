@@ -87,7 +87,7 @@ const Paywall = () => {
         </div>
 
         <h2 className="text-2xl font-black text-foreground mb-2">
-          Unlock sao.ai Pro
+          Unlock sao.ai
         </h2>
         <p className="text-sm text-white/30 mb-8 max-w-xs mx-auto">
           You've used your free scan. Purchase once for unlimited AI-powered scanning and cleaning — forever.

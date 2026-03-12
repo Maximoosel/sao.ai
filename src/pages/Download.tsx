@@ -539,7 +539,7 @@ const DownloadPage = () => {
               href="/auth"
               className="w-full inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20"
             >
-              Get sao.ai Pro — $3.99
+              Get sao.ai — $3.99
             </a>
           </motion.div>
         </div>
