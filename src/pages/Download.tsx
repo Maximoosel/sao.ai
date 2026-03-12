@@ -522,7 +522,7 @@ const DownloadPage = () => {
             viewport={{ once: true }}
           >
             <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl">One-time</div>
-            <div className="text-xs font-semibold text-primary uppercase tracking-wide mb-4">sao.ai Pro</div>
+            <div className="text-xs font-semibold text-primary uppercase tracking-wide mb-4">sao.ai</div>
             <div className="flex items-baseline gap-1 justify-center mb-1">
               <span className="text-4xl font-black text-foreground">$3.99</span>
             </div>
