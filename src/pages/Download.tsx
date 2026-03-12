@@ -5,7 +5,8 @@ import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-const DOWNLOAD_URL = 'https://github.com/your-repo/releases/download/v1.0.0/sao.ai-1.0.0-universal.dmg';
+const DOWNLOAD_URL_DMG = 'https://github.com/Maximoosel/sao.ai/raw/main/sao.ai-1.0.0-universal.dmg';
+const DOWNLOAD_URL_ZIP = 'https://github.com/Maximoosel/sao.ai/raw/main/sao.ai-1.0.0-universal-mac.zip';
 
 // Animated GB counter
 const GBCounter = () => {
@@ -646,7 +647,7 @@ const DownloadPage = () => {
             Download sao.ai and start cleaning in under 30 seconds. Free to use.
           </p>
           <a
-            href={DOWNLOAD_URL}
+            href={DOWNLOAD_URL_DMG}
             className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
           >
             <Apple size={18} />
