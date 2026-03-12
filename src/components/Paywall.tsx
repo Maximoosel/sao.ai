@@ -112,7 +112,7 @@ const Paywall = () => {
           disabled={loading}
           className="w-full h-12 rounded-2xl bg-primary text-primary-foreground font-bold text-base hover:brightness-110 shadow-lg shadow-primary/20 mb-3"
         >
-          {loading ? 'Loading...' : 'Subscribe — $3.99/mo'}
+          {loading ? 'Loading...' : 'Buy Now — $3.99 one-time'}
         </Button>
 
         <div className="flex items-center justify-center gap-1.5 text-white/20 text-[11px]">
