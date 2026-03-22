@@ -6,8 +6,8 @@ import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
-const DOWNLOAD_URL_DMG = 'https://raw.githubusercontent.com/Maximoosel/sao.ai/main/sao.ai-1.0.0-universal.dmg';
-const DOWNLOAD_URL_ZIP = 'https://raw.githubusercontent.com/Maximoosel/sao.ai/main/sao.ai-1.0.0-universal-mac.zip';
+const DOWNLOAD_URL_DMG = 'https://github.com/Maximoosel/sao.ai/raw/main/sao.ai-1.0.0-universal.dmg';
+const DOWNLOAD_URL_ZIP = 'https://github.com/Maximoosel/sao.ai/raw/main/sao.ai-1.0.0-universal-mac.zip';
 
 // Animated GB counter
 const GBCounter = () => {
@@ -257,14 +257,8 @@ const DownloadPage = () => {
       }
       return;
     }
-    // Open the installer URL outside the preview iframe so the browser can download it normally
-    const link = document.createElement('a');
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Navigate directly to trigger browser download of the LFS-hosted file
+    window.open(url, '_self');
   };
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
