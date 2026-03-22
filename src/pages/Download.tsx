@@ -344,13 +344,14 @@ const DownloadPage = () => {
             </motion.div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <a
-                href="#download"
-                className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+              <button
+                onClick={() => handleDownload(DOWNLOAD_URL_DMG)}
+                disabled={checkoutLoading}
+                className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 disabled:opacity-50"
               >
-                <Apple size={16} />
-                Download for macOS
-              </a>
+                {checkoutLoading ? <Loader2 size={16} className="animate-spin" /> : (!user || !subscription.subscribed) ? <Lock size={16} /> : <Apple size={16} />}
+                {checkoutLoading ? 'Loading...' : (!user || !subscription.subscribed) ? 'Purchase to Download — $3.99' : 'Download for macOS'}
+              </button>
               <a
                 href="#how"
                 className="inline-flex items-center justify-center gap-2 border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl px-7 py-3.5 rounded-2xl text-sm font-medium text-white/50 hover:text-white/70 hover:bg-white/[0.06] transition-all"
