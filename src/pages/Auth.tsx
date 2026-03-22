@@ -16,12 +16,14 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
 
-  // Redirect already-authenticated users to home
+  const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/';
+
+  // Redirect already-authenticated users
   useEffect(() => {
     if (!authLoading && user) {
-      navigate('/', { replace: true });
+      navigate(redirectTo, { replace: true });
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

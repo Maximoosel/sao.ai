@@ -219,7 +219,7 @@ const DownloadPage = () => {
 
   const handleDownload = async (url: string) => {
     if (!user) {
-      navigate('/auth');
+      navigate('/auth?redirect=/download');
       return;
     }
     if (!subscription.subscribed) {
