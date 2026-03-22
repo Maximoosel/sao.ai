@@ -134,7 +134,7 @@ const Auth = () => {
 
         {!isLogin && (
           <p className="text-[11px] text-white/20 text-center mt-4">
-            1 free scan · Then $3.99/mo · Cancel anytime
+            One-time purchase · $3.99 · Unlimited use
           </p>
         )}
       </motion.div>
