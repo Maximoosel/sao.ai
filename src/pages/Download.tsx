@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Apple, Monitor, Loader2 } from 'lucide-react';
+import { Apple, Monitor, Loader2, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
