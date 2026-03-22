@@ -213,9 +213,29 @@ const FloatingCardStack = ({
 };
 
 const DownloadPage = () => {
-  const { subscription, user } = useAuth();
+  const { subscription, user, checkSubscription } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Auto-refresh subscription when returning from Stripe checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'success') {
+      // Clean URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('checkout');
+      window.history.replaceState({}, '', url.pathname + url.hash);
+      // Poll subscription status (Stripe may take a moment)
+      const poll = setInterval(async () => {
+        await checkSubscription();
+      }, 3000);
+      // Also check immediately
+      checkSubscription();
+      // Stop polling after 30s
+      setTimeout(() => clearInterval(poll), 30000);
+      return () => clearInterval(poll);
+    }
+  }, [checkSubscription]);
 
   const handleDownload = async (url: string) => {
     if (!user) {
