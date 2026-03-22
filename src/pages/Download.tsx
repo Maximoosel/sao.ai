@@ -562,12 +562,13 @@ const DownloadPage = () => {
                 </div>
               ))}
             </div>
-            <a
-              href="/auth"
-              className="w-full inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20"
+            <button
+              onClick={() => handleDownload(DOWNLOAD_URL_DMG)}
+              disabled={checkoutLoading}
+              className="w-full inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
             >
-              Get sao.ai — $3.99
-            </a>
+              {checkoutLoading ? 'Loading...' : subscription.subscribed ? 'Download sao.ai' : 'Get sao.ai — $3.99'}
+            </button>
           </motion.div>
         </div>
       </section>
