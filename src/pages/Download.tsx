@@ -291,12 +291,21 @@ const DownloadPage = () => {
               >
                 Pricing
               </a>
-              <a
-                href="/auth"
-                className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
-              >
-                Sign In
-              </a>
+              {user ? (
+                <button
+                  onClick={async () => { await supabase.auth.signOut(); }}
+                  className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+                >
+                  Sign Out
+                </button>
+              ) : (
+                <a
+                  href="/auth?redirect=/download"
+                  className="text-white/40 hover:text-white/70 px-3 py-1.5 rounded-xl text-xs font-medium transition-all"
+                >
+                  Sign In
+                </a>
+              )}
               <a
                 href="#download"
                 className="bg-primary/10 text-primary border border-primary/20 px-4 py-1.5 rounded-xl text-xs font-semibold hover:bg-primary/20 transition-all"
