@@ -25,21 +25,25 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated or email not available");
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
+    
+    // Always ensure a Stripe customer exists so check-subscription can find them
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
+    } else {
+      const newCustomer = await stripe.customers.create({ email: user.email });
+      customerId = newCustomer.id;
     }
 
     const origin = req.headers.get("origin") || "https://sao-ai.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : user.email,
       line_items: [{ price: "price_1TAHeVROAMhwTLDACV3DgRgO", quantity: 1 }],
       mode: "payment",
-      success_url: `${origin}/?checkout=success`,
-      cancel_url: `${origin}/?checkout=cancel`,
+      success_url: `${origin}/download?checkout=success`,
+      cancel_url: `${origin}/download?checkout=cancel`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
