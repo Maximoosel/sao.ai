@@ -237,7 +237,13 @@ const DownloadPage = () => {
       }
       return;
     }
-    window.open(url, '_blank');
+    // Trigger a real file download instead of opening in browser
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop() || 'sao.ai-installer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
