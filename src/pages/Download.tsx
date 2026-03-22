@@ -214,6 +214,30 @@ const FloatingCardStack = ({
 const DownloadPage = () => {
   const { subscription, user } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDownload = async (url: string) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    if (!subscription.subscribed) {
+      setCheckoutLoading(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('create-checkout');
+        if (error) throw error;
+        if (data?.url) {
+          window.open(data.url, '_blank');
+        }
+      } catch (err: any) {
+        console.error('Checkout error:', err);
+      } finally {
+        setCheckoutLoading(false);
+      }
+      return;
+    }
+    window.open(url, '_blank');
+  };
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
