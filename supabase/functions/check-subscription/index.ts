@@ -38,43 +38,72 @@ serve(async (req) => {
     logStep("User authenticated", { email: user.email });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    
+    // Try to find existing customer
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    let customerId: string | null = null;
 
-    if (customers.data.length === 0) {
-      logStep("No Stripe customer found");
-      return new Response(JSON.stringify({ subscribed: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+      logStep("Found Stripe customer", { customerId });
+    } else {
+      logStep("No Stripe customer found, checking for unlinked payments");
     }
 
-    const customerId = customers.data[0].id;
-    logStep("Found Stripe customer", { customerId });
+    let hasPurchased = false;
 
-    // Check for completed one-time payments
-    const sessions = await stripe.checkout.sessions.list({
-      customer: customerId,
-      limit: 100,
-    });
+    if (customerId) {
+      // Check for completed one-time payments via checkout sessions
+      const sessions = await stripe.checkout.sessions.list({
+        customer: customerId,
+        limit: 100,
+      });
+      hasPurchased = sessions.data.some(
+        (s) => s.mode === "payment" && s.payment_status === "paid"
+      );
+      logStep("Customer purchase check", { hasPurchased });
+    }
 
-    const hasPurchased = sessions.data.some(
-      (s) => s.mode === "payment" && s.payment_status === "paid"
-    );
-    logStep("Purchase check", { hasPurchased });
+    // Fallback: check recent checkout sessions for matching email (handles payments without a customer)
+    if (!hasPurchased) {
+      const recentSessions = await stripe.checkout.sessions.list({ limit: 100 });
+      hasPurchased = recentSessions.data.some(
+        (s) =>
+          s.mode === "payment" &&
+          s.payment_status === "paid" &&
+          s.customer_details?.email?.toLowerCase() === user.email.toLowerCase()
+      );
+      logStep("Email fallback purchase check", { hasPurchased });
+
+      // If we found a payment but no customer, create one for future lookups
+      if (hasPurchased && !customerId) {
+        try {
+          const newCustomer = await stripe.customers.create({ email: user.email });
+          customerId = newCustomer.id;
+          logStep("Created Stripe customer for future lookups", { customerId });
+        } catch (e) {
+          logStep("Failed to create customer", { error: String(e) });
+        }
+      }
+    }
 
     // Also check for active subscriptions (legacy support)
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerId,
-      status: "active",
-      limit: 1,
-    });
-    const hasActiveSub = subscriptions.data.length > 0;
+    let hasActiveSub = false;
+    let subscriptionEnd = null;
+    if (customerId) {
+      const subscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+        status: "active",
+        limit: 1,
+      });
+      hasActiveSub = subscriptions.data.length > 0;
+      if (hasActiveSub) {
+        subscriptionEnd = new Date(subscriptions.data[0].current_period_end * 1000).toISOString();
+      }
+    }
 
     const subscribed = hasPurchased || hasActiveSub;
-    let subscriptionEnd = null;
-    if (hasActiveSub) {
-      subscriptionEnd = new Date(subscriptions.data[0].current_period_end * 1000).toISOString();
-    }
+    logStep("Final result", { subscribed, hasPurchased, hasActiveSub });
 
     return new Response(JSON.stringify({
       subscribed,
