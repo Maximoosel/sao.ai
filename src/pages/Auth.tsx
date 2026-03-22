@@ -16,7 +16,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
 
-  const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/';
+  const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/download';
 
   // Redirect already-authenticated users
   useEffect(() => {
