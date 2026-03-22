@@ -257,10 +257,11 @@ const DownloadPage = () => {
       }
       return;
     }
-    // Trigger a real file download instead of opening in browser
+    // Open the installer URL outside the preview iframe so the browser can download it normally
     const link = document.createElement('a');
     link.href = url;
-    link.download = url.split('/').pop() || 'sao.ai-installer';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
