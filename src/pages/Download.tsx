@@ -670,17 +670,18 @@ const DownloadPage = () => {
 
           <h2 className="text-3xl sm:text-4xl font-black mb-3">Reclaim your space</h2>
           <p className="text-white/30 text-sm mb-8 max-w-sm mx-auto">
-            Download sao.ai and start cleaning in under 30 seconds. Free to use.
+            {subscription.subscribed 
+              ? 'Download sao.ai and start cleaning in under 30 seconds.'
+              : 'Purchase sao.ai for $3.99 to download and start cleaning.'}
           </p>
-          <a
-            href={DOWNLOAD_URL_DMG}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
+          <button
+            onClick={() => handleDownload(DOWNLOAD_URL_DMG)}
+            disabled={checkoutLoading}
+            className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 disabled:opacity-50"
           >
-            <Apple size={18} />
-            Download for macOS
-          </a>
+            {checkoutLoading ? <Loader2 size={18} className="animate-spin" /> : (!user || !subscription.subscribed) ? <Lock size={18} /> : <Apple size={18} />}
+            {checkoutLoading ? 'Loading...' : (!user || !subscription.subscribed) ? 'Purchase to Download — $3.99' : 'Download for macOS'}
+          </button>
           <div className="flex items-center justify-center gap-3 mt-5 text-[11px] text-white/20">
             <span className="flex items-center gap-1"><Monitor size={11} /> macOS 12+</span>
             <span className="text-white/10">·</span>
