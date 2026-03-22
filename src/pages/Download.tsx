@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Apple, Monitor, Loader2 } from 'lucide-react';
+import { Apple, Monitor, Loader2, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { AbstractShape } from '@/components/SplashScreen';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -214,6 +215,30 @@ const FloatingCardStack = ({
 const DownloadPage = () => {
   const { subscription, user } = useAuth();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDownload = async (url: string) => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    if (!subscription.subscribed) {
+      setCheckoutLoading(true);
+      try {
+        const { data, error } = await supabase.functions.invoke('create-checkout');
+        if (error) throw error;
+        if (data?.url) {
+          window.open(data.url, '_blank');
+        }
+      } catch (err: any) {
+        console.error('Checkout error:', err);
+      } finally {
+        setCheckoutLoading(false);
+      }
+      return;
+    }
+    window.open(url, '_blank');
+  };
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -319,13 +344,14 @@ const DownloadPage = () => {
             </motion.div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <a
-                href="#download"
-                className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30"
+              <button
+                onClick={() => handleDownload(DOWNLOAD_URL_DMG)}
+                disabled={checkoutLoading}
+                className="group inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-7 py-3.5 rounded-2xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 disabled:opacity-50"
               >
-                <Apple size={16} />
-                Download for macOS
-              </a>
+                {checkoutLoading ? <Loader2 size={16} className="animate-spin" /> : (!user || !subscription.subscribed) ? <Lock size={16} /> : <Apple size={16} />}
+                {checkoutLoading ? 'Loading...' : (!user || !subscription.subscribed) ? 'Purchase to Download — $3.99' : 'Download for macOS'}
+              </button>
               <a
                 href="#how"
                 className="inline-flex items-center justify-center gap-2 border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl px-7 py-3.5 rounded-2xl text-sm font-medium text-white/50 hover:text-white/70 hover:bg-white/[0.06] transition-all"
@@ -536,12 +562,13 @@ const DownloadPage = () => {
                 </div>
               ))}
             </div>
-            <a
-              href="/auth"
-              className="w-full inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20"
+            <button
+              onClick={() => handleDownload(DOWNLOAD_URL_DMG)}
+              disabled={checkoutLoading}
+              className="w-full inline-flex items-center justify-center bg-primary text-primary-foreground px-5 py-3 rounded-xl text-sm font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
             >
-              Get sao.ai — $3.99
-            </a>
+              {checkoutLoading ? 'Loading...' : subscription.subscribed ? 'Download sao.ai' : 'Get sao.ai — $3.99'}
+            </button>
           </motion.div>
         </div>
       </section>
@@ -644,17 +671,18 @@ const DownloadPage = () => {
 
           <h2 className="text-3xl sm:text-4xl font-black mb-3">Reclaim your space</h2>
           <p className="text-white/30 text-sm mb-8 max-w-sm mx-auto">
-            Download sao.ai and start cleaning in under 30 seconds. Free to use.
+            {subscription.subscribed 
+              ? 'Download sao.ai and start cleaning in under 30 seconds.'
+              : 'Purchase sao.ai for $3.99 to download and start cleaning.'}
           </p>
-          <a
-            href={DOWNLOAD_URL_DMG}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30"
+          <button
+            onClick={() => handleDownload(DOWNLOAD_URL_DMG)}
+            disabled={checkoutLoading}
+            className="inline-flex items-center justify-center gap-2.5 bg-primary text-primary-foreground px-8 py-4 rounded-2xl text-base font-bold hover:brightness-110 transition-all shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 disabled:opacity-50"
           >
-            <Apple size={18} />
-            Download for macOS
-          </a>
+            {checkoutLoading ? <Loader2 size={18} className="animate-spin" /> : (!user || !subscription.subscribed) ? <Lock size={18} /> : <Apple size={18} />}
+            {checkoutLoading ? 'Loading...' : (!user || !subscription.subscribed) ? 'Purchase to Download — $3.99' : 'Download for macOS'}
+          </button>
           <div className="flex items-center justify-center gap-3 mt-5 text-[11px] text-white/20">
             <span className="flex items-center gap-1"><Monitor size={11} /> macOS 12+</span>
             <span className="text-white/10">·</span>
