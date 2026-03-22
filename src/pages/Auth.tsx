@@ -16,12 +16,14 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
 
-  // Redirect already-authenticated users to home
+  const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/';
+
+  // Redirect already-authenticated users
   useEffect(() => {
     if (!authLoading && user) {
-      navigate('/', { replace: true });
+      navigate(redirectTo, { replace: true });
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +34,7 @@ const Auth = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success('Welcome back!');
-        navigate('/');
+        navigate(redirectTo);
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -73,7 +75,7 @@ const Auth = () => {
             {isLogin ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="text-sm text-white/30 mb-6">
-            {isLogin ? 'Sign in to your account' : '1 free scan, then $3.99/mo'}
+            {isLogin ? 'Sign in to your account' : 'One-time purchase · $3.99'}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -132,7 +134,7 @@ const Auth = () => {
 
         {!isLogin && (
           <p className="text-[11px] text-white/20 text-center mt-4">
-            1 free scan · Then $3.99/mo · Cancel anytime
+            One-time purchase · $3.99 · Unlimited use
           </p>
         )}
       </motion.div>
